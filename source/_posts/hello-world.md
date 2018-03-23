@@ -1,38 +1,36 @@
 ---
 title: Hello World
 ---
-Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
+## 面朝大海，春暖花开
 
-## Quick Start
+从明天起，做一个幸福的人
 
-### Create a new post
+喂马、劈柴、周游世界
 
-``` bash
-$ hexo new "My New Post"
-```
+从明天起，关心粮食和蔬菜
 
-More info: [Writing](https://hexo.io/docs/writing.html)
+我有一所房子，面朝大海，春暖花开
 
-### Run server
 
-``` bash
-$ hexo server
-```
 
-More info: [Server](https://hexo.io/docs/server.html)
+从明天起，和每一个亲人通信
 
-### Generate static files
+告诉他们我的幸福
 
-``` bash
-$ hexo generate
-```
+那幸福的闪电告诉我的
 
-More info: [Generating](https://hexo.io/docs/generating.html)
+我将告诉每一个人
 
-### Deploy to remote sites
 
-``` bash
-$ hexo deploy
-```
 
-More info: [Deployment](https://hexo.io/docs/deployment.html)
+给每一条河每一座山取一个温暖的名字
+
+陌生人，我也为你祝福
+
+愿你有一个灿烂的前程
+
+愿你有情人总成眷属
+
+愿你在尘世获得幸福
+
+我只愿面朝大海，春暖花开
