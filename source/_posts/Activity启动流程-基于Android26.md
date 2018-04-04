@@ -1027,3 +1027,8 @@ public void callActivityOnRestart() {
 下面的图例来自[博客](http://gityuan.com/2016/03/12/start-activity/)：
 
 ![启动流程](http://gityuan.com/images/activity/start_activity_process.jpg)
+
+### 时序图
+
+![Android启动流程](http://oy017242u.bkt.clouddn.com/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png)
+

@@ -28,7 +28,8 @@
 <meta property="og:description" content="基于 Android 26，分析 Android Activity 启动流程  参考startActivity启动过程分析 源码源码篇幅可能过长，所以会省略一下不必要的代码和注释 Activity12345678910111213@Override                                    public void startActivity() &amp;#123;">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://gityuan.com/images/activity/start_activity_process.jpg">
-<meta property="og:updated_time" content="2018-03-30T03:57:21.541Z">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png">
+<meta property="og:updated_time" content="2018-03-30T08:43:13.220Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Activity启动流程(基于Android26)">
 <meta name="twitter:description" content="基于 Android 26，分析 Android Activity 启动流程  参考startActivity启动过程分析 源码源码篇幅可能过长，所以会省略一下不必要的代码和注释 Activity12345678910111213@Override                                    public void startActivity() &amp;#123;">
@@ -160,7 +161,7 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">1.</span> <span class="post-toc-text">参考</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#源码"><span class="post-toc-number">2.</span> <span class="post-toc-text">源码</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Activity"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">Activity</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Instrumentation"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">Instrumentation</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityManagerService"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">ActivityManagerService</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStarter"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">ActivityStarter</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStack"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">ActivityStack</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStackSupervisor"><span class="post-toc-number">2.6.</span> <span class="post-toc-text">ActivityStackSupervisor</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStack-1"><span class="post-toc-number">2.7.</span> <span class="post-toc-text">ActivityStack</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStackSupervisor-1"><span class="post-toc-number">2.8.</span> <span class="post-toc-text">ActivityStackSupervisor</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ApplicationThread"><span class="post-toc-number">2.9.</span> <span class="post-toc-text">ApplicationThread</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityThread"><span class="post-toc-number">2.10.</span> <span class="post-toc-text">ActivityThread</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Instrumentation-1"><span class="post-toc-number">2.11.</span> <span class="post-toc-text">Instrumentation</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Activity-1"><span class="post-toc-number">2.12.</span> <span class="post-toc-text">Activity</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Instrumentation-2"><span class="post-toc-number">2.13.</span> <span class="post-toc-text">Instrumentation</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.</span> <span class="post-toc-text">总结</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">1.</span> <span class="post-toc-text">参考</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#源码"><span class="post-toc-number">2.</span> <span class="post-toc-text">源码</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Activity"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">Activity</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Instrumentation"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">Instrumentation</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityManagerService"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">ActivityManagerService</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStarter"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">ActivityStarter</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStack"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">ActivityStack</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStackSupervisor"><span class="post-toc-number">2.6.</span> <span class="post-toc-text">ActivityStackSupervisor</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStack-1"><span class="post-toc-number">2.7.</span> <span class="post-toc-text">ActivityStack</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityStackSupervisor-1"><span class="post-toc-number">2.8.</span> <span class="post-toc-text">ActivityStackSupervisor</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ApplicationThread"><span class="post-toc-number">2.9.</span> <span class="post-toc-text">ApplicationThread</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ActivityThread"><span class="post-toc-number">2.10.</span> <span class="post-toc-text">ActivityThread</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Instrumentation-1"><span class="post-toc-number">2.11.</span> <span class="post-toc-text">Instrumentation</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Activity-1"><span class="post-toc-number">2.12.</span> <span class="post-toc-text">Activity</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Instrumentation-2"><span class="post-toc-number">2.13.</span> <span class="post-toc-text">Instrumentation</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.</span> <span class="post-toc-text">总结</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#时序图"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">时序图</span></a></li></ol></li></ol>
         </nav>
     </aside>
 
@@ -257,6 +258,14 @@
                 </div>
                 <div class="image-caption">启动流程</div>
             </figure>
+<h3 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h3><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png" alt="Android启动流程" title="">
+                </div>
+                <div class="image-caption">Android启动流程</div>
+            </figure>
+
         </div>
 
         <blockquote class="post-copyright">
@@ -264,7 +273,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-03-30T03:57:21.541Z" itemprop="dateUpdated">2018-03-30 11:57:21</time>
+    最后更新时间：<time datetime="2018-03-30T08:43:13.220Z" itemprop="dateUpdated">2018-03-30 16:43:13</time>
 </span><br>
 
 
@@ -339,7 +348,14 @@
     </div>
 
     
-<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/04/03/触摸事件实践之路/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">触摸事件实践之路</h4>
+      </a>
+    </div>
   
 
   

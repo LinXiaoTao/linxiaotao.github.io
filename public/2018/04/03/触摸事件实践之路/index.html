@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    <title>触摸事件实践之路 | My World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="触摸事件实践之路">
+<meta property="og:url" content="https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/more.gif">
+<meta property="og:updated_time" content="2018-04-04T01:29:19.503Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="触摸事件实践之路">
+<meta name="twitter:description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
+<meta name="twitter:image" content="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123">
+    
+        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/img/favicon.png">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Leo</h5>
+          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/LinXiaoTao" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">触摸事件实践之路</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">触摸事件实践之路</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-04-03T01:17:20.000Z" itemprop="datePublished" class="page-time">
+  2018-04-03
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#触摸事件简单回顾"><span class="post-toc-number">2.</span> <span class="post-toc-text">触摸事件简单回顾</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#手势判定"><span class="post-toc-number">3.</span> <span class="post-toc-text">手势判定</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#onInterceptTouchEvent"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">onInterceptTouchEvent</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-DOWN"><span class="post-toc-number">3.1.1.</span> <span class="post-toc-text">TOUCH_DOWN</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-MOVE"><span class="post-toc-number">3.1.2.</span> <span class="post-toc-text">TOUCH_MOVE</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-CANCEL-amp-amp-TOUCH-UP"><span class="post-toc-number">3.1.3.</span> <span class="post-toc-text">TOUCH_CANCEL &amp;&amp; TOUCH_UP</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ACTION-POINTER-UP"><span class="post-toc-number">3.1.4.</span> <span class="post-toc-text">ACTION_POINTER_UP</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#小结"><span class="post-toc-number">3.1.5.</span> <span class="post-toc-text">小结</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#onTouchEvent"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">onTouchEvent</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-DOWN-1"><span class="post-toc-number">3.2.1.</span> <span class="post-toc-text">TOUCH_DOWN</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-MOVE-1"><span class="post-toc-number">3.2.2.</span> <span class="post-toc-text">TOUCH_MOVE</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-UP"><span class="post-toc-number">3.2.3.</span> <span class="post-toc-text">TOUCH_UP</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-CANCEL"><span class="post-toc-number">3.2.4.</span> <span class="post-toc-text">TOUCH_CANCEL</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ACTION-POINTER-DOWN"><span class="post-toc-number">3.2.5.</span> <span class="post-toc-text">ACTION_POINTER_DOWN</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ACTION-POINTER-UP-1"><span class="post-toc-number">3.2.6.</span> <span class="post-toc-text">ACTION_POINTER_UP</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#小结-1"><span class="post-toc-number">3.2.7.</span> <span class="post-toc-text">小结</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实战"><span class="post-toc-number">4.</span> <span class="post-toc-text">实战</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#滚轮控件"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">滚轮控件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#卷尺控件"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">卷尺控件</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-number">5.</span> <span class="post-toc-text">结语</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-触摸事件实践之路"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">触摸事件实践之路</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-04-03 09:17:20" datetime="2018-04-03T01:17:20.000Z"  itemprop="datePublished">2018-04-03</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发的理解，同时能实现相关需求。</p>
+<h2 id="触摸事件简单回顾"><a href="#触摸事件简单回顾" class="headerlink" title="触摸事件简单回顾"></a>触摸事件简单回顾</h2><p>我们都知道触摸事件的分发严格意义上讲，是从 Activity 开始进行分发，但一般我们谈论的，只从 ViewGroup 开始分发。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123" alt="TouchEvent" title="">
+                </div>
+                <div class="image-caption">TouchEvent</div>
+            </figure>
+<p>上面的图只是粗略地画出触摸事件的分发流程，从 ViewGroup 的 <code>dispatchTouchEvent</code> 开始分发，先判断 ViewGroup 的 <code>onInterceptTouchEvent</code> 是否拦截，同时这里也可以调用 ViewGroup 的 <code>requestDisallowInterceptTouchEvent</code> 让 ViewGroup 不调用 <code>onInterceptTouchEvent</code>，如果事件被拦截，则调用 ViewGroup 的超类即 View 的 <code>dispatchTouchEvent</code>，反之，则调用子视图的 <code>dispatchTouchEvent</code>，注意：这里我们做了简单处理，假设当前 ViewGroup 的子视图为 View，如果子视图为 ViewGroup，那么还是先执行 ViewGroup 的 <code>dispatchTouchEvent</code>。</p>
+<p>最终都会调用到 View 的 <code>onTouchEvent</code> 中，这个方法是真正处理触摸事件的，一般如果我们需要自己处理触摸事件，也是在这个方法中处理。</p>
+<h2 id="手势判定"><a href="#手势判定" class="headerlink" title="手势判定"></a>手势判定</h2><p>上面我们简单回顾了触摸事件分发，具体细节可以看下源码。其实上面所讲的分发流程，很多同学都能说出个大概，但就是在动手写的时候，不知道如何入手。</p>
+<p>当我们在日常开发中，如果遇到不知道怎么实现的需求时，最直接的方法就是阅读他人的源码，不管是个人的库也好，Google 提供的库也好，设计良好的源码抵过看一大堆的博客。在实现需要处理触摸事件的需求也是一个道理，Android SDK 已经提供了 ListView，RecyclerView，ScrollView 等等涉及拖动处理的系统控件，所以我们可以从阅读这类控件的源码入手，看看系统控件是如何处理触摸事件的。这里我们选择 ScrollView 来简单分析下：</p>
+<p>ScrollView 继承于 FrameLayout，属于 ViewGroup 控件，所以有 <code>onInterceptTouchEvent</code></p>
+<blockquote>
+<p>因为篇幅有限，所以我们会省略去无关紧要的代码，各位同学可以对照着源码进行分析。</p>
+<p>源码部分基于 Android 26</p>
+</blockquote>
+<h3 id="onInterceptTouchEvent"><a href="#onInterceptTouchEvent" class="headerlink" title="onInterceptTouchEvent"></a>onInterceptTouchEvent</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ((action == MotionEvent.ACTION_MOVE) &amp;&amp; (mIsBeingDragged)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用 <code>mIsBeingDragged</code> 变量来保存当前是否已经开始进行拖动手势，这个后面会讲到，同时当前分发事件类型为 <code>ACTION_MOVE</code>，那么直接返回 true，即拦截事件向子视图进行分发。这个是一个快捷的判断，省去了后面再进行一系列的判断，这个是个小技巧，我们在实现自定义控件的时候也可以用上。接下来的分析，为了更清晰，我们分为不同类型的 Touch Action 进行阅读。</p>
+<h4 id="TOUCH-DOWN"><a href="#TOUCH-DOWN" class="headerlink" title="TOUCH_DOWN"></a>TOUCH_DOWN</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!inChild((<span class="keyword">int</span>) ev.getX(), (<span class="keyword">int</span>) y)) &#123;</span><br><span class="line">    mIsBeingDragged = <span class="keyword">false</span>;</span><br><span class="line">    recycleVelocityTracker();</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码很简单，如果触摸事件没有作用于子视图范围内，那么就不处理，同时释放速度跟踪器，这个后面会讲到，一般用于 fling 手势的判定。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mLastMotionY = y;</span><br><span class="line">mActivePointerId = ev.getPointerId(<span class="number">0</span>);</span><br><span class="line">initOrResetVelocityTracker();</span><br><span class="line">mVelocityTracker.addMovement(ev);</span><br><span class="line"></span><br><span class="line">mScroller.computeScrollOffset();</span><br><span class="line">mIsBeingDragged = !mScroller.isFinished();</span><br><span class="line"></span><br><span class="line">startNestedScroll(SCROLL_AXIS_VERTICAL);</span><br></pre></td></tr></table></figure>
+<p>这段代码主要是用于初始化判定之前的资源，比如 <code>mLastMotionY</code> 记录按下时的坐标信息，<code>mActivePointerId</code> 记录当前分发触摸事件的手指 id，这个一般用于多指的处理，<code>initOrResetVelocityTracker</code> 初始化速度跟踪器，同时使用 <code>addMovement</code> 记录当前触摸事件信息，<code>mScroller</code> 是一般用于 fling 手势处理，这里的作用是处理上一次的 fling，<code>startNestedScroll</code> 则是嵌套滚动机制的知识了，嵌套滚动机制也不难理解，但这里我们先不涉及，相信理解基础的触摸事件知识后，这个只要稍微阅读下源码，就能理解的，说句题外话，虽然嵌套滚动很容易理解，作用却非常大，基本解决了大部分的滑动冲突场景。</p>
+<h4 id="TOUCH-MOVE"><a href="#TOUCH-MOVE" class="headerlink" title="TOUCH_MOVE"></a>TOUCH_MOVE</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> activePointerId = mActivePointerId;</span><br><span class="line"><span class="keyword">if</span> (activePointerId == INVALID_POINTER) &#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> pointerIndex = ev.findPointerIndex(activePointerId);</span><br><span class="line"><span class="keyword">if</span> (pointerIndex == -<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> y = (<span class="keyword">int</span>) ev.getY(pointerIndex);</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> yDiff = Math.abs(y - mLastMotionY);</span><br><span class="line"><span class="keyword">if</span> (yDiff &gt; mTouchSlop &amp;&amp; (getNestedScrollAxes() &amp; SCROLL_AXIS_VERTICAL) == <span class="number">0</span>) &#123;</span><br><span class="line">    mIsBeingDragged = <span class="keyword">true</span>;</span><br><span class="line">    mLastMotionY = y;</span><br><span class="line">    initVelocityTrackerIfNotExists();</span><br><span class="line">    mVelocityTracker.addMovement(ev);</span><br><span class="line">    <span class="keyword">final</span> ViewParent parent = getParent();</span><br><span class="line">    <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">        parent.requestDisallowInterceptTouchEvent(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码先使用我们在 <code>TOUCH_DOWN</code> 中记录的  <code>mActivePointerId</code> 进行是否为有效的判断，如果有效，则通过 <code>findPointerIndex</code> 获取作用手指 id 的下标，记录为  <code>pointerIndex</code> ，为什么要获取这个值，我们知道现在的手机屏幕都是支持多指触摸的，所以我们需要根据某个按下的手指的触摸信息来进行处理。<code>yDiff</code> 是滑动的距离，<code>mTouchSlop</code> 则是 SDK 定义的可作为判定是否开始进行拖动的距离常量，可以通过 ViewConfiguration 的 <code>getScaledTouchSlop</code> 获取，如果大于这个值，我们可以认为开始了拖动的手势。 <code>getNestedScrollAxes</code> 这个同样是用于嵌套滚动机制的，可以略过。如果开始了拖动手势，<code>mIsBeingDragged</code> 标记为 <code>true</code>，同样使用速度跟踪器记录信息，这里还会调用 ViewParent 的 <code>requestDisallowInterceptTouchEvent</code>，防止父视图拦截了事件，即 <code>onInterceptTouchEvent</code></p>
+<h4 id="TOUCH-CANCEL-amp-amp-TOUCH-UP"><a href="#TOUCH-CANCEL-amp-amp-TOUCH-UP" class="headerlink" title="TOUCH_CANCEL &amp;&amp; TOUCH_UP"></a>TOUCH_CANCEL &amp;&amp; TOUCH_UP</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mIsBeingDragged = <span class="keyword">false</span>;</span><br><span class="line">mActivePointerId = INVALID_POINTER;</span><br><span class="line">recycleVelocityTracker();</span><br><span class="line">stopNestedScroll();</span><br></pre></td></tr></table></figure>
+<p>一般我们都会在 <code>TOUCH_CANCEL</code> 和 <code>TOUCH_UP</code> 这两个类型的触摸事件分发中，进行一些释放资源的操作，比如 <code>mIsBeingDragged</code> 设置为 <code>false</code>，释放速度跟踪器等等 </p>
+<blockquote>
+<p><code>TOUCH_UP</code> 是所有的手指(多指触摸)抬起时分发的事件，这个比较好理解，而 <code>TOUCH_CANCEL</code> 则是触摸取消事件类型，一般什么时候会分发这个事件呢？举个例子，如果某个子视图已经消费了 <code>TOUCH_DOWN</code>，即在这个事件分发时，向父视图传递了 <code>true</code> 的返回值，那么一般情况下，父视图不会再拦截接下来的事件，比如 <code>ACTION_MOVE</code> 等，但是如果父视图在这种情况下，还拦截了事件传递，即在 <code>onInterceptTouch</code> 中返回了 <code>true</code>，那么在 ViewGroup 的 <code>dispatchTouchEvent</code> 中会给已经确认消费事件的子视图分发一个 <code>TOUCH_CANCEL</code> 的事件，具体可以阅读源码。</p>
+</blockquote>
+<h4 id="ACTION-POINTER-UP"><a href="#ACTION-POINTER-UP" class="headerlink" title="ACTION_POINTER_UP"></a>ACTION_POINTER_UP</h4><p>这个为多指触摸时，某个手指抬起时分发的事件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> pointerIndex = (ev.getAction() &amp; MotionEvent.ACTION_POINTER_INDEX_MASK) &gt;&gt;</span><br><span class="line">                MotionEvent.ACTION_POINTER_INDEX_SHIFT;</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> pointerId = ev.getPointerId(pointerIndex);</span><br><span class="line"><span class="keyword">if</span> (pointerId == mActivePointerId) &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> newPointerIndex = pointerIndex == <span class="number">0</span> ? <span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    mLastMotionY = (<span class="keyword">int</span>) ev.getY(newPointerIndex);</span><br><span class="line">    mActivePointerId = ev.getPointerId(newPointerIndex);</span><br><span class="line">    <span class="keyword">if</span> (mVelocityTracker != <span class="keyword">null</span>) &#123;</span><br><span class="line">        mVelocityTracker.clear();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码处理的是，当某个手指抬起时，而这个手指刚好是我们当前使用的，则重新初始化资源</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>我们可以简单总结下，<code>onInterceptTouchEvent</code> 所进行的处理，即在 <code>TOUCH_DOWN</code> 资源初始化，<code>TOUCH_MOVE</code> 判断是否开始拖动手势，<code>TOUCH_CANCEL</code> &amp;&amp; <code>TOUCH_UP</code> 中进行资源释放。这里涉及了多指触摸的处理。</p>
+<h3 id="onTouchEvent"><a href="#onTouchEvent" class="headerlink" title="onTouchEvent"></a>onTouchEvent</h3><p><code>onTouchEvent</code> 要比 <code>onInterceptTouch</code> 的逻辑更复杂，因为这个方法是用于真正的消费触摸事件。同样的，我们只关心核心代码，略去无关紧要的代码片段。</p>
+<h4 id="TOUCH-DOWN-1"><a href="#TOUCH-DOWN-1" class="headerlink" title="TOUCH_DOWN"></a>TOUCH_DOWN</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (getChildCount() == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ((mIsBeingDragged = !mScroller.isFinished())) &#123;</span><br><span class="line">    <span class="keyword">final</span> ViewParent parent = getParent();</span><br><span class="line">    <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">        parent.requestDisallowInterceptTouchEvent(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!mScroller.isFinished()) &#123;</span><br><span class="line">    mScroller.abortAnimation();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mLastMotionY = (<span class="keyword">int</span>) ev.getY();</span><br><span class="line">mActivePointerId = ev.getPointerId(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>同样的，<code>onTouchEvent</code> 在 <code>TOUCH_DOWN</code> 事件分发中，主要是进行资源初始化，同时也处理上一次的 fling 任务，比如调用 Scroller 的 <code>abortAnimation</code>，如果 Scroller 还没结束 fling 计算，则中止处理。</p>
+<h4 id="TOUCH-MOVE-1"><a href="#TOUCH-MOVE-1" class="headerlink" title="TOUCH_MOVE"></a>TOUCH_MOVE</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> activePointerIndex = ev.findPointerIndex(mActivePointerId);</span><br><span class="line"><span class="keyword">if</span> (activePointerIndex == -<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> y = (<span class="keyword">int</span>) ev.getY(activePointerIndex);</span><br><span class="line"><span class="keyword">int</span> deltaY = mLastMotionY - y;</span><br><span class="line"><span class="keyword">if</span> (dispatchNestedPreScroll(<span class="number">0</span>, deltaY, mScrollConsumed, mScrollOffset)) &#123;</span><br><span class="line">    <span class="comment">// 嵌套滚动处理</span></span><br><span class="line">    deltaY -= mScrollConsumed[<span class="number">1</span>];</span><br><span class="line">    vtev.offsetLocation(<span class="number">0</span>, mScrollOffset[<span class="number">1</span>]);</span><br><span class="line">    mNestedYOffset += mScrollOffset[<span class="number">1</span>];</span><br><span class="line">&#125;</span><br><span class="line">    <span class="keyword">if</span> (!mIsBeingDragged &amp;&amp; Math.abs(deltaY) &gt; mTouchSlop) &#123;</span><br><span class="line">        <span class="keyword">final</span> ViewParent parent = getParent();</span><br><span class="line">        <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">            parent.requestDisallowInterceptTouchEvent(<span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        mIsBeingDragged = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (deltaY &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            deltaY -= mTouchSlop;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            deltaY += mTouchSlop;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (mIsBeingDragged) &#123;</span><br><span class="line">        <span class="comment">/// 业务逻辑</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码同样会进行多指处理，获取指定手指的触摸事件信息。<code>mIsBeingDragged</code> 为 <code>false</code>，同时会再进行一次拖动手势的判定，判定逻辑和 <code>onInterceptTouchEvent</code> 中类似，如果 <code>mIsBeingDragged</code> 为 <code>true</code>，则开始进行真正的逻辑处理。</p>
+<blockquote>
+<p>EdgeEffect 是用于拖动时，边缘的阴影效果，具体使用可以参考源码</p>
+</blockquote>
+<h4 id="TOUCH-UP"><a href="#TOUCH-UP" class="headerlink" title="TOUCH_UP"></a>TOUCH_UP</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mIsBeingDragged) &#123;</span><br><span class="line">    <span class="keyword">final</span> VelocityTracker velocityTracker = mVelocityTracker;</span><br><span class="line">	velocityTracker.computeCurrentVelocity(<span class="number">1000</span>, mMaximumVelocity);</span><br><span class="line">    <span class="keyword">int</span> initialVelocity = (<span class="keyword">int</span>) velocityTracker.getYVelocity(mActivePointerId);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> ((Math.abs(initialVelocity) &gt; mMinimumVelocity)) &#123;</span><br><span class="line">    	flingWithNestedDispatch(-initialVelocity);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    mActivePointerId = INVALID_POINTER;</span><br><span class="line">    endDrag();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当手指全部抬起时，可以使用速度跟踪器进行 fling 手势的判定，同时释放资源。通过 <code>getYVelocity</code> 获取速度，在判断是否可以作为 fling 手势处理，<code>mMaximumVelocity</code> 是处理的最大速度，<code>mMinimumVelocity</code> 是处理的最小速度，这两个值同样可以通过 ViewConfiguration 的 <code>getScaledMaximumFlingVelocity</code> 和 <code>getScaledMinimumFlingVelocity</code> 获取。一般情况对 fling 的处理是通过 Scroller 进行处理的，因为这里涉及复杂的数学知识，而 Scroller 可以帮我们简化这里的操作，使用如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> height = getHeight() - mPaddingBottom - mPaddingTop;</span><br><span class="line"><span class="keyword">int</span> bottom = getChildAt(<span class="number">0</span>).getHeight();</span><br><span class="line"></span><br><span class="line">mScroller.fling(mScrollX, mScrollY, <span class="number">0</span>, velocityY, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">                    Math.max(<span class="number">0</span>, bottom - height), <span class="number">0</span>, height/<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">postInvalidateOnAnimation();</span><br></pre></td></tr></table></figure>
+<p>通过传递当前拖动手势速度值来调用 <code>fling</code> 进行处理，然后在 <code>computeScrollOffset</code> 方法中，进行真正的滚动处理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">computeScroll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mScroller.computeScrollOffset()) &#123;</span><br><span class="line">      	<span class="comment">// 逻辑处理</span></span><br><span class="line">        <span class="keyword">int</span> x = mScroller.getCurrX();</span><br><span class="line">        <span class="keyword">int</span> y = mScroller.getCurrY();</span><br><span class="line">        postInvalidateOnAnimation();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先我们要知道 Scroller 并不会为我们进行滚动处理，它只是提供了计算的模型，通过调用 <code>computeScrollOffset</code> 进行计算，如果返回 <code>true</code>，表示计算还没结束，然后通过 <code>getCurrX</code> 或 <code>getCurrY</code> 获取计算后的值，最后进行真正的滚动处理，比如调用 <code>scrollTo</code> 等等，这里需要注意的是，需要调用 <code>invalidate</code> 来确保进行下一次的 <code>computeScroll</code> 调用，这里使用的 <code>postInvalidateOnAnimation</code> 其作用是类似的。</p>
+<h4 id="TOUCH-CANCEL"><a href="#TOUCH-CANCEL" class="headerlink" title="TOUCH_CANCEL"></a>TOUCH_CANCEL</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mIsBeingDragged &amp;&amp; getChildCount() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (mScroller.springBack(mScrollX, mScrollY, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, getScrollRange())) &#123;</span><br><span class="line">        postInvalidateOnAnimation();</span><br><span class="line">    &#125;</span><br><span class="line">    mActivePointerId = INVALID_POINTER;</span><br><span class="line">    endDrag();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样的，一般我们都会在 <code>TOUCH_CANCEL</code> 中释放资源。</p>
+<h4 id="ACTION-POINTER-DOWN"><a href="#ACTION-POINTER-DOWN" class="headerlink" title="ACTION_POINTER_DOWN"></a>ACTION_POINTER_DOWN</h4><p>当有新的手指按下时分发的事件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> index = ev.getActionIndex();</span><br><span class="line">mLastMotionY = (<span class="keyword">int</span>) ev.getY(index);</span><br><span class="line">mActivePointerId = ev.getPointerId(index);</span><br></pre></td></tr></table></figure>
+<p>以新按下的手指的信息重新计算</p>
+<h4 id="ACTION-POINTER-UP-1"><a href="#ACTION-POINTER-UP-1" class="headerlink" title="ACTION_POINTER_UP"></a>ACTION_POINTER_UP</h4><p>这里的处理和 <code>onInterceptTouch</code> 一致</p>
+<h4 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h4><p><code>onTouchEvent</code> 和 <code>onInterceptTouchEvent</code> 处理有些相似，主要是在 <code>TOUCH_MOVE</code> 中在判定为拖动手势后进行真正的业务逻辑处理，同时在 <code>TOUCH_UP</code> 中根据速度跟踪器的获取的速度，判定是否符合 fling 手势，如果符合，则使用 Scroller 进行计算。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>在分析完 ScrollView 的触摸事件处理，我们应该对事件处理有个基本理解，可以按照这个思路去分析其他的类似的系统控件，比如 <code>NestedScrollView</code>、<code>RecyclerView</code>  等等，我们可以发现处理的思路基本一致，那我们是不是可以将这些判定逻辑封装下呢？是的，并且系统已经提供 GestureDetector 来进行手势的判定，我们只需要在相应的手势回调方法中进行我们的业务逻辑即可。还有更强大的 <code>ViewDragHelper</code> ，但不管怎样，只要能理解好触摸事件分发，对工具类的熟练使用就不在话下。</p>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p>理论说的再多，也是纸上谈兵，只有真正去实践，才能熟练掌握。因为业务需求或者兴趣爱好，我写了以下两个自定义控件，正好一个是纵向滑动和一个是横向滑动，效果如下：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim" alt="WheelView" title="">
+                </div>
+                <div class="image-caption">WheelView</div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/more.gif" alt="TapeView" title="">
+                </div>
+                <div class="image-caption">TapeView</div>
+            </figure>
+<p>详细的代码分析我们就不进行了，因为阅读源码是最快的方式，第一个是<a href="https://github.com/LinXiaoTao/WheelView" target="_blank" rel="noopener">滚轮控件</a>，第二个是之前参加活动的仿薄荷健康的<a href="https://github.com/LinXiaoTao/CustomViewProject/blob/master/app/src/main/java/com/leo/customviewproject/tape/README.md" target="_blank" rel="noopener">卷尺控件</a>。在这里我们只分析部分代码：</p>
+<h3 id="滚轮控件"><a href="#滚轮控件" class="headerlink" title="滚轮控件"></a>滚轮控件</h3><p>在前面手势判定中的分析中，我们提到在 <code>onTouchEvent</code> 判定拖动手势成功后，进行真正的业务逻辑处理，在这个控件中也是一样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mIsBeingDragged) &#123;</span><br><span class="line">    mDistanceY += mLastY - moveY;</span><br><span class="line">    postInvalidateOnAnimation();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在每次 <code>TOUCH_MOVE</code> 事件分发时，计算与 <code>TOUCH_DOWN</code> 时记录的位置信息的差值，保存为 <code>mDistanceY</code>，并且在 <code>onDraw</code> 中使用这个值对 Canvas 进行位移，绘制新位置的 UI。</p>
+<h3 id="卷尺控件"><a href="#卷尺控件" class="headerlink" title="卷尺控件"></a>卷尺控件</h3><p>拖动距离的计算与滚轮控件一样，只是记录为 <code>mOffsetLeft</code> 而已，同时两个控件都有在 <code>onTouchEvent</code> 的 <code>ACTION_UP</code> 事件分发中，处理 fling 手势。不过卷尺控件有使用 EdgeEffect 处理边缘效果，有兴趣的同学可以看下。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>文章的主要目的并不在于教会怎么去处理触摸事件的分发，只是希望通过这个例子，大家能养成阅读源码的习惯，不管是系统 SDK 也好，第三方库也好，只要把核心知识掌握，就能熟练使用各种现成的工具库，并且达到举一反三的效果。</p>
+<p>但是理论知识再多也是纸上谈兵，最重要的是实践，具体实践可以这样做：先理解好触摸事件分发流程，然后选择一个控件，可以是系统控件，也可以是其他控件，只要涉及触摸事件处理就行，进行阅读，然后手动实现一个相反方向滚动的控件，比如，你阅读的是纵向滑动的控件，那么就实现一个横向滑动的控件。这个自定义控件需要实现以下效果：</p>
+<ul>
+<li>最基本的拖动手势处理</li>
+<li>fling 效果实现</li>
+<li>如果可以，再实现边缘效果</li>
+</ul>
+<p>感谢大家的阅读。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-04-04T01:29:19.503Z" itemprop="dateUpdated">2018-04-04 09:29:19</time>
+</span><br>
+
+
+        
+        欢迎探讨 <a href="mailto://linxiaotao1993@vip.qq.com" target="_blank">linxiaotao1993@vip.qq.com</a>
+        
+    </div>
+    
+    <footer>
+        <a href="https://linxiaotao.github.io">
+            <img src="/img/avatar.jpeg" alt="Leo">
+            Leo
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&title=《触摸事件实践之路》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&title=《触摸事件实践之路》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《触摸事件实践之路》 — My World&url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/03/27/Activity启动流程-基于Android26/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Activity启动流程(基于Android26)</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Leo &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&title=《触摸事件实践之路》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&title=《触摸事件实践之路》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《触摸事件实践之路》 — My World&url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
