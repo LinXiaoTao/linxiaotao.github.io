@@ -13,6 +13,7 @@
     
     
     
+    
     <title>触摸事件实践之路 | My World</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
@@ -30,7 +31,7 @@
 <meta property="og:image" content="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim">
 <meta property="og:image" content="http://oy017242u.bkt.clouddn.com/more.gif">
-<meta property="og:updated_time" content="2018-04-04T01:29:19.503Z">
+<meta property="og:updated_time" content="2018-04-11T14:05:30.096Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="触摸事件实践之路">
 <meta name="twitter:description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
@@ -38,7 +39,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/img/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
     <script>window.lazyScripts=[]</script>
 
@@ -190,13 +191,7 @@
         <div class="post-content" id="post-content" itemprop="postContent">
             <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发的理解，同时能实现相关需求。</p>
 <h2 id="触摸事件简单回顾"><a href="#触摸事件简单回顾" class="headerlink" title="触摸事件简单回顾"></a>触摸事件简单回顾</h2><p>我们都知道触摸事件的分发严格意义上讲，是从 Activity 开始进行分发，但一般我们谈论的，只从 ViewGroup 开始分发。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123" alt="TouchEvent" title="">
-                </div>
-                <div class="image-caption">TouchEvent</div>
-            </figure>
+<p><img src="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123" alt="TouchEvent"></p>
 <p>上面的图只是粗略地画出触摸事件的分发流程，从 ViewGroup 的 <code>dispatchTouchEvent</code> 开始分发，先判断 ViewGroup 的 <code>onInterceptTouchEvent</code> 是否拦截，同时这里也可以调用 ViewGroup 的 <code>requestDisallowInterceptTouchEvent</code> 让 ViewGroup 不调用 <code>onInterceptTouchEvent</code>，如果事件被拦截，则调用 ViewGroup 的超类即 View 的 <code>dispatchTouchEvent</code>，反之，则调用子视图的 <code>dispatchTouchEvent</code>，注意：这里我们做了简单处理，假设当前 ViewGroup 的子视图为 View，如果子视图为 ViewGroup，那么还是先执行 ViewGroup 的 <code>dispatchTouchEvent</code>。</p>
 <p>最终都会调用到 View 的 <code>onTouchEvent</code> 中，这个方法是真正处理触摸事件的，一般如果我们需要自己处理触摸事件，也是在这个方法中处理。</p>
 <h2 id="手势判定"><a href="#手势判定" class="headerlink" title="手势判定"></a>手势判定</h2><p>上面我们简单回顾了触摸事件分发，具体细节可以看下源码。其实上面所讲的分发流程，很多同学都能说出个大概，但就是在动手写的时候，不知道如何入手。</p>
@@ -246,20 +241,8 @@
 <h4 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h4><p><code>onTouchEvent</code> 和 <code>onInterceptTouchEvent</code> 处理有些相似，主要是在 <code>TOUCH_MOVE</code> 中在判定为拖动手势后进行真正的业务逻辑处理，同时在 <code>TOUCH_UP</code> 中根据速度跟踪器的获取的速度，判定是否符合 fling 手势，如果符合，则使用 Scroller 进行计算。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>在分析完 ScrollView 的触摸事件处理，我们应该对事件处理有个基本理解，可以按照这个思路去分析其他的类似的系统控件，比如 <code>NestedScrollView</code>、<code>RecyclerView</code>  等等，我们可以发现处理的思路基本一致，那我们是不是可以将这些判定逻辑封装下呢？是的，并且系统已经提供 GestureDetector 来进行手势的判定，我们只需要在相应的手势回调方法中进行我们的业务逻辑即可。还有更强大的 <code>ViewDragHelper</code> ，但不管怎样，只要能理解好触摸事件分发，对工具类的熟练使用就不在话下。</p>
 <h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p>理论说的再多，也是纸上谈兵，只有真正去实践，才能熟练掌握。因为业务需求或者兴趣爱好，我写了以下两个自定义控件，正好一个是纵向滑动和一个是横向滑动，效果如下：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim" alt="WheelView" title="">
-                </div>
-                <div class="image-caption">WheelView</div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://oy017242u.bkt.clouddn.com/more.gif" alt="TapeView" title="">
-                </div>
-                <div class="image-caption">TapeView</div>
-            </figure>
+<p><img src="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim" alt="WheelView"></p>
+<p><img src="http://oy017242u.bkt.clouddn.com/more.gif" alt="TapeView"></p>
 <p>详细的代码分析我们就不进行了，因为阅读源码是最快的方式，第一个是<a href="https://github.com/LinXiaoTao/WheelView" target="_blank" rel="noopener">滚轮控件</a>，第二个是之前参加活动的仿薄荷健康的<a href="https://github.com/LinXiaoTao/CustomViewProject/blob/master/app/src/main/java/com/leo/customviewproject/tape/README.md" target="_blank" rel="noopener">卷尺控件</a>。在这里我们只分析部分代码：</p>
 <h3 id="滚轮控件"><a href="#滚轮控件" class="headerlink" title="滚轮控件"></a>滚轮控件</h3><p>在前面手势判定中的分析中，我们提到在 <code>onTouchEvent</code> 判定拖动手势成功后，进行真正的业务逻辑处理，在这个控件中也是一样的：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mIsBeingDragged) &#123;</span><br><span class="line">    mDistanceY += mLastY - moveY;</span><br><span class="line">    postInvalidateOnAnimation();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -281,12 +264,12 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-04-04T01:29:19.503Z" itemprop="dateUpdated">2018-04-04 09:29:19</time>
+    最后更新时间：<time datetime="2018-04-11T14:05:30.096Z" itemprop="dateUpdated">2018-04-11 22:05:30</time>
 </span><br>
 
 
         
-        欢迎探讨 <a href="mailto://linxiaotao1993@vip.qq.com" target="_blank">linxiaotao1993@vip.qq.com</a>
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指出，感激不尽！
         
     </div>
     
@@ -356,7 +339,14 @@
     </div>
 
     
-<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/04/11/hello-world/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Hello World</h4>
+      </a>
+    </div>
   
 
   
@@ -372,6 +362,9 @@
 
 
     
+
+
+
 
 
 

@@ -13,6 +13,7 @@
     
     
     
+    
     <title>Android消息机制-Handler | My World</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
@@ -29,7 +30,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://gityuan.com/images/handler/java_sendmessage.png">
 <meta property="og:image" content="http://gityuan.com/images/handler/handler_java.jpg">
-<meta property="og:updated_time" content="2018-03-27T01:21:48.004Z">
+<meta property="og:updated_time" content="2018-04-11T14:05:30.096Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android消息机制-Handler">
 <meta name="twitter:description" content="参考Android消息机制1-Handler(Java层) Android消息机制2-Handler(Native层) Android应用程序消息处理机制（Looper、Handler）分析 管道(Unix)) Epoll 文件描述符 Handler 机制主要由四个部分组成：  Looper MessageQueue Message Handler  典型用法1234567891011121314">
@@ -37,7 +38,7 @@
     
         <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/img/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
     <script>window.lazyScripts=[]</script>
 
@@ -222,13 +223,7 @@
 <p>在 <code>Looper.loop</code> 中，当存在 Message 需要处理时，会调用 <code>dispatchMessage</code> 来进行分发：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dispatchMessage</span><span class="params">(Message msg)</span> </span>&#123;      </span><br><span class="line">    <span class="keyword">if</span> (msg.callback != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 先调用 callback</span></span><br><span class="line">        handleCallback(msg);                    </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                                    </span><br><span class="line">        <span class="keyword">if</span> (mCallback != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 接着检查通过构造方法传进来的 Callback</span></span><br><span class="line">            <span class="keyword">if</span> (mCallback.handleMessage(msg)) &#123; </span><br><span class="line">                <span class="keyword">return</span>;                         </span><br><span class="line">            &#125;                                   </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 最后调用 handleMessage</span></span><br><span class="line">        handleMessage(msg);                     </span><br><span class="line">    &#125;                                           </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>通过 Handler 发送消息：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://gityuan.com/images/handler/java_sendmessage.png" alt="发送消息调用链" title="">
-                </div>
-                <div class="image-caption">发送消息调用链</div>
-            </figure>
+<p><img src="http://gityuan.com/images/handler/java_sendmessage.png" alt="发送消息调用链"></p>
 <p>最终所有的方法都会调用到 <code>MessageQueue.enqueueMessage</code></p>
 <h3 id="MessageQueue"><a href="#MessageQueue" class="headerlink" title="MessageQueue"></a>MessageQueue</h3><blockquote>
 <p>消息机制中 Java 层和 C++ 层的连接纽带，大部分核心方法都交给 native 层来处理</p>
@@ -261,13 +256,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> RefBase::decStrong(<span class="keyword">const</span> <span class="keyword">void</span>* id) <span class="keyword">const</span></span><br><span class="line">&#123;</span><br><span class="line">    weakref_impl* <span class="keyword">const</span> refs = mRefs;</span><br><span class="line">    refs-&gt;removeStrongRef(id); <span class="comment">//移除强引用</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int32_t</span> c = android_atomic_dec(&amp;refs-&gt;mStrong);</span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">1</span>) &#123;</span><br><span class="line">        refs-&gt;mBase-&gt;onLastStrongRef(id);</span><br><span class="line">        <span class="keyword">if</span> ((refs-&gt;mFlags&amp;OBJECT_LIFETIME_MASK) == OBJECT_LIFETIME_STRONG) &#123;</span><br><span class="line">            <span class="keyword">delete</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    refs-&gt;decWeak(id); <span class="comment">// 移除弱引用</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="Message"><a href="#Message" class="headerlink" title="Message"></a>Message</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">recycleUnchecked</span><span class="params">()</span> </span>&#123;                 </span><br><span class="line">    <span class="comment">// 标记为使用状态，清除其他状态     </span></span><br><span class="line">    flags = FLAG_IN_USE;                  </span><br><span class="line">    what = <span class="number">0</span>;                             </span><br><span class="line">    arg1 = <span class="number">0</span>;                             </span><br><span class="line">    arg2 = <span class="number">0</span>;                             </span><br><span class="line">    obj = <span class="keyword">null</span>;                           </span><br><span class="line">    replyTo = <span class="keyword">null</span>;                       </span><br><span class="line">    sendingUid = -<span class="number">1</span>;                      </span><br><span class="line">    when = <span class="number">0</span>;                             </span><br><span class="line">    target = <span class="keyword">null</span>;                        </span><br><span class="line">    callback = <span class="keyword">null</span>;                      </span><br><span class="line">    data = <span class="keyword">null</span>;                          </span><br><span class="line">                                          </span><br><span class="line">    <span class="keyword">synchronized</span> (sPoolSync) &#123;</span><br><span class="line">        <span class="comment">// 消息缓存</span></span><br><span class="line">        <span class="keyword">if</span> (sPoolSize &lt; MAX_POOL_SIZE) &#123;  </span><br><span class="line">            next = sPool;                 </span><br><span class="line">            sPool = <span class="keyword">this</span>;                 </span><br><span class="line">            sPoolSize++;                  </span><br><span class="line">        &#125;                                 </span><br><span class="line">    &#125;                                     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Message <span class="title">obtain</span><span class="params">()</span> </span>&#123;             </span><br><span class="line">    <span class="keyword">synchronized</span> (sPoolSync) &#123;               </span><br><span class="line">        <span class="keyword">if</span> (sPool != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 从缓存中获取</span></span><br><span class="line">            Message m = sPool;               </span><br><span class="line">            sPool = m.next;                  </span><br><span class="line">            m.next = <span class="keyword">null</span>;                   </span><br><span class="line">            m.flags = <span class="number">0</span>; <span class="comment">// clear in-use flag</span></span><br><span class="line">            sPoolSize--;                     </span><br><span class="line">            <span class="keyword">return</span> m;                        </span><br><span class="line">        &#125;                                    </span><br><span class="line">    &#125;                                        </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Message();                    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="http://gityuan.com/images/handler/handler_java.jpg" alt="消息机制" title="">
-                </div>
-                <div class="image-caption">消息机制</div>
-            </figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><img src="http://gityuan.com/images/handler/handler_java.jpg" alt="消息机制"></p>
 <p>Java 层：</p>
 <ul>
 <li>Handler 通过 <code>sendMessage</code>，将 Message 通过 <code>MessageQueue.enqueueMessage</code> 添加到队列中</li>
@@ -298,12 +287,12 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-03-27T01:21:48.004Z" itemprop="dateUpdated">2018-03-27 09:21:48</time>
+    最后更新时间：<time datetime="2018-04-11T14:05:30.096Z" itemprop="dateUpdated">2018-04-11 22:05:30</time>
 </span><br>
 
 
         
-        欢迎探讨 <a href="mailto://linxiaotao1993@vip.qq.com" target="_blank">linxiaotao1993@vip.qq.com</a>
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指出，感激不尽！
         
     </div>
     
@@ -384,18 +373,14 @@
   
 
   
-    <div class="waves-block waves-effect next">
-      <a href="/2018/03/17/hello-world/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">Hello World</h4>
-      </a>
-    </div>
-  
 </nav>
 
 
 
     
+
+
+
 
 
 
