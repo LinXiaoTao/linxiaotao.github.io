@@ -12,7 +12,7 @@ categories: Android Framework
 
 > 本文中涉及的源码分析都是基于 Android 27
 
-Context 又叫上下文，用于提供应用环境的信息。常用的操作包括启动 Activity、Service，或者通过 `getResources()` 返回 Resources 用于获取应用的资源文件，比如字符串、Drawable 等等。对于这些用法，我们就不去一一列举了，这篇文章的最终目的是，通过对于 Context 体系的整体了解，能在平时的应用开发中，正确使用不同类型的 Context。首先我们看下 Context 的类图：
+Context 又叫上下文，用于提供应用环境的信息。常用的操作包括启动 Activity、Service，或者通过 `getResources()` 返回 Resources 用于获取应用的资源文件，比如字符串、Drawable 等等。对于这些用法，我们就不去一一列举了，这篇文章的最终目的是，通过对 Context 体系的整体了解，能在平时的应用开发中，正确使用不同类型的 Context。首先我们看下 Context 的类图：
 
 ![Context](http://oy017242u.bkt.clouddn.com/Context.png)
 
@@ -37,7 +37,7 @@ public void startActivity(Intent intent) {
 
 ### Activity
 
-在前面的 [Activity 启动分析](https://linxiaotao.github.io/2018/03/27/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B-%E5%9F%BA%E4%BA%8EAndroid26/)中，我们知道最终 Activity 启动方法是 `ActivityThread.performLaunchActivity()`
+在前面的 [Activity 启动分析](https://linxiaotao.github.io/2018/03/27/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B-%E5%9F%BA%E4%BA%8EAndroid26/)中，我们知道 Activity 启动方法是 `ActivityThread.performLaunchActivity()`
 
 ``` java
 private void performLaunchActivity() {
@@ -66,7 +66,7 @@ private void performLaunchActivity() {
 }
 ```
 
-首先获取 LoadedApk 实例，接着调用 `createBaseContextForActivity()` 创建 ContextImpl 实例，之前我们提到 ContextWraper 是将 Context 核心功能转发给 ContextImpl 实现的，在 Activity 启动流程中，是通过调用 `Activity.attach()` 实现，这个我们在后面的分析中可以知道。
+首先获取 LoadedApk 实例，接着调用 `createBaseContextForActivity()` 创建 ContextImpl 实例，之前我们提到 ContextWrapper 是将 Context 核心功能转发给 ContextImpl 实现的，而 `ContextWrapper.mBase` 的赋值，在 Activity 启动流程中，是通过调用 `Activity.attach()` 实现，这个我们在后面的分析中可以知道。
 
 #### create 
 
@@ -147,7 +147,7 @@ try {
 }
 ```
 
-Service 的 Context 初始化流程和 Activity 是差不多，相同的是 LoadedApk -> ContextImpl -> attach
+Service 的 Context 初始化流程和 Activity 是差不多，相同的 LoadedApk -> ContextImpl -> attach
 
 #### create
 
@@ -204,7 +204,7 @@ public Application makeApplication() {
 }
 ```
 
-咋一看好像 Application 的流程和其他两个不太相同，其实不是这样的，Application 的 attach 在 `Instrumentation.newApplication()`
+咋一看好像 Application 的流程和其他两个不太相同，其实 Application 的 attach 是在 `Instrumentation.newApplication()`
 
 #### create
 
@@ -235,11 +235,11 @@ final void attach() {
 
 ### 小结
 
-通过我们对 Activity、Service、Application 的 Context 初始化流程的分析，首先创建 ContextImpl 实例，接着调用 `ContextWrapper.attachBaseContext()` 赋值给 `mBase`，ContextImpl 用于实现 Context 的核心功能，而 Context 的继承类则增加差异性功能。
+ Activity、Service、Application 的 Context 初始化流程大致是这样，首先创建 ContextImpl 实例，接着调用 `ContextWrapper.attachBaseContext()` 赋值给 `mBase`，ContextImpl 用于实现 Context 的核心功能，而 Context 的继承类则增加差异性功能。
 
 ## 实践
 
-通过上面对不同类型的 Context 的初始化分析，我们对 Context 机制有个大概的认识，接下来我们通过实际场景下的不同 Context 用例进行分析，从而加深对 Context 的理解。
+通过上面对不同类型的 Context 的初始化分析，我们对 Context 机制有个大概的认识，接下来我们通过对实际场景下的不同 Context 用例进行分析，从而加深对 Context 的理解。
 
 ### View Context
 
@@ -254,15 +254,15 @@ final void attach() {
 如果我们想要动态从 xml 布局中解析得到 View，我们会通过 LayoutInflater 去实现：
 
 ``` java
-LayoutInflater mLayoutInflater = LayoutInflater.from(context);
-View view = mLayoutInflater.inflate(R.layout.xxx,null);
+LayoutInflater layoutInflater = LayoutInflater.from(context);
+View view = layoutInflater.inflate(R.layout.xxx,null);
 ```
 
 首先我们看下 `LayoutInflater.from()`：
 
 ``` java
 public static LayoutInflater from(Context context) {
-	LayoutInflater LayoutInflater =(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+LayoutInflater LayoutInflater =		  (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     if (LayoutInflater == null) {
         throw new AssertionError("LayoutInflater not found.");
     }
@@ -270,7 +270,7 @@ public static LayoutInflater from(Context context) {
 }
 ```
 
-在上文我们提到 Context 的核心方法都转发给 `mBase` 即 ContextImpl 实例
+在前面，我们提到 Context 的核心方法都转发给 `mBase` 即 ContextImpl 实例，所以看下 ContextImpl 类的实现：
 
 ``` java
 public Object getSystemService(String name) {
@@ -283,7 +283,7 @@ public static Object getSystemService(ContextImpl ctx, String name) {
 }
 ```
 
-最终的调用都转发给了 ServiceFetcher，而 `SYSTEM_SERVICE_FETCHERS` 存储着各个类型的 Fetcher 的实例
+可以看到最终的调用都转发给了 ServiceFetcher，而 `SYSTEM_SERVICE_FETCHERS` 则是存储着各个类型的 Fetcher 的实例
 
 ``` java
 // SYSTEM_SERVICE_FETCHERS 是个 Map，存储 Name->Fetcher
@@ -311,7 +311,7 @@ registerService(Context.LAYOUT_INFLATER_SERVICE, LayoutInflater.class,
     }});                                                              
 ```
 
-LayoutInflater 的实现类是 PhoneLayoutInflater，同时 Fetcher 的实现类是 CachedServiceFetcher，PhoneLayoutInflater 实际并没有特殊的操作，基本逻辑都在 LayoutInflater，有兴趣的同学可以去看下，所以我们就看下 `CachedServiceFetcher.getService()`
+LayoutInflater 的实现类是 PhoneLayoutInflater，同时 Fetcher 的实现类是 CachedServiceFetcher，PhoneLayoutInflater 只是简单的继承 LayoutInflater，核心代码都在 LayoutInflater，有兴趣的同学可以去看下，所以我们就看下 `CachedServiceFetcher.getService()`
 
 ``` java
 public final T getService(ContextImpl ctx) {
@@ -388,7 +388,7 @@ public View inflate(XmlPullParser parser, @Nullable ViewGroup root, boolean atta
     
 ```
 
-`inflater()` 就是对 xml 布局进行解析，实例化 View，这里我们不去关心它的解析流程，这一块内容可以单独写成一篇文章，我们主要看的是 `createViewFromTag()` 它是根据标签名称是实例化具体的 View 实例
+`inflater()` 就是对 xml 布局进行解析，接着实例化 View，这里我们不去关心它的解析流程，这一块内容可以单独写成一篇文章，我们主要看的是 `createViewFromTag()` 它是根据标签名称去实例化具体的 View 实例
 
 ``` java
 View createViewFromTag(View parent, String name, Context context, AttributeSet attrs,
@@ -520,7 +520,7 @@ public final View createView(String name, String prefix, AttributeSet attrs){
 }
 ```
 
-最后一个问题，Application Context 和 Activity Context 用在 View Context 中有什么不同地方，我们先通过一个例子来看下效果：
+最后一个问题，Application Context 和 Activity Context 用在 View Context 中有什么不同的地方，我们先通过一个例子来看下效果：
 
 ``` java
 protected void onCreate(Bundle savedInstanceState) {
@@ -614,7 +614,7 @@ if (theme != 0) {
 
 绝大数情况下，这两个方法的返回值是一样。
 
-`getApplicationContext()` 的存在是 Android 历史原因，`getApplication()` 这两个只存在 Activity 和 Service 类中，那么对于 BroadcastReceiver 和 ContentProvider 来说，要获取 Application，就只能通过 `getApplicationContext()`。
+`getApplicationContext()` 的存在是 Android 历史原因，`getApplication()` 这个只存在 Activity 和 Service 类中，那么对于 BroadcastReceiver 和 ContentProvider 来说，要获取 Application，就只能通过 `getApplicationContext()`。
 
 两者对比：
 
@@ -680,4 +680,4 @@ public void startActivity(Intent intent, Bundle options) {
 
 上面我们列举了不同 Context 的初始化过程，比如最常见的 Activity Context 和 Application Context，同时对不同 Context 的使用场景进行比较，相信看完文章的同学，对 Context 有了更多的理解。
 
-不管如何谨慎小心，怀着诚惶诚恐的心态，毕竟作者的水平有限，如果有说的不对的地方，敬请指出，先行感谢。
+不管如何谨慎小心，怀着诚惶诚恐的心态写作，但是毕竟作者的水平有限，如果有写的不对的地方，敬请指教，先行感谢。
