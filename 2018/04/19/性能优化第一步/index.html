@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>性能优化第一步 | My World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="感谢cpu-profiler 前言对于有一定 Android 应用开发经验的同学来说，性能优化是避不开的话题，一般来说，Android 上我们常说的性能优化包括，内存优化和界面优化，当然还有电量优化、网络优化等等。性能优化知识的学习是一个长期的过程，也不可能通过一两篇文章就能说的清楚，需要在具有相关的理论知识的前提下，同时在日常开发中加以实践，才能在这方面的工作中得心应手。 同时作者也并不是这方面">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能优化第一步">
+<meta property="og:url" content="https://linxiaotao.github.io/2018/04/19/性能优化第一步/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="感谢cpu-profiler 前言对于有一定 Android 应用开发经验的同学来说，性能优化是避不开的话题，一般来说，Android 上我们常说的性能优化包括，内存优化和界面优化，当然还有电量优化、网络优化等等。性能优化知识的学习是一个长期的过程，也不可能通过一两篇文章就能说的清楚，需要在具有相关的理论知识的前提下，同时在日常开发中加以实践，才能在这方面的工作中得心应手。 同时作者也并不是这方面">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/source.gif">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/low.gif">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/cpu_profiler_L2-2X.png">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/cpu_profiler_L3-2X.png">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/call-chart.png">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/flame-chart.png">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/top-down.png">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/bottom-up.png">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/max-self-method.png">
+<meta property="og:updated_time" content="2018-04-22T04:45:28.967Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="性能优化第一步">
+<meta name="twitter:description" content="感谢cpu-profiler 前言对于有一定 Android 应用开发经验的同学来说，性能优化是避不开的话题，一般来说，Android 上我们常说的性能优化包括，内存优化和界面优化，当然还有电量优化、网络优化等等。性能优化知识的学习是一个长期的过程，也不可能通过一两篇文章就能说的清楚，需要在具有相关的理论知识的前提下，同时在日常开发中加以实践，才能在这方面的工作中得心应手。 同时作者也并不是这方面">
+<meta name="twitter:image" content="http://oy017242u.bkt.clouddn.com/source.gif">
+    
+        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Leo</h5>
+          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/LinXiaoTao" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">性能优化第一步</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">性能优化第一步</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-04-19T03:37:45.000Z" itemprop="datePublished" class="page-time">
+  2018-04-19
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#感谢"><span class="post-toc-number">1.</span> <span class="post-toc-text">感谢</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-number">2.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#例子"><span class="post-toc-number">3.</span> <span class="post-toc-text">例子</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">小结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-性能优化第一步"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">性能优化第一步</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-04-19 11:37:45" datetime="2018-04-19T03:37:45.000Z"  itemprop="datePublished">2018-04-19</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p><a href="https://developer.android.com/studio/profile/cpu-profiler.html" target="_blank" rel="noopener">cpu-profiler</a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>对于有一定 Android 应用开发经验的同学来说，性能优化是避不开的话题，一般来说，Android 上我们常说的性能优化包括，内存优化和界面优化，当然还有电量优化、网络优化等等。性能优化知识的学习是一个长期的过程，也不可能通过一两篇文章就能说的清楚，需要在具有相关的理论知识的前提下，同时在日常开发中加以实践，才能在这方面的工作中得心应手。</p>
+<p>同时作者也并不是这方面的大牛，还处于入门学习的阶段，所以也会遇到初学者经常碰到的问题，其中，我个人认为阻碍初学者在这方面深入学习的一个原因是，大部分的文章都偏向于理论知识和工具使用说明，很多同学包括作者在看完这些文章，都有着似懂非懂的感觉，只记住了工具的名称，但等到自己去实际使用时，却不知道如何下手。这也是这个系列文章存在的意义，希望能通过实际例子去使用工具，从而能掌握工具基本的使用，之后在实际开发中，通过经常使用来达到得心应手的地步。</p>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>作者最近刚接手一个新项目，在首页列表滑动时就感到有点不顺畅，特别是在滑动到有 ViewPager 部分的时候，如果是熟悉的项目，可能会第一时间会去检查代码，但前面说到这个是刚接手的项目，同时首页的代码逻辑比较复杂，不花点时间熟悉下代码可能很难找出问题来，那在这种情况下，我们就只能通过外部工具来检查，快速定位问题。</p>
+<p>Android Studio 提供了一个非常好用的工具：Android Profiler，基本可以满足大部分的场景了。所以下面的分析我们都基于 Android Profiler。</p>
+<p>为了更直观的观察问题，我创建了个 Demo，里面包含了问题代码，首先我们先通过两个 gif 图来看下，没有问题代码之前和加了问题代码之后的运行情况：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/source.gif" alt="正常" title="">
+                </div>
+                <div class="image-caption">正常</div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/low.gif" alt="问题代码" title="">
+                </div>
+                <div class="image-caption">问题代码</div>
+            </figure>
+<p>上面的 gif 图中，我们先开启了 <a href="https://github.com/LinXiaoTao/notes/blob/master/android/topic/performance/rendering/profile-gpu.md" target="_blank" rel="noopener">GPU 呈现模式分析</a> 后面的文章中我们会说到这个，现在只需要了解横坐标表示应用绘制渲染的每一帧，纵坐标表示每一帧绘制渲染的时间，绿线表示 16.6 ms，也就是要想保持应用能够流畅使用，我们应该让页面绘制渲染时间尽量位于绿线之下。</p>
+<p>从第一张动图中可以看到页面每一帧的绘制渲染时间都基本处于绿线之下，而第二章动图加了问题代码之后，出现了不少帧出现了绘制渲染时间过长的情况。</p>
+<p>接下来，我们可以使用 Android Profiler 来对应用进行分析，在这个例子中，我们只使用 <a href="https://developer.android.com/studio/profile/cpu-profiler.html" target="_blank" rel="noopener">cpu-profiler</a> 功能。具体介绍可以看官方文档，下面就官方提供的图片简单说下：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/cpu_profiler_L2-2X.png" alt="cpu-profiler" title="">
+                </div>
+                <div class="image-caption">cpu-profiler</div>
+            </figure>
+<p>这是 cpu-profiler 的主界面，具体各个部分的说明可以阅读官方文档，我们只需要知道这里记录了各个线程的活动状态：</p>
+<ul>
+<li>绿色：表示线程处于活动状态或准备使用 CPU。 即，它正在“运行中”或处于“可运行”状态。</li>
+<li>黄色：表示线程处于活动状态，但它正在等待一个 I/O 操作（如磁盘或网络 I/O），然后才能完成它的工作。</li>
+<li>灰色：表示线程正在休眠且没有消耗任何 CPU 时间。 当线程需要访问尚不可用的资源时偶尔会发生这种情况。 线程进入自主休眠或内核将此线程置于休眠状态，直到所需的资源可用。</li>
+</ul>
+<p>可以看到标记 5 为一个记录按钮，用于开始和停止记录<a href="https://developer.android.com/studio/profile/cpu-profiler.html#method_traces" target="_blank" rel="noopener">函数跟踪</a>。这个是我们这篇文章所要着重讲的功能，接下来我们看下函数跟踪的功能面板，图片同样来源于官方文档：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/cpu_profiler_L3-2X.png" alt="method-traces" title="">
+                </div>
+                <div class="image-caption">method-traces</div>
+            </figure>
+<p>使用方式很简单，先点击记录按钮，接着在应用上操作一小会，接着再次按下按钮，结束记录。上图则是记录后的面版：</p>
+<ul>
+<li>标记 1和标记 2 表示这次函数跟踪的时间段</li>
+<li>标记 3 表示函数跟踪的结果，具体展示跟标记 4 所选的展示标签有关</li>
+<li>标记 4 则是不同的展示标签</li>
+<li>标记 5 则是函数调用的时间信息：<ul>
+<li>Wall clock time: 壁钟时间信息表示实际经过的时间</li>
+<li>Thread time: 线程时间信息表示实际经过的时间减去线程没有消耗 CPU 资源的任意时间部分。 对于任何给定函数，其线程时间始终少于或等于其壁钟时间。 使用线程时间可以让您更好地了解线程的实际 CPU 使用率中有多少是给定函数消耗的</li>
+</ul>
+</li>
+</ul>
+<p>标记 4 中包含的标签包括：Call Chart、Flame Chart、Top Down 和 Bottom Up，具体的含义可以阅读<a href="https://developer.android.com/studio/profile/cpu-profiler.html#method_traces" target="_blank" rel="noopener">官方文档</a>，这里我们同样只是简单解释下：</p>
+<ul>
+<li><p>Call Chart：函数调用情况的图形化界面。从上至下表示父函数和子函数的调用情况。</p>
+<blockquote>
+<p>这里我们的父函数指的是，调用其他函数的函数，而被调用的函数称为该父函数的子函数。</p>
+</blockquote>
+<p><img src="http://oy017242u.bkt.clouddn.com/call-chart.png" alt="call-chart"></p>
+<p>可以看到，应用的执行开始于 <code>ZygoteInit.main()</code> 其中系统 API 的调用表示为橙色，第三方 API 包括 Java 的调用表示为蓝色，应用自有函数的调用表示为绿色。</p>
+</li>
+<li><p>Flame Chart：提供一个倒置的调用图表，其汇总相同的调用堆栈，简单来说就是将 Call Chart 倒置过来</p>
+<p><img src="http://oy017242u.bkt.clouddn.com/flame-chart.png" alt="flame-chart"></p>
+</li>
+<li><p>Top Down：显示一个函数调用列表，在该列表中展开函数节点会被调用的子函数</p>
+<p><img src="http://oy017242u.bkt.clouddn.com/top-down.png" alt="top-down"></p>
+</li>
+<li><p>Bottom Up：显示一个函数调用列表，在该列表中展开函数节点将显示函数的父函数</p>
+<p><img src="http://oy017242u.bkt.clouddn.com/bottom-up.png" alt="bottom-up"></p>
+</li>
+</ul>
+<p>简单了解每个选项的功能后，我们针对上面的 demo 来实践下，这里我们选择 bottom up 选项，从上面图看出，每个函数所展示的信息有：Total（函数总共花费的时间）、%（所占的百分比）、Self（函数自身花费的时间）、%（所占的百分比）、Children（函数所调用的子函数花费的时间），%（所占百分比）。可以看到 <code>main()</code> <code>run()</code> 这些方法的时间主要都是花费在调用子函数上。那么我们先找出本身最耗时的方法，使用 Self 进行排序：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/max-self-method.png" alt="max-self-method" title="">
+                </div>
+                <div class="image-caption">max-self-method</div>
+            </figure>
+<p>很清楚的看出， <code>setConfiguration()</code> 函数是除了 <code>nativePollOnce()</code> 之外最耗时的函数，而 <code>nativePollOnce()</code> 是系统函数，是 Handle 用于阻塞获取栈中下一个执行的消息，具体可以看另外一篇文章，<a href="https://linxiaotao.github.io/2018/03/23/Android%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-Handler/">Android消息机制-Handler</a> 所以这个函数我们这里不需要关心它，所以我们打开 <code>setConfiguration()</code> 的父函数调用链，可以发现最终指到我们应用自身的函数，即 <code>MainActivity.getResources()</code> 这时候，我们就可以找到对应的类和函数，也可以使用快捷跳转方式：    <strong>Jump To Source</strong>，我们看下具体的函数实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>                                                     </span><br><span class="line"><span class="function"><span class="keyword">public</span> Resources <span class="title">getResources</span><span class="params">()</span> </span>&#123;                             </span><br><span class="line">    Resources res = <span class="keyword">super</span>.getResources();                     </span><br><span class="line">    Configuration config = <span class="keyword">new</span> Configuration();               </span><br><span class="line">    config.setToDefaults();                                   </span><br><span class="line">    res.updateConfiguration(config, res.getDisplayMetrics()); </span><br><span class="line">    <span class="keyword">return</span> res;                                               </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从代码中可以看出，耗时函数就出在 <code>res.updateConfiguration()</code>，而 <code>getResources()</code> 会在比如 View 的构造函数中或者 inflate 布局时候被调用，我们上面的例子实现的是，使用 ViewPager 去实现图片滑动浏览的效果，ViewPager 在滑动的时候会调用 <code>instantiateItem()</code> 函数去生成新的 item：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NonNull</span>                                                                                                         </span><br><span class="line"><span class="meta">@Override</span>                                                                                                        </span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">instantiateItem</span><span class="params">(@NonNull ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;                                      </span><br><span class="line">    <span class="keyword">final</span> TextView childView = (TextView) View.inflate(container.getContext(), R.layout.item_image, <span class="keyword">null</span>);       </span><br><span class="line">    childView.setText(String.valueOf(position));                                                                 </span><br><span class="line">    container.addView(childView);                                                                                </span><br><span class="line">    <span class="keyword">return</span> childView;                                                                                            </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里会调用 <code>inflate()</code> 从 xml 布局文件中构建 View，而这个函数又会调用 <code>getResources()</code> 函数，最终调用到 <code>setConfiguration()</code> 上，这也是我们之所以在滑动的时候，会出现卡顿的原因。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>在上面的例子上，我们不需要去纠结为什么要重载 <code>getResources()</code> 而是通过这个例子达到能简单使用 cpu-profiler 的目的。</p>
+<p>当然你也可以使用其他工具来检查，比如 <a href="https://developer.android.com/studio/profile/am-methodtrace.html" target="_blank" rel="noopener">method-trace</a> 等等，但最终目的是一样的，找到耗时函数，从而去优化它。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-04-22T04:45:28.967Z" itemprop="dateUpdated">2018-04-22 12:45:28</time>
+</span><br>
+
+
+        
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指教，感激不尽！
+        
+    </div>
+    
+    <footer>
+        <a href="https://linxiaotao.github.io">
+            <img src="/img/avatar.jpeg" alt="Leo">
+            Leo
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/04/19/性能优化第一步/&title=《性能优化第一步》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/04/19/性能优化第一步/&title=《性能优化第一步》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/04/19/性能优化第一步/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《性能优化第一步》 — My World&url=https://linxiaotao.github.io/2018/04/19/性能优化第一步/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/04/19/性能优化第一步/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/04/12/熟悉又陌生的Context/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">熟悉又陌生的Context</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Leo &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/04/19/性能优化第一步/&title=《性能优化第一步》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/04/19/性能优化第一步/&title=《性能优化第一步》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/04/19/性能优化第一步/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《性能优化第一步》 — My World&url=https://linxiaotao.github.io/2018/04/19/性能优化第一步/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/04/19/性能优化第一步/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2018/04/19/性能优化第一步/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
