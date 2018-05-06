@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Gradle多项目构建 | My World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="参考multi_project_builds 概述在使用 Android Studio 作为 IDE 之后，Android 项目就开始使用 Gradle 作为构建脚本，Gradle 的优点就不用我多说了，使用 Groovy 作为开发语言，配合各种 Gradle 插件和 DSL 可以实现多样化的构建过程。 Gradle 能讲的知识点很多，本文主要讲的是 Gradle 在多项目构建上提供的一些便捷的功">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle多项目构建">
+<meta property="og:url" content="https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="参考multi_project_builds 概述在使用 Android Studio 作为 IDE 之后，Android 项目就开始使用 Gradle 作为构建脚本，Gradle 的优点就不用我多说了，使用 Groovy 作为开发语言，配合各种 Gradle 插件和 DSL 可以实现多样化的构建过程。 Gradle 能讲的知识点很多，本文主要讲的是 Gradle 在多项目构建上提供的一些便捷的功">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-05-06T14:43:18.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle多项目构建">
+<meta name="twitter:description" content="参考multi_project_builds 概述在使用 Android Studio 作为 IDE 之后，Android 项目就开始使用 Gradle 作为构建脚本，Gradle 的优点就不用我多说了，使用 Groovy 作为开发语言，配合各种 Gradle 插件和 DSL 可以实现多样化的构建过程。 Gradle 能讲的知识点很多，本文主要讲的是 Gradle 在多项目构建上提供的一些便捷的功">
+    
+        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Leo</h5>
+          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/LinXiaoTao" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Gradle多项目构建</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Gradle多项目构建</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-04-29T01:57:51.000Z" itemprop="datePublished" class="page-time">
+  2018-04-29
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Gradle/">Gradle</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参考"><span class="post-toc-number">1.</span> <span class="post-toc-text">参考</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#概述"><span class="post-toc-number">2.</span> <span class="post-toc-text">概述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#名词解释"><span class="post-toc-number">3.</span> <span class="post-toc-text">名词解释</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Gradle-多项目构建"><span class="post-toc-number">4.</span> <span class="post-toc-text">Gradle 多项目构建</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#跨项目配置"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">跨项目配置</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#边读取边解释"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">边读取边解释</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#执行规则"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">执行规则</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#执行顺序"><span class="post-toc-number">4.4.</span> <span class="post-toc-text">执行顺序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#项目解耦"><span class="post-toc-number">4.5.</span> <span class="post-toc-text">项目解耦</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#多项目编译和测试"><span class="post-toc-number">4.6.</span> <span class="post-toc-text">多项目编译和测试</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#属性和方法的继承"><span class="post-toc-number">4.7.</span> <span class="post-toc-text">属性和方法的继承</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#其他选项"><span class="post-toc-number">4.8.</span> <span class="post-toc-text">其他选项</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#并行模式"><span class="post-toc-number">4.8.1.</span> <span class="post-toc-text">并行模式</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#按需配置"><span class="post-toc-number">4.8.2.</span> <span class="post-toc-text">按需配置</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Gradle多项目构建"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Gradle多项目构建</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-04-29 09:57:51" datetime="2018-04-29T01:57:51.000Z"  itemprop="datePublished">2018-04-29</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Gradle/">Gradle</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://docs.gradle.org/current/userguide/multi_project_builds.html" target="_blank" rel="noopener">multi_project_builds</a></p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在使用 Android Studio 作为 IDE 之后，Android 项目就开始使用 Gradle 作为构建脚本，Gradle 的优点就不用我多说了，使用 Groovy 作为开发语言，配合各种 Gradle 插件和 DSL 可以实现多样化的构建过程。</p>
+<p>Gradle 能讲的知识点很多，本文主要讲的是 Gradle 在多项目构建上提供的一些便捷的功能，希望能给大家一些启发。</p>
+<h2 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h2><ul>
+<li>构建脚本：本文所说的构建脚本指的是 Gradle 文件，以 <code>.gradle</code> 为后缀的文件</li>
+<li>项目：在多项目构建中，有根项目和子项目。根项目的称呼是相对的，以执行 gradle 命令的目录为根项目，当前目录的子目录称为子项目</li>
+</ul>
+<h2 id="Gradle-多项目构建"><a href="#Gradle-多项目构建" class="headerlink" title="Gradle 多项目构建"></a>Gradle 多项目构建</h2><p>首先我们对 Gradle 多项目构建先做下了解，这里所涉及的知识点大部分来源于参考文档。</p>
+<h3 id="跨项目配置"><a href="#跨项目配置" class="headerlink" title="跨项目配置"></a>跨项目配置</h3><p>Gradle 提供了在任何构建脚本中访问任何项目，比如可以使用 <code>allprojects</code> 来对所有项目进行配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">    task hello &#123;</span><br><span class="line">        doLast &#123;</span><br><span class="line">            println <span class="string">"Hello Gradle"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个例子我们对所有项目都创建了一个叫 “hello” 的 task，如果你只是想对当前项目的子项目进行配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">subprojects &#123;</span><br><span class="line">    task hello &#123;</span><br><span class="line">        doLast &#123;</span><br><span class="line">            println <span class="string">"Hello Gradle"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然你也可以针对单个项目进行配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">project (<span class="string">':project'</span>) &#123;</span><br><span class="line">    task hello &#123;</span><br><span class="line">        doLast &#123;</span><br><span class="line">            println <span class="string">"Hello Gradle"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面所说的操作可以在任何一个构建脚本上执行，所以你可以选择统一写到单独的构建脚本上，再通过 <code>apply from: &quot;xxx.gradle&quot;</code> 应用进来。</p>
+<h3 id="边读取边解释"><a href="#边读取边解释" class="headerlink" title="边读取边解释"></a>边读取边解释</h3><p>可能有的同学会问，为什么上面要用 doLast，可以不用 doLast，直接写可以吗？</p>
+<p>当前可以，但是执行的时机就不一样了，doLast 从字面意思来看，表示在最后执行，那么这个最后指的是什么之后呢。答案就是项目配置评测(evaluation)之后，简单来讲，当 Gradle 开始执行时，会先从根目录的 <code>settings.gradle</code> 中读取参与构建的项目，即只有将子项目 <code>include</code> 才能参与构建，接着 Gradle 会在每个项目的根目录下读取 <code>build.gradle</code> 如果存在的话，即 <code>build.gradle</code> 并不是必须的。默认情况下，Gradle 会先读取根项目的配置，即当你执行 Gradle 命令时所在目录的项目。接着按字母排序，读取子项目的配置，当项目配置评测完成之后，再执行对应的 task.doLast。</p>
+<p>那有的同学又会问了，那如果直接写，执行的顺序是什么呢？是在评测之后，doLast 之前吗？这可能是写习惯应用程序的同学最常见的误区了，之前博主也是这么想的，后来经过同事的点拨，<strong>Gradle 是边读取边解释</strong>，有点口语化，但确实如此，回到上面的问题，如果直接写在 task 的代码，会在 Gradle 读取到这一行的时候执行，即可能先于其他还没评测的项目执行，我们可以通过一个例子来看下：</p>
+<p>这是项目的目录结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">├── build.gradle</span><br><span class="line">├── config.gradle</span><br><span class="line">├── gradle</span><br><span class="line">│   └── wrapper</span><br><span class="line">│       ├── gradle-wrapper.jar</span><br><span class="line">│       └── gradle-wrapper.properties</span><br><span class="line">├── gradle.properties</span><br><span class="line">├── gradlew</span><br><span class="line">├── gradlew.bat</span><br><span class="line">├── settings.gradle</span><br><span class="line">├── sub1</span><br><span class="line">│   └── build.gradle</span><br><span class="line">└── sub2</span><br><span class="line">    └── build.gradle</span><br></pre></td></tr></table></figure>
+<p>这里我们包含了两个子项目，分别是 <code>sub1</code> 和 <code>sub2</code>，在每个项目的 <code>build.gradle</code> 我们都加上 Log 打印：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println <span class="string">"$project.name init"</span></span><br><span class="line"></span><br><span class="line">println <span class="string">"$project.name  end"</span></span><br></pre></td></tr></table></figure>
+<p>接着我们在根项目的 <code>build.gradle</code> 即最外层目录下，添加一个 task：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">task hello &#123;</span><br><span class="line">    println <span class="string">"我直接运行"</span></span><br><span class="line">    doLast &#123;</span><br><span class="line">        println <span class="string">"我运行在 doLast"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>记得在根目录下执行 <code>./gradlew -q hello</code>，参数 <code>-q</code> 只打印我们的 log，结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MyApplication init</span><br><span class="line">我直接运行</span><br><span class="line">MyApplication  end</span><br><span class="line">sub1 init</span><br><span class="line">sub1 end</span><br><span class="line">sub2 init</span><br><span class="line">sub2  end</span><br><span class="line">我运行在 doLast</span><br></pre></td></tr></table></figure>
+<p>结果是不是和我们想的一样。接着我们在 sub1 的 <code>build.gradle</code> 中增加以下代码：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">println <span class="string">"当前 sub2 是否存在 username 属性："</span> + rootProject.project(<span class="string">":sub2"</span>).findProperty(<span class="string">'username'</span>)</span><br><span class="line"></span><br><span class="line">rootProject.project(<span class="string">":sub2"</span>) &#123;</span><br><span class="line">    ext &#123;</span><br><span class="line">        username = <span class="string">"Leo"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">println <span class="string">"当前 sub2 是否存在 username 属性："</span> + rootProject.project(<span class="string">":sub2"</span>).findProperty(<span class="string">'username'</span>)</span><br></pre></td></tr></table></figure>
+<p>上面我们说到，在任何一个构建脚本中，都可以去配置其他项目，所以我们在 sub1 中往 sub2 添加一个变量，然后在 sub2 中将它打印出来：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println <span class="string">"我的名字是 $project.ext.username"</span></span><br></pre></td></tr></table></figure>
+<p>执行下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MyApplication init</span><br><span class="line">我直接运行</span><br><span class="line">MyApplication  end</span><br><span class="line">sub1 init</span><br><span class="line">当前 sub2 是否存在 username 属性：null</span><br><span class="line">当前 sub2 是否存在 username 属性：Leo</span><br><span class="line">sub1  end</span><br><span class="line">sub2 init</span><br><span class="line">我的名字是 Leo</span><br><span class="line">sub2  end</span><br><span class="line">我运行在 doLast</span><br></pre></td></tr></table></figure>
+<p>是不是非常有意思，要记住：<strong>Gradle 边读取边解释，先评测项目配置，再执行相应的 Task.doLast</strong></p>
+<h3 id="执行规则"><a href="#执行规则" class="headerlink" title="执行规则"></a>执行规则</h3><p>Gradle 执行时，从当前执行的目录开始查看项目结构，即当前目录为根项目，根据目录下的 <code>setting.gradle</code> 去评估子项目的配置，执行相应的 Task，我们同样来看个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── build.gradle</span><br><span class="line">├── config.gradle</span><br><span class="line">├── gradle</span><br><span class="line">│   └── wrapper</span><br><span class="line">│       ├── gradle-wrapper.jar</span><br><span class="line">│       └── gradle-wrapper.properties</span><br><span class="line">├── gradle.properties</span><br><span class="line">├── gradlew</span><br><span class="line">├── gradlew.bat</span><br><span class="line">├── settings.gradle</span><br><span class="line">├── sub1</span><br><span class="line">│   └── build.gradle</span><br><span class="line">└── sub2</span><br><span class="line">    ├── build.gradle</span><br><span class="line">    ├── settings.gradle</span><br><span class="line">    └── sub3</span><br><span class="line">        └── build.gradle</span><br></pre></td></tr></table></figure>
+<p>我们在 sub2 目录下创建一个新的目录 sub3，其中的 <code>build.gradle</code> 如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println <span class="string">"rootProject is $rootProject.name"</span></span><br></pre></td></tr></table></figure>
+<p>代码非常简单，就是输出当前根项目的名称。我们先在最外层的目录下，执行 <code>./gradlew</code> 输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rootProject is MyApplication</span><br></pre></td></tr></table></figure>
+<p>记得将 sub3 <code>include</code> 到 <code>settings.gradle</code> 可以看到当前的根项目名称即为当前运行的目录，接着我们切换到 sub2 目录下执行同样的命令，输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rootProject is sub2</span><br></pre></td></tr></table></figure>
+<h3 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h3><p>这里我们所说的执行顺序，包括两个方面，第一是项目的评测顺序，第二是各个项目 Task 的执行顺序。</p>
+<p>上面我们提到了项目评测顺序是，先评测根项目，接着按字母顺序评测子项目。那我们如果想改变默认顺序，又不想修改名称呢。Gradle 提供了 <code>evaluationDependsOn</code> 用于声明某个项目的评测依赖于其他项目的评测，所以会在依赖项目评测完成之后进行。在上面的例子中，sub1 默认会在 sub2 之前执行，但是如果我们在 sub1 项目中增加如下配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">println <span class="string">"$project.name init"</span></span><br><span class="line"></span><br><span class="line">evaluationDependsOn(<span class="string">':sub2'</span>)</span><br><span class="line"></span><br><span class="line">println <span class="string">"$project.name  end"</span></span><br></pre></td></tr></table></figure>
+<p>执行 <code>./gradlew -q</code> 输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sub1 init</span><br><span class="line">sub2 init</span><br><span class="line">sub2  end</span><br><span class="line">sub1  end</span><br></pre></td></tr></table></figure>
+<p>结合我们之前说到的，Gradle 是边读取边解释的，那么 <code>sub1 end</code> 在最后输出就不难理解了。</p>
+<p>Gradle 还提供了 <code>evaluationDependsOnChildren</code> 声明子项目先于根项目进行评测。</p>
+<p>Task 也是类似的，Gradle 提供了 <code>dependsOn</code> 去声明某个 Task 依赖于其他 Task，所以会在依赖 Task 执行后执行。使用例子如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">task hello(<span class="string">dependsOn:</span> <span class="string">':project:task'</span>) &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="项目解耦"><a href="#项目解耦" class="headerlink" title="项目解耦"></a>项目解耦</h3><p>Gradle 允许任何项目去访问当前多项目构建中其他项目，虽然这很灵活，但使用不当却会导致项目耦合程度高。</p>
+<p>例如，我们通过会在根项目中使用 <code>allprojects</code> 或者 <code>subprojects</code> 进行项目配置注入，但如果我们在子项目中去对其他项目进行配置注入，就会导致项目耦合。同时如果在子项目构建时，去更改其他项目的配置，这同样也会导致项目耦合，并且这两个操作都可能会影响到 <strong>并行模式</strong> 和 <strong>按需配置</strong> 的正确性。</p>
+<p>为了更好的使用配置注入和其他优化选项，我们应该：</p>
+<ul>
+<li>避免在子项目 <code>build.gradle</code> 引用其他子项目，更适合在根项目中进行配置注入</li>
+<li>避免在构建时更改其他的项目的配置</li>
+</ul>
+<h3 id="多项目编译和测试"><a href="#多项目编译和测试" class="headerlink" title="多项目编译和测试"></a>多项目编译和测试</h3><p>在 Java 插件的 <code>build</code> task 通常是用于对单个项目进行编译、测试和应用代码格式化检查等等。在多项目中构建中你可能想要将 task 作用于指定范围内的项目，那么 <code>buildNeeded</code> 和 <code>buildDependents</code> task 可以帮助你。</p>
+<blockquote>
+<p>接下来的例子都是从官方文档中翻译而来的</p>
+</blockquote>
+<p>比如在这个<a href="https://docs.gradle.org/current/userguide/multi_project_builds.html#javadependencies_2" target="_blank" rel="noopener">例子</a>中，<code>:services:personservice</code> 项目依赖于 <code>:api</code> 和 <code>:shared</code> 项目，同时 <code>:api</code> 项目也依赖于 <code>:shared</code>。</p>
+<p>当我们执行 <code>./gradlew :api:build</code> 时，输出可能如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&gt; gradle :api:build</span><br><span class="line">&gt; Task :shared:compileJava</span><br><span class="line">&gt; Task :shared:processResources</span><br><span class="line">&gt; Task :shared:classes</span><br><span class="line">&gt; Task :shared:jar</span><br><span class="line">&gt; Task :api:compileJava</span><br><span class="line">&gt; Task :api:processResources</span><br><span class="line">&gt; Task :api:classes</span><br><span class="line">&gt; Task :api:jar</span><br><span class="line">&gt; Task :api:assemble</span><br><span class="line">&gt; Task :api:compileTestJava</span><br><span class="line">&gt; Task :api:processTestResources</span><br><span class="line">&gt; Task :api:testClasses</span><br><span class="line">&gt; Task :api:test</span><br><span class="line">&gt; Task :api:check</span><br><span class="line">&gt; Task :api:build</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL in 0s</span><br><span class="line">9 actionable tasks: 9 executed</span><br></pre></td></tr></table></figure>
+<p>可以看到，当我们只执行 <code>:api</code> 项目的 <code>build</code> task，同时也会执行其依赖项目 <code>:shared</code> 部分的 task，如果我们确定对 <code>:api</code> 项目的修改不会影响 <code>:share</code> 项目，可以使用 <code>-a</code> 选项参数，这个参数可以让 Gradle 去缓存依赖项目生成的 jars，不重新去编译依赖项目，现在我们增加 <code>-a</code> 参数，<code>./gradlew -a :api:build</code>，输出可能如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&gt; gradle -a :api:build</span><br><span class="line">&gt; Task :api:compileJava</span><br><span class="line">&gt; Task :api:processResources</span><br><span class="line">&gt; Task :api:classes</span><br><span class="line">&gt; Task :api:jar</span><br><span class="line">&gt; Task :api:assemble</span><br><span class="line">&gt; Task :api:compileTestJava</span><br><span class="line">&gt; Task :api:processTestResources</span><br><span class="line">&gt; Task :api:testClasses</span><br><span class="line">&gt; Task :api:test</span><br><span class="line">&gt; Task :api:check</span><br><span class="line">&gt; Task :api:build</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL in 0s</span><br><span class="line">6 actionable tasks: 6 executed</span><br></pre></td></tr></table></figure>
+<p>可以看到 <code>-a</code> 选项起作用了。</p>
+<p>如果你刚刚从版本控制工具中更新了 <code>:api</code> 项目依赖的项目，你可能不仅仅想要只执行编译，可能想要去测试它们，那么 <code>buildNeeded</code> task 将测试所有依赖项目测试运行时的配置。执行 <code>./gradlew :api:buildNeeded</code>，可能输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&gt; gradle :api:buildNeeded</span><br><span class="line">&gt; Task :shared:compileJava</span><br><span class="line">&gt; Task :shared:processResources</span><br><span class="line">&gt; Task :shared:classes</span><br><span class="line">&gt; Task :shared:jar</span><br><span class="line">&gt; Task :api:compileJava</span><br><span class="line">&gt; Task :api:processResources</span><br><span class="line">&gt; Task :api:classes</span><br><span class="line">&gt; Task :api:jar</span><br><span class="line">&gt; Task :api:assemble</span><br><span class="line">&gt; Task :api:compileTestJava</span><br><span class="line">&gt; Task :api:processTestResources</span><br><span class="line">&gt; Task :api:testClasses</span><br><span class="line">&gt; Task :api:test</span><br><span class="line">&gt; Task :api:check</span><br><span class="line">&gt; Task :api:build</span><br><span class="line">&gt; Task :shared:assemble</span><br><span class="line">&gt; Task :shared:compileTestJava</span><br><span class="line">&gt; Task :shared:processTestResources</span><br><span class="line">&gt; Task :shared:testClasses</span><br><span class="line">&gt; Task :shared:test</span><br><span class="line">&gt; Task :shared:check</span><br><span class="line">&gt; Task :shared:build</span><br><span class="line">&gt; Task :shared:buildNeeded</span><br><span class="line">&gt; Task :api:buildNeeded</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL in 0s</span><br><span class="line">12 actionable tasks: 12 executed</span><br></pre></td></tr></table></figure>
+<p>有时候你重构了 <code>:api</code> 的某些代码，想要测试依赖于 <code>:api</code> 项目的其他项目，那么可以使用 <code>buildDependents</code>，它可以测试编译依赖指定的项目的所有项目，运行 <code>./gradlew :api:buildDependents</code> 输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&gt; gradle :api:buildDependents</span><br><span class="line">&gt; Task :shared:compileJava</span><br><span class="line">&gt; Task :shared:processResources</span><br><span class="line">&gt; Task :shared:classes</span><br><span class="line">&gt; Task :shared:jar</span><br><span class="line">&gt; Task :api:compileJava</span><br><span class="line">&gt; Task :api:processResources</span><br><span class="line">&gt; Task :api:classes</span><br><span class="line">&gt; Task :api:jar</span><br><span class="line">&gt; Task :api:assemble</span><br><span class="line">&gt; Task :api:compileTestJava</span><br><span class="line">&gt; Task :api:processTestResources</span><br><span class="line">&gt; Task :api:testClasses</span><br><span class="line">&gt; Task :api:test</span><br><span class="line">&gt; Task :api:check</span><br><span class="line">&gt; Task :api:build</span><br><span class="line">&gt; Task :services:personService:compileJava</span><br><span class="line">&gt; Task :services:personService:processResources</span><br><span class="line">&gt; Task :services:personService:classes</span><br><span class="line">&gt; Task :services:personService:jar</span><br><span class="line">&gt; Task :services:personService:assemble</span><br><span class="line">&gt; Task :services:personService:compileTestJava</span><br><span class="line">&gt; Task :services:personService:processTestResources</span><br><span class="line">&gt; Task :services:personService:testClasses</span><br><span class="line">&gt; Task :services:personService:test</span><br><span class="line">&gt; Task :services:personService:check</span><br><span class="line">&gt; Task :services:personService:build</span><br><span class="line">&gt; Task :services:personService:buildDependents</span><br><span class="line">&gt; Task :api:buildDependents</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL in 0s</span><br><span class="line">17 actionable tasks: 17 executed</span><br></pre></td></tr></table></figure>
+<p>最后，如果你在根项目执行的任何 task 都会导致所有项目中存在同名的 task 的执行。</p>
+<h3 id="属性和方法的继承"><a href="#属性和方法的继承" class="headerlink" title="属性和方法的继承"></a>属性和方法的继承</h3><p>在根项目中声明的属性和方法都会继承到子项目中，这是配置注入的替代方式。而配置注入不支持方法，</p>
+<h3 id="其他选项"><a href="#其他选项" class="headerlink" title="其他选项"></a>其他选项</h3><h4 id="并行模式"><a href="#并行模式" class="headerlink" title="并行模式"></a>并行模式</h4><p>可以使用 <code>—parallel</code> 开启并行模式，这可以减少项目构建时间</p>
+<h4 id="按需配置"><a href="#按需配置" class="headerlink" title="按需配置"></a>按需配置</h4><p>可以使用 <code>--configure-on-demand</code> 开启按需配置，这同样可以减少构建配置时间</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在上面的篇幅我们着重讲解了 Gradle 对多项目构建的支持，包括跨项目配置，多项目的执行规则和执行顺序，配置注入等等。但理论知识毕竟只是纸上谈兵，下一篇文章会通过具体的项目配置，来讲解实际的使用。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-05-06T14:43:18.140Z" itemprop="dateUpdated">2018-05-06 22:43:18</time>
+</span><br>
+
+
+        
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指教，感激不尽！
+        
+    </div>
+    
+    <footer>
+        <a href="https://linxiaotao.github.io">
+            <img src="/img/avatar.jpeg" alt="Leo">
+            Leo
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/&title=《Gradle多项目构建》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/&title=《Gradle多项目构建》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Gradle多项目构建》 — My World&url=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/04/19/性能优化第一步/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">性能优化第一步</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Leo &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/&title=《Gradle多项目构建》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/&title=《Gradle多项目构建》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Gradle多项目构建》 — My World&url=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2018/04/29/Gradle多项目构建/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
