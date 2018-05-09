@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Gradle多项目实践 | My World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="前言上篇文章中，我们说到了 Gradle多项目构建 的一些知识点，但这些总归只是纸上谈兵，今天我们在实际项目中通过之前学到的知识去改造下项目的 Gradle 构建脚本，充分利用 Gradle 带来的好处。 虽然使用 Gradle 作为构建工具已经有一段时间了，但很多同学对它还是很陌生的，基本都是沿用 Android Studio 默认生成的配置，用的比较多的可能也只是 dependencies 配">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle多项目实践">
+<meta property="og:url" content="https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="前言上篇文章中，我们说到了 Gradle多项目构建 的一些知识点，但这些总归只是纸上谈兵，今天我们在实际项目中通过之前学到的知识去改造下项目的 Gradle 构建脚本，充分利用 Gradle 带来的好处。 虽然使用 Gradle 作为构建工具已经有一段时间了，但很多同学对它还是很陌生的，基本都是沿用 Android Studio 默认生成的配置，用的比较多的可能也只是 dependencies 配">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-05-09T12:27:57.414Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle多项目实践">
+<meta name="twitter:description" content="前言上篇文章中，我们说到了 Gradle多项目构建 的一些知识点，但这些总归只是纸上谈兵，今天我们在实际项目中通过之前学到的知识去改造下项目的 Gradle 构建脚本，充分利用 Gradle 带来的好处。 虽然使用 Gradle 作为构建工具已经有一段时间了，但很多同学对它还是很陌生的，基本都是沿用 Android Studio 默认生成的配置，用的比较多的可能也只是 dependencies 配">
+    
+        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Leo</h5>
+          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/LinXiaoTao" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Gradle多项目实践</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Gradle多项目实践</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-05-08T10:58:17.000Z" itemprop="datePublished" class="page-time">
+  2018-05-08
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Gradle/">Gradle</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#改造开始"><span class="post-toc-number">2.</span> <span class="post-toc-text">改造开始</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Gradle-知识"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">Gradle 知识</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#重复配置处理"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">重复配置处理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#依赖管理"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">依赖管理</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#改造结束"><span class="post-toc-number">3.</span> <span class="post-toc-text">改造结束</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Gradle多项目实践"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Gradle多项目实践</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-05-08 18:58:17" datetime="2018-05-08T10:58:17.000Z"  itemprop="datePublished">2018-05-08</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Gradle/">Gradle</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上篇文章中，我们说到了 <a href="https://linxiaotao.github.io/2018/04/29/Gradle%E5%A4%9A%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA/">Gradle多项目构建</a> 的一些知识点，但这些总归只是纸上谈兵，今天我们在实际项目中通过之前学到的知识去改造下项目的 Gradle 构建脚本，充分利用 Gradle 带来的好处。</p>
+<p>虽然使用 Gradle 作为构建工具已经有一段时间了，但很多同学对它还是很陌生的，基本都是沿用 Android Studio 默认生成的配置，用的比较多的可能也只是 <code>dependencies</code> 配置，从不同的 <code>repositories</code> 去下载依赖，可能在需要实现一些自定义配置的时候，就去 google 后照搬代码，对其配置参数也是似懂非懂，出了问题不知道如何下手解决，所以这篇文章的主要目的是，实践 Gradle 在 Android 上的运用，对 Gradle 的使用有基本认识。</p>
+<p><a href="https://github.com/LinXiaoTao/GradleCaseProject" target="_blank" rel="noopener">项目源码</a></p>
+<h2 id="改造开始"><a href="#改造开始" class="headerlink" title="改造开始"></a>改造开始</h2><h3 id="Gradle-知识"><a href="#Gradle-知识" class="headerlink" title="Gradle 知识"></a>Gradle 知识</h3><p>我们先看下 Android Studio 默认帮我们生成的配置代码：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    <span class="comment">// android 构建配置</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line"> 	<span class="comment">// 依赖配置</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先简单讲下上面各部分的配置含义，首先我们知道如果不先 <code>apply plugin: &#39;com.android.application&#39;</code> 就不会有 <code>android</code> 配置选项，那么这个配置选项具体是什么内容呢？我们可以通过源码了解下，<code>com.android.application</code> 这个插件就是我们在根目录下的 <em>build.gradle</em> 中导入的：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        <span class="comment">// 构建脚本依赖源地址</span></span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:3.1.2'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对 Gradle Plugin 有点了解的同学都知道，Gradle Plugin 需要定义到 <em>META-INF</em> 中，浏览 <em>gradle-3.1.2.jar</em>，<em>META-INF</em> 目录如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">├── MANIFEST.MF</span><br><span class="line">├── gradle-plugins</span><br><span class="line">│   ├── android-library.properties</span><br><span class="line">│   ├── android-reporting.properties</span><br><span class="line">│   ├── android.properties</span><br><span class="line">│   ├── com.android.application.properties</span><br><span class="line">│   ├── com.android.atom.properties</span><br><span class="line">│   ├── com.android.bundle.properties</span><br><span class="line">│   ├── com.android.debug.structure.properties</span><br><span class="line">│   ├── com.android.feature.properties</span><br><span class="line">│   ├── com.android.instantapp.properties</span><br><span class="line">│   ├── com.android.library.properties</span><br><span class="line">│   ├── com.android.lint.properties</span><br><span class="line">│   └── com.android.test.properties</span><br></pre></td></tr></table></figure>
+<p>这里对应的是提供的各个插件的配置，比如 <em>com.android.application.properties</em> 就表示 <code>com.android.application</code> 插件，其他也是一样，properties 的名称表示插件的名称。<em>com.android.application.properties</em> 的内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implementation-class=com.android.build.gradle.AppPlugin</span><br></pre></td></tr></table></figure>
+<p><code>com.android.build.gradle.AppPlugin</code> 这个类就是 Application Plugin 的源码。阅读 AppPlugin 源码，我们可以看到这一段：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NonNull</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">protected</span> BaseExtension createExtension(</span><br><span class="line">           <span class="meta">@NonNull</span> Project project,</span><br><span class="line">           <span class="meta">@NonNull</span> ProjectOptions projectOptions,</span><br><span class="line">           <span class="meta">@NonNull</span> AndroidBuilder androidBuilder,</span><br><span class="line">           <span class="meta">@NonNull</span> SdkHandler sdkHandler,</span><br><span class="line">           <span class="meta">@NonNull</span> NamedDomainObjectContainer&lt;BuildType&gt; buildTypeContainer,</span><br><span class="line">           <span class="meta">@NonNull</span> NamedDomainObjectContainer&lt;ProductFlavor&gt; productFlavorContainer,</span><br><span class="line">           <span class="meta">@NonNull</span> NamedDomainObjectContainer&lt;SigningConfig&gt; signingConfigContainer,</span><br><span class="line">           <span class="meta">@NonNull</span> NamedDomainObjectContainer&lt;BaseVariantOutput&gt; buildOutputs,</span><br><span class="line">           <span class="meta">@NonNull</span> SourceSetManager sourceSetManager,</span><br><span class="line">           <span class="meta">@NonNull</span> ExtraModelInfo extraModelInfo) &#123;</span><br><span class="line">       <span class="keyword">return</span> project.getExtensions()</span><br><span class="line">               .create(</span><br><span class="line">                       <span class="string">"android"</span>,</span><br><span class="line">                       AppExtension.<span class="keyword">class</span>,</span><br><span class="line">                       project,</span><br><span class="line">                       projectOptions,</span><br><span class="line">                       androidBuilder,</span><br><span class="line">                       sdkHandler,</span><br><span class="line">                       buildTypeContainer,</span><br><span class="line">                       productFlavorContainer,</span><br><span class="line">                       signingConfigContainer,</span><br><span class="line">                       buildOutputs,</span><br><span class="line">                       sourceSetManager,</span><br><span class="line">                       extraModelInfo);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>首先我们先通过 API 文档了解下 <a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html" target="_blank" rel="noopener">project.extensions</a> 的定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">定义：</span><br><span class="line">	ExtensionContainer extensions (read-only)</span><br><span class="line">说明：</span><br><span class="line">	Allows adding DSL extensions to the project. Useful for plugin authors.</span><br><span class="line">	允许向项目添加 DSL 扩展，对插件作者很有用</span><br></pre></td></tr></table></figure>
+<p>接着我们看下 <a href="https://docs.gradle.org/current/javadoc/org/gradle/api/plugins/ExtensionContainer.html#create-java.lang.String-java.lang.Class-java.lang.Object...-" target="_blank" rel="noopener"><code>ExtensionContainer.create</code></a> 方法的定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">定义：</span><br><span class="line">	&lt;T&gt; T create(String name,Class&lt;T&gt; type,Object... constructionArguments)</span><br><span class="line">说明：</span><br><span class="line">	Creates and adds a new extension to this container. A new instance of the given type will be created using the given constructionArguments. The extension will be exposed as type unless the extension itself declares a preferred public type via the HasPublicType protocol. The new instance will have been dynamically made ExtensionAware, which means that you can cast it to ExtensionAware.</span><br><span class="line">	向项目创建并且添加一个新的扩展。通过给定的 type 创建一个新的实例，使用给定的 constructionArguments 构造函数参数。可以通过 HasPublicType 接口声明对外开放的类型，否则整个扩展将对外开放。新的实例将动态生成为 </span><br><span class="line">ExtensionAware，这意味着你可以将它转换成 ExtensionAware</span><br></pre></td></tr></table></figure>
+<p>现在我们可以知道，为什么在引入 <code>com.android.application</code> 之后才能使用 <code>android</code> 配置块，这也意味着，<code>android</code> 所能提供的配置依赖于 <code>AppExtension</code> 这个类。</p>
+<p>这里我们简单就 <code>defaultConfig</code> 这个做下分析，先看下这个类在 <code>AppExtension</code> 中的配置，因为 <code>AppExtension</code> 直接调用超类 <code>TestedExtension</code> 的构造方法，而 <code>TestedExtension</code> 又会调用超类 <code>BaseExtension</code> 所以我们直接看到 <code>BaseExtension</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> DefaultConfig defaultConfig;</span><br><span class="line"></span><br><span class="line">defaultConfig = objectFactory.newInstance(</span><br><span class="line">                        DefaultConfig.class,</span><br><span class="line">                        BuilderConstants.MAIN,</span><br><span class="line">                        project,</span><br><span class="line">                        objectFactory,</span><br><span class="line">                        extraModelInfo.getDeprecationReporter(),</span><br><span class="line">                        project.getLogger());</span><br></pre></td></tr></table></figure>
+<p>这里我们先不关心 <code>objectFactory.newInstance</code> 只需要知道，当我们在 <code>android</code> 配置块中，配置 <code>defaultConfig</code> 实质上也是，对 <code>DefaultConfig</code> 的配置，而 <code>DefaultConfig</code> 又继承于 <code>DefaultProductFlavor</code>，相关的配置同时也是 <code>DefaultProductFlavor</code> 的成员属性：</p>
+<blockquote>
+<p>DefaultProductFlavor 位于 <code>builder-3.1.2.jar</code></p>
+<p>Android Gradle Plugin 相关代码分别位于 <code>gradle-3.1.2.jar</code>、<code>gradle-api-3.1.2.jar</code>、<code>gradle-core-3.1.2.jar</code></p>
+<p>如果想查看源码，则下载 sources 包，比如 <a href="https://dl.google.com/dl/android/maven2/com/android/tools/build/builder/3.1.2/builder-3.1.2-sources.jar" target="_blank" rel="noopener">builder-3.1.2-sources.jar</a>，其他 jar 下载方法类似</p>
+<p>心好累，各种继承。。。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultProductFlavor</span> <span class="keyword">extends</span> <span class="title">BaseConfigImpl</span> <span class="keyword">implements</span> <span class="title">ProductFlavor</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String mName;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> String mDimension;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> ApiVersion mMinSdkVersion;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> ApiVersion mTargetSdkVersion;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Integer mMaxSdkVersion;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Integer mRenderscriptTargetApi;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Boolean mRenderscriptSupportModeEnabled;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Boolean mRenderscriptSupportModeBlasEnabled;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Boolean mRenderscriptNdkModeEnabled;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Integer mVersionCode;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> String mVersionName;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> String mApplicationId;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> String mTestApplicationId;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> String mTestInstrumentationRunner;</span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, String&gt; mTestInstrumentationRunnerArguments = Maps.newHashMap();</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Boolean mTestHandleProfiling;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Boolean mTestFunctionalTest;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> SigningConfig mSigningConfig;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Set&lt;String&gt; mResourceConfiguration;</span><br><span class="line">    <span class="meta">@NonNull</span></span><br><span class="line">    <span class="keyword">private</span> DefaultVectorDrawablesOptions mVectorDrawablesOptions;</span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> Boolean mWearAppUnbundled;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="重复配置处理"><a href="#重复配置处理" class="headerlink" title="重复配置处理"></a>重复配置处理</h3><p>当我们项目不止只有一个 app module 时，那么在其他 module 中，例如下面这些配置都需要去配置下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">        minSdkVersion <span class="number">21</span></span><br><span class="line">        targetSdkVersion <span class="number">27</span></span><br><span class="line">        versionCode <span class="number">1</span></span><br><span class="line">        versionName <span class="string">"1.0"</span></span><br><span class="line"></span><br><span class="line">        testInstrumentationRunner <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这样就显得很繁琐又不灵活，比如现在很多项目都开始进行组件化，有的 module 有时候是 <code>com.android.application</code>，有的时候又是  <code>com.android.library</code> 这样又得根据条件写两套配置，如果其中一个更改了，还得去挨个 module 中更改。</p>
+<p>而利用 Gradle 多项目构建，我们可以将这些重复配置都统一处理，还可以根据属性自动导入不同的 plugin。首先为了统一管理各种版本号，我们先新建一个 <em>constants.gradle</em> 将一些常量写入到 ext 中：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">project.ext &#123;</span><br><span class="line">    compileSdkVersion = <span class="number">27</span></span><br><span class="line">    </span><br><span class="line">    minSdkVersion = <span class="number">21</span></span><br><span class="line">    </span><br><span class="line">    targetSdkVersion = <span class="number">27</span></span><br><span class="line">    </span><br><span class="line">    versionCode = <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    versionName = <span class="string">"1.0"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> ext 实际上是 <a href="https://docs.gradle.org/current/dsl/org.gradle.api.plugins.ExtraPropertiesExtension.html" target="_blank" rel="noopener">ExtraPropertiesExtension</a> 类型，它类似 map，可以存储 key/value 键值对。ext 也是扩展的一种，可以通过 <code>project.extensions.getByName(&#39;ext&#39;)</code> 获取实例，所有的 <a href="https://docs.gradle.org/current/dsl/org.gradle.api.plugins.ExtensionAware.html" target="_blank" rel="noopener"><code>ExtensionAware</code></a> 都拥有一个 <code>ext</code>，而 Project 又是继承于  <code>ExtensionAware</code></p>
+</blockquote>
+<p>接着我们在各个 module 中创建一个 <code>gradle.properties</code> ，这个文件默认会被读取，在其中定义一个属性 <code>isApplication</code>，根据这个属性导入不同的 plugin：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// library module</span></span><br><span class="line">isApplication=<span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// application module</span></span><br><span class="line">isApplication=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>接着创建 <em>init.gradle</em>，在 <code>subprojects</code> 中配置，这里的配置对所有的子项目都会生效：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">subprojects &#123;</span><br><span class="line">    <span class="keyword">if</span> (project.isApplication.toBoolean()) &#123;</span><br><span class="line">        <span class="comment">// 当前 module 导入 application plugin</span></span><br><span class="line">        project.plugins.apply(<span class="string">"com.android.application"</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        project.plugins.apply(<span class="string">"com.android.library"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里有点地方需要注意下，因为属性的获取都是通过 String 类型，所以我们需要明确使用 <code>toBoolean()</code> 去转化成布尔值</p>
+</blockquote>
+<p>最后要想使得这些 gradle 文件生效，需要将它们 apply 进去，因为 Gradle 默认只会识别 <code>build.gradle</code>，还记得我们在 <a href="https://linxiaotao.github.io/2018/04/29/Gradle%E5%A4%9A%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA/">Gradle多项目构建</a> 中说到，<em>Gradle 是边读取边执行的</em> ，这意味着你需要在使用到 <code>android</code> 构建块之前，将 plugin apply 进去，所以我们将这些 gradle 文件在根目录的 <em>build.gradle</em> 中 apply，因为默认根目录的优先级最高：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// constants.gradle 需要在 init.gradle，因为 init.gradle 后面会使用到 constants.gradle 中定义的值，理由如上</span></span><br><span class="line">apply <span class="string">from:</span> <span class="string">'gradle/constants.gradle'</span></span><br><span class="line">apply <span class="string">from:</span> <span class="string">'gradle/init.gradle'</span></span><br></pre></td></tr></table></figure>
+<p>我们将 module 下 <em>build.gradle</em> 中的 apply 代码删除，重新同步下，可以发现 <code>android</code> 配置块依然生效，这意味着，我们 apply plugin 操作成功了。</p>
+<p>在处理完 plugin 之后，我们可以将 <code>android</code> 配置块中的重复配置也在 <em>init.gradle</em> 中去配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">subprojects &#123;</span><br><span class="line">    <span class="keyword">if</span> (project.isApplication.toBoolean()) &#123;</span><br><span class="line">        <span class="comment">// 当前 module 导入 application plugin</span></span><br><span class="line">        project.plugins.apply(<span class="string">"com.android.application"</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        project.plugins.apply(<span class="string">"com.android.library"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    android &#123;</span><br><span class="line">        compileSdkVersion rootProject.ext[<span class="string">'compileSdkVersion'</span>]</span><br><span class="line">        defaultConfig &#123;</span><br><span class="line">            minSdkVersion rootProject.ext[<span class="string">'minSdkVersion'</span>]</span><br><span class="line">            targetSdkVersion rootProject.ext[<span class="string">'targetSdkVersion'</span>]</span><br><span class="line">            versionCode rootProject.ext[<span class="string">'versionCode'</span>]</span><br><span class="line">            versionName rootProject.ext[<span class="string">'versionName'</span>]</span><br><span class="line">            testInstrumentationRunner <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></span><br><span class="line">        &#125;</span><br><span class="line">        buildTypes &#123;</span><br><span class="line">            release &#123;</span><br><span class="line">                minifyEnabled <span class="literal">false</span></span><br><span class="line">                proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是非常方便，这样统一的配置你只需要写一次，不只是 <code>android</code> 配置块可以这么处理，其他的配置也可以这么处理。</p>
+<h3 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h3><p>一般情况下，我们会在各个 module 下去编写所需的依赖配置，比如通过 <code>implementation &#39;com.android.support:appcompat-v7:27.1.1&#39;</code> 去从 maven 中心仓库或者 jcenter 中下载依赖，但这样有个不好的地方就是依赖配置太分散了，只能到每个 module 目录中的 <em>build.gradle</em> 去管理，如果我们将这个写到统一的 Gradle 构建脚本中，是不是会更好点，我们同样创建个 <em>dependencies.gradle</em>，将共同的依赖写到 <code>subprojects</code> ，特有的依赖写到单独的项目配置中，同样这个文件需要在根目录的 <em>build.gradle</em> 中 apply：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">subprojects &#123;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        testImplementation rootProject.ext.dependencies[<span class="string">'junit'</span>]</span><br><span class="line">        androidTestImplementation rootProject.ext.dependencies[<span class="string">'runner'</span>]</span><br><span class="line">        androidTestImplementation rootProject.ext.dependencies[<span class="string">'espresso-core'</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">project(<span class="string">':mylibrary'</span>) &#123;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        api fileTree(<span class="string">dir:</span> <span class="string">'libs'</span>, <span class="string">include:</span> [<span class="string">'*.jar'</span>])</span><br><span class="line">        api rootProject.ext.dependencies[<span class="string">'appcompat-v7'</span>]</span><br><span class="line">        api rootProject.ext.dependencies[<span class="string">'constraint-layout'</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">project(<span class="string">':app'</span>) &#123;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        implementation fileTree(<span class="string">dir:</span> <span class="string">'libs'</span>, <span class="string">include:</span> [<span class="string">'*.jar'</span>])</span><br><span class="line">        implementation project(<span class="string">":mylibrary"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以将共同的依赖写到 <code>subprojects</code> 块，单独项目的配置写到各自的配置块下。</p>
+<p>现在我们再来解决另外一个常见的问题：依赖冲突，比如不同的依赖项各自又依赖于同一个库的不同版本，默认 <a href="https://docs.gradle.org/current/userguide/troubleshooting_dependency_resolution.html#sub:version_conflicts" target="_blank" rel="noopener">Gradle 会用这个重复库的最高版本</a>，但如果你配置了 <code>resolutionStrategy.failOnVersionConflict()</code> 即当出现版本冲突则失败，或者版本选择不合适，等等，就会出现依赖冲突问题。</p>
+<p>我们通过个例子来证实默认的处理策略，我们在 app 模块中去依赖  <code>com.android.support:design:27.1.1</code> 和 <code>com.android.support:recyclerview-v7:26.1.0</code> ，而 <code>design</code> 会自动去依赖 <code>com.android.support:recyclerview-v7:27.1.1</code>，依赖关系我们可以通过 <code>./gradlew :app:dependencies</code> 这个 Task 去查看，这里我们只查看 <em>releaseCompileClasspath</em> 依赖配置中 <code>design</code> 和 <code>recyclerview</code> 的情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">+--- project :mylibrary</span><br><span class="line">|    \--- com.android.support:design:27.1.1</span><br><span class="line">|         +--- com.android.support:support-v4:27.1.1</span><br><span class="line">|         |    +--- com.android.support:support-compat:27.1.1 (*)</span><br><span class="line">|         |    +--- com.android.support:support-media-compat:27.1.1</span><br><span class="line">|         |    |    +--- com.android.support:support-annotations:27.1.1</span><br><span class="line">|         |    |    \--- com.android.support:support-compat:27.1.1 (*)</span><br><span class="line">|         |    +--- com.android.support:support-core-utils:27.1.1 (*)</span><br><span class="line">|         |    +--- com.android.support:support-core-ui:27.1.1 (*)</span><br><span class="line">|         |    \--- com.android.support:support-fragment:27.1.1 (*)</span><br><span class="line">|         +--- com.android.support:appcompat-v7:27.1.1 (*)</span><br><span class="line">|         +--- com.android.support:recyclerview-v7:27.1.1</span><br><span class="line">|         |    +--- com.android.support:support-annotations:27.1.1</span><br><span class="line">|         |    +--- com.android.support:support-compat:27.1.1 (*)</span><br><span class="line">|         |    \--- com.android.support:support-core-ui:27.1.1 (*)</span><br><span class="line">|         \--- com.android.support:transition:27.1.1</span><br><span class="line">|              +--- com.android.support:support-annotations:27.1.1</span><br><span class="line">|              \--- com.android.support:support-compat:27.1.1 (*)</span><br><span class="line">\--- com.android.support:recyclerview-v7:26.1.0 -&gt; 27.1.1 (*)</span><br></pre></td></tr></table></figure>
+<p>可以看到我们依赖的 26.1.0 已经被替换成 27.1.1，如果这是我们想要的结果，那就很理想，但是如果我们想要去定义依赖冲突的策略呢？同样的，Gradle 也提供了相应的 API。</p>
+<p>还是上面的例子，如果我们不想要使用 <code>design</code> 中的 <code>recyclerview</code> 而想要我们单独依赖的 <code>recyclerview-v7:26.1.1</code> 这里我们有几种方式解决：</p>
+<ol>
+<li><p>不传递依赖</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">api(rootProject.ext.dependencies[<span class="string">'design'</span>]) &#123;</span><br><span class="line">            transitive = <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>强制使用当前版本</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">implementation(rootProject.ext.dependencies[<span class="string">'recyclerview'</span>]) &#123;</span><br><span class="line">            force = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>其他的解决方案可以参考<a href="https://docs.gradle.org/current/userguide/introduction_dependency_management.html" target="_blank" rel="noopener">官方文档</a></p>
+<p>这里我们使用 Gradle 提供的 <a href="https://docs.gradle.org/current/userguide/customizing_dependency_resolution_behavior.html" target="_blank" rel="noopener">resolutionStrategy</a> 方案： </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">subprojects &#123;</span><br><span class="line">    configurations.all &#123;</span><br><span class="line">        resolutionStrategy &#123;</span><br><span class="line">            force rootProject.ext.dependencies[<span class="string">'recyclerview'</span>]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>configurations</code> 表示当前项目的依赖配置容器，<code>configurations.all</code> 表示当前项目的所有依赖配置，上面的配置表示，遍历当前项目的所有依赖配置，设置其依赖解决策略为 <strong>强制使用指定的版本</strong></p>
+<h2 id="改造结束"><a href="#改造结束" class="headerlink" title="改造结束"></a>改造结束</h2><p>现在我们再来对比下，默认生成的构建配置和改造后的构建配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">27</span></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"com.example.leo.gradlecaseproject"</span></span><br><span class="line">        minSdkVersion <span class="number">21</span></span><br><span class="line">        targetSdkVersion <span class="number">27</span></span><br><span class="line">        versionCode <span class="number">1</span></span><br><span class="line">        versionName <span class="string">"1.0"</span></span><br><span class="line">        testInstrumentationRunner <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></span><br><span class="line">    &#125;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="literal">false</span></span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(<span class="string">dir:</span> <span class="string">'libs'</span>, <span class="string">include:</span> [<span class="string">'*.jar'</span>])</span><br><span class="line">    implementation <span class="string">'com.android.support:appcompat-v7:27.1.1'</span></span><br><span class="line">    implementation <span class="string">'com.android.support.constraint:constraint-layout:1.1.0'</span></span><br><span class="line">    testImplementation <span class="string">'junit:junit:4.12'</span></span><br><span class="line">    androidTestImplementation <span class="string">'com.android.support.test:runner:1.0.2'</span></span><br><span class="line">    androidTestImplementation <span class="string">'com.android.support.test.espresso:espresso-core:3.0.2'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"com.example.leo.gradlecaseproject"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是简洁了不少，重复的配置项我们交给统一的配置文件去做，依赖配置也是如此，包括依赖冲突的解决策略，但是 Gradle 能实现的不仅仅如此，还有强大的自定义 Gradle Plugin 我们还没讲到。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过这篇文章，不仅仅是教会大家如何去编写简单的 Gradle 构建脚本，更重要的想让大家对 Gradle 有个初步的认识，知道 Gradle 的配置块是如何生成的，更多知识可以通过<a href="https://docs.gradle.org/current/userguide/userguide.html" target="_blank" rel="noopener">官方文档</a>去获取。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-05-09T12:27:57.414Z" itemprop="dateUpdated">2018-05-09 20:27:57</time>
+</span><br>
+
+
+        
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指教，感激不尽！
+        
+    </div>
+    
+    <footer>
+        <a href="https://linxiaotao.github.io">
+            <img src="/img/avatar.jpeg" alt="Leo">
+            Leo
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/&title=《Gradle多项目实践》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/&title=《Gradle多项目实践》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Gradle多项目实践》 — My World&url=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/04/29/Gradle多项目构建/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Gradle多项目构建</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Leo &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/&title=《Gradle多项目实践》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/&title=《Gradle多项目实践》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Gradle多项目实践》 — My World&url=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2018/05/08/Gradle多项目实践/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
