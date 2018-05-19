@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="My World">
 <meta property="og:description" content="前言本文是 Gradle 系列的第三篇，前两篇都是关于 Gradle 多项目构建，有兴趣的同学可以去翻看下。Gradle 系列作者会一直更新下去，这些知识大部分都来自于 Gradle 用户手册，但我并不想写成翻译类型的文章，从最基础的知识开始深入，因为这样前期枯燥的理论知识会让人感到厌倦，所以从用户最常用的知识入手，再穿插必要的基础知识，最终达到知识的融会贯通。因为作者从事 Android 开发，">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-05-19T08:38:38.181Z">
+<meta property="og:updated_time" content="2018-05-19T08:46:53.701Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Gradle插件-设计">
 <meta name="twitter:description" content="前言本文是 Gradle 系列的第三篇，前两篇都是关于 Gradle 多项目构建，有兴趣的同学可以去翻看下。Gradle 系列作者会一直更新下去，这些知识大部分都来自于 Gradle 用户手册，但我并不想写成翻译类型的文章，从最基础的知识开始深入，因为这样前期枯燥的理论知识会让人感到厌倦，所以从用户最常用的知识入手，再穿插必要的基础知识，最终达到知识的融会贯通。因为作者从事 Android 开发，">
@@ -186,6 +186,9 @@
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
             <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文是 Gradle 系列的第三篇，前两篇都是关于 Gradle 多项目构建，有兴趣的同学可以去翻看下。Gradle 系列作者会一直更新下去，这些知识大部分都来自于 <a href="https://docs.gradle.org/current/userguide/userguide.html" target="_blank" rel="noopener">Gradle 用户手册</a>，但我并不想写成翻译类型的文章，从最基础的知识开始深入，因为这样前期枯燥的理论知识会让人感到厌倦，所以从用户最常用的知识入手，再穿插必要的基础知识，最终达到知识的融会贯通。因为作者从事 Android 开发，所以会更多提及 Android 中关于 Gradle 的知识。</p>
+<blockquote>
+<p>博客中的<a href="https://github.com/LinXiaoTao/GradleCaseProject" target="_blank" rel="noopener">源码地址</a></p>
+</blockquote>
 <h2 id="Gradle插件"><a href="#Gradle插件" class="headerlink" title="Gradle插件"></a>Gradle插件</h2><p>Gradle 是非常强大的构建工具，所有的知识都围绕着 project 和 task 这两个知识点。project 在前面的文章中我们已经简单介绍了，task 现在是穿插着讲，后续会考虑单独写成文章。而我们今天讲的 plugin 对于大部分的 Gradle 使用者来说，可能是一个熟悉又陌生的知识点，熟悉是因为用的太频繁了，比如 Android 项目中，我们都会使用以下配置：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion xxx</span><br><span class="line">    buildToolsVersion xxx</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>但另外一方面，我们对 plugin 的实现又似懂非懂，使用 Android Application Plugin 后，<code>android {}</code> 配置块是如何生成的，又有哪些配置可以用。现在有很多自定义的 Gradle Plugin，比如使用 AOP 实现的代码插桩，打点等等功能的库，那么这些库又是如何通过 Plugin 功能实现的。</p>
@@ -308,7 +311,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-05-19T08:38:38.181Z" itemprop="dateUpdated">2018-05-19 16:38:38</time>
+    最后更新时间：<time datetime="2018-05-19T08:46:53.701Z" itemprop="dateUpdated">2018-05-19 16:46:53</time>
 </span><br>
 
 
