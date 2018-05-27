@@ -1,13 +1,15 @@
 ---
-title: Gradle插件-设计
+title: Gradle插件-基础篇
 date: 2018-05-16 09:20:58
-categories:
-tags: Gradle
+categories: Gradle
+tags: 
 ---
 
 ## 前言
 
 本文是 Gradle 系列的第三篇，前两篇都是关于 Gradle 多项目构建，有兴趣的同学可以去翻看下。Gradle 系列作者会一直更新下去，这些知识大部分都来自于 [Gradle 用户手册](https://docs.gradle.org/current/userguide/userguide.html)，但我并不想写成翻译类型的文章，从最基础的知识开始深入，因为这样前期枯燥的理论知识会让人感到厌倦，所以从用户最常用的知识入手，再穿插必要的基础知识，最终达到知识的融会贯通。因为作者从事 Android 开发，所以会更多提及 Android 中关于 Gradle 的知识。
+
+> 博客中的[源码地址](https://github.com/LinXiaoTao/GradleCaseProject)
 
 ## Gradle插件
 
