@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Gradle插件-提高篇 | My World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="前言在上一篇文章 Gradle插件-基础篇 中，我们学习了 Plugin 的设计规范，并且通过一个非常简单的例子对自定义 Plugin 有了初步认识，在这篇文章中，我们来继续学习 Gradle Plugin 更为深入的知识点。  本文参考 Gradle用户手册   Gradle插件 本文涉及的所有源码都位于 github  简单扩展当我们引入 Android Plugin 时，在 android{">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle插件-提高篇">
+<meta property="og:url" content="https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="前言在上一篇文章 Gradle插件-基础篇 中，我们学习了 Plugin 的设计规范，并且通过一个非常简单的例子对自定义 Plugin 有了初步认识，在这篇文章中，我们来继续学习 Gradle Plugin 更为深入的知识点。  本文参考 Gradle用户手册   Gradle插件 本文涉及的所有源码都位于 github  简单扩展当我们引入 Android Plugin 时，在 android{">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-05-27T04:41:56.275Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gradle插件-提高篇">
+<meta name="twitter:description" content="前言在上一篇文章 Gradle插件-基础篇 中，我们学习了 Plugin 的设计规范，并且通过一个非常简单的例子对自定义 Plugin 有了初步认识，在这篇文章中，我们来继续学习 Gradle Plugin 更为深入的知识点。  本文参考 Gradle用户手册   Gradle插件 本文涉及的所有源码都位于 github  简单扩展当我们引入 Android Plugin 时，在 android{">
+    
+        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Leo</h5>
+          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/LinXiaoTao" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Gradle插件-提高篇</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Gradle插件-提高篇</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-05-21T00:44:35.000Z" itemprop="datePublished" class="page-time">
+  2018-05-21
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Gradle/">Gradle</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Gradle插件"><span class="post-toc-number">2.</span> <span class="post-toc-text">Gradle插件</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#简单扩展"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">简单扩展</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#嵌套扩展"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">嵌套扩展</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#配置容器"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">配置容器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#懒加载属性"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">懒加载属性</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Gradle插件-提高篇"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Gradle插件-提高篇</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-05-21 08:44:35" datetime="2018-05-21T00:44:35.000Z"  itemprop="datePublished">2018-05-21</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Gradle/">Gradle</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在上一篇文章 <a href="https://linxiaotao.github.io/2018/05/16/Gradle%E6%8F%92%E4%BB%B6-%E5%9F%BA%E7%A1%80%E7%AF%87/">Gradle插件-基础篇</a> 中，我们学习了 Plugin 的设计规范，并且通过一个非常简单的例子对自定义 Plugin 有了初步认识，在这篇文章中，我们来继续学习 Gradle Plugin 更为深入的知识点。</p>
+<blockquote>
+<p>本文参考 <a href="https://guides.gradle.org/implementing-gradle-plugins/?_ga=2.31320828.258862271.1526633053-590693097.1523454314#writing-and-using-custom-task-types" target="_blank" rel="noopener">Gradle用户手册</a> </p>
+</blockquote>
+<h2 id="Gradle插件"><a href="#Gradle插件" class="headerlink" title="Gradle插件"></a>Gradle插件</h2><blockquote>
+<p>本文涉及的所有源码都位于 <a href="https://github.com/LinXiaoTao/GradleCaseProject" target="_blank" rel="noopener">github</a></p>
+</blockquote>
+<h3 id="简单扩展"><a href="#简单扩展" class="headerlink" title="简单扩展"></a>简单扩展</h3><p>当我们引入 Android Plugin 时，在 <code>android{}</code> 有一些常用的配置，比如：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">27</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们想在自定义的 Plugin 中也使用这样的配置，可以使用 Gradle 提供的扩展功能：<code>Extensions</code> ，在第一篇文章中我们自定义了一个简单的 <code>com.example.hello</code> 插件，我们现在就在这个基础上添加一个扩展功能，最终实现的配置如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hello &#123;</span><br><span class="line">    outFile <span class="string">'hello'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>向 outFile 指定的文件中写入一句 “Hello World”，如文件不存在则创建它。</p>
+<p>为了创建扩展，我们先定义一个数据模型用于读取配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloModel</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> String outFile;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getOutFile</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> outFile;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOutFile</span><span class="params">(String outFile)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.outFile = outFile;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着使用 <code>ExtensionContainer</code> 创建一个扩展：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project.getExtensions().create(<span class="string">"hello"</span>, HelloModel.class);</span><br></pre></td></tr></table></figure>
+<p><code>getExtensions(String,Class,Object...)</code> 这个方法有三个参数，第一个参数为扩展的名称即在 <strong><em>gradle</em></strong> 文件中使用的配置块，第二个参数为扩展的模型，用于定义可配置的属性，在上面的例子上，只有一个简单的 <code>outFile</code> 表示输出文件，第三个参数为可变长参数，表示模型的构造参数，在这个例子中，我们使用默认的无参构造函数。</p>
+<p>经过上面的步骤，我们已经创建好了扩展，接下来是读取扩展的属性值，还记得我们之前说的，<strong>Gradle 是边读取边解释</strong>，所以当我们 <code>apply plugin</code> 时，会创建好扩展，而扩展的属性值配置只能在 <code>apply plugin</code> 之后，所以我们在 plugin 中直接读取扩展属性值是不行的，必须在项目评估完成之后：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">project.afterEvaluate(project1 -&gt; &#123;</span><br><span class="line">            HelloModel helloModel = project1.getExtensions().getByType(HelloModel.class);</span><br><span class="line">            mLogger.quiet(<span class="string">"hello : "</span> + helloModel);</span><br><span class="line">            <span class="keyword">if</span> (helloModel.getOutFile() == <span class="keyword">null</span> || helloModel.getOutFile().isEmpty()) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> GradleException(<span class="string">"outFile 不能等于空"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            FileOutputStream fileOutputStream = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                File outFile = project1.file(helloModel.getOutFile());</span><br><span class="line">                <span class="keyword">if</span> (!outFile.exists()) &#123;</span><br><span class="line">                    outFile.createNewFile();</span><br><span class="line">                &#125;</span><br><span class="line">                fileOutputStream = <span class="keyword">new</span> FileOutputStream(outFile);</span><br><span class="line">                fileOutputStream.write(<span class="string">"Hello World"</span>.getBytes());</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (fileOutputStream != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        fileOutputStream.close();</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
+<p>逻辑比较简单，我们现在直接运行在 <code>.gradlew</code> 即可，可以看到在 app 目录下生成一个 <strong><em>hello</em></strong> 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hello World</span><br></pre></td></tr></table></figure>
+<h3 id="嵌套扩展"><a href="#嵌套扩展" class="headerlink" title="嵌套扩展"></a>嵌套扩展</h3><p>如果要想实现如下 DSL 配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"com.example.leo.gradlecaseproject"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Gradle 也支持这种嵌套扩展，同样是上面的例子，我们现在想添加一个 <code>info</code> 配置块，将这部分的信息也写入到文件中，最终配置如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hello &#123;</span><br><span class="line">    outFile = <span class="string">'hello'</span></span><br><span class="line">    info &#123;</span><br><span class="line">        username = <span class="string">"leo"</span></span><br><span class="line">        email = <span class="string">"linxiaotao1993@vip.qq.com"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先我们先创建一个 InfoModel，这里有个要注意的地方：用于实现扩展的类不能是 <code>final</code>，因为最终用于扩展的实现类就是继承于这个类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">InfoModel</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String username;</span><br><span class="line">        <span class="keyword">private</span> String email;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Inject</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">InfoModel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> username;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.username = username;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getEmail</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> email;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEmail</span><span class="params">(String email)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.email = email;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"InfoModel&#123;"</span> +</span><br><span class="line">                    <span class="string">"username='"</span> + username + <span class="string">'\''</span> +</span><br><span class="line">                    <span class="string">", email='"</span> + email + <span class="string">'\''</span> +</span><br><span class="line">                    <span class="string">'&#125;'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>上面在构造方法中添加 <code>@Inject</code> 注解是为了能用 Gradle 提供的 <code>ObjectFactor</code> 用于实现依赖注入功能。而在原来的 <code>HelloModel</code> 中，我们增加了 <code>private final InfoModel info;</code> 同时在构建函数中增加了 <code>ObjectFactory</code> 参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">HelloModel</span><span class="params">(ObjectFactory objectFactory)</span> </span>&#123;</span><br><span class="line">        info = objectFactory.newInstance(InfoModel.class);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但这样还不够，还需要当 <code>info</code> 配置块被调用时所传递的实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">info</span><span class="params">(Action&lt;InfoModel&gt; action)</span> </span>&#123;</span><br><span class="line">        action.execute(info);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：这里的方法名和 DSL 中的使用的配置块名称一致。</p>
+<p>最后我们在写入文件时，将这部分配置的信息也写入，同时在生成扩展时提供 <code>ObjectFactor</code> 实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">project.getExtensions().create(<span class="string">"hello"</span>, HelloModel.class, project.getObjects());</span><br><span class="line"></span><br><span class="line">fileOutputStream.write(String.format(</span><br><span class="line">                        Locale.getDefault(),</span><br><span class="line">                        <span class="string">"Hello World\ncreate by %s %s"</span>,</span><br><span class="line">                        helloModel.getInfo().getUsername(),</span><br><span class="line">                        helloModel.getInfo().getEmail()).getBytes()</span><br><span class="line">                      );</span><br></pre></td></tr></table></figure>
+<p>最后执行下就可以看到结果了。</p>
+<blockquote>
+<p>可以看到 Gradle 可以很方便地使用依赖注入。</p>
+</blockquote>
+<h3 id="配置容器"><a href="#配置容器" class="headerlink" title="配置容器"></a>配置容器</h3><p>在 Android 项目中，我们可以去配置不同的构建变体：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">flavorDimensions <span class="string">"api"</span>, <span class="string">"mode"</span></span><br><span class="line">    productFlavors &#123;</span><br><span class="line">        demo &#123;</span><br><span class="line">            dimension <span class="string">"mode"</span></span><br><span class="line">        &#125;</span><br><span class="line">        full &#123;</span><br><span class="line">            dimension <span class="string">"mode"</span></span><br><span class="line">        &#125;</span><br><span class="line">        minApi24 &#123;</span><br><span class="line">            dimension <span class="string">"api"</span></span><br><span class="line">        &#125;</span><br><span class="line">        minApi23 &#123;</span><br><span class="line">            dimension <span class="string">"api"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们想要实现类似 <code>productFlavors</code> 这种动态生成的 DSL 配置块，我们可以使用 <code>NamedDomainObjectContainer</code> 来实现，接着上面的例子，我们最终的配置如下：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">hello &#123;</span><br><span class="line">    outFile = <span class="string">'hello'</span></span><br><span class="line">    info &#123;</span><br><span class="line">        username = <span class="string">"leo"</span></span><br><span class="line">        email = <span class="string">"linxiaotao1993@vip.qq.com"</span></span><br><span class="line">    &#125;</span><br><span class="line">    other &#123;</span><br><span class="line">        time &#123;</span><br><span class="line">            value = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>).format(<span class="keyword">new</span> Date())</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们先创建 <code>ValueModel</code> 用于表示容器中每一项的格式，注意：这个类必须有个字段为 <code>name</code> ，比如上面的例子中，<code>name</code> 就是我们配置的 <code>time</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ValueModel</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String value;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ValueModel</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"ValueModel&#123;"</span> +</span><br><span class="line">                <span class="string">"name='"</span> + name + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", value='"</span> + value + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这个类不能写成内部类，静态内部类也不行</p>
+</blockquote>
+<p>接着，我们在 <code>HelloModel</code> 中同样创建 <code>other</code> 配置块，需要注意的是，这里我们要使用 <code>NamedDomainObjectContainer</code> ：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">other</span><span class="params">(Action&lt;NamedDomainObjectContainer&lt;ValueModel&gt;&gt; action)</span> </span>&#123;</span><br><span class="line">        action.execute(other);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而 <code>other</code> 则是这样子创建的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">other = project.container(ValueModel.class);</span><br></pre></td></tr></table></figure>
+<p>最后，同样的，我们将这块的配置也写入到 <code>hello</code> 文件中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">StringBuilder otherString = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">                helloModel.getOther().forEach(valueModel -&gt;</span><br><span class="line">                        otherString.append(valueModel.getName())</span><br><span class="line">                                .append(<span class="string">"："</span>)</span><br><span class="line">                                .append(valueModel.getValue())</span><br><span class="line">                                .append(<span class="string">"\n"</span>));</span><br><span class="line">                fileOutputStream.write(String.format(</span><br><span class="line">                        Locale.getDefault(),</span><br><span class="line">                        <span class="string">"Hello World\ncreate by %s %s\n%s"</span>,</span><br><span class="line">                        helloModel.getInfo().getUsername(),</span><br><span class="line">                        helloModel.getInfo().getEmail(),</span><br><span class="line">                        otherString.toString()).getBytes()</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h3 id="懒加载属性"><a href="#懒加载属性" class="headerlink" title="懒加载属性"></a>懒加载属性</h3><p>在上面的例子中，我们都是通过使用原始数据类型去映射在构建脚本中的配置，这种方式会在配置完成之后直接映射，Gradle 4.0 提供了 <code>Provider</code> 和 <code>Property</code> 来提供懒加载属性，其中 <code>Provider</code> 表示不可变属性，<code>Property</code> 表示可变属性。这个 API 提供了两个好处：</p>
+<ol>
+<li>可以放心地连接不同的数据模型，而不用担心某个数据模型的值是否已经知道。举个例子，比如你想将扩展中的属性映射到 task 中的属性，但扩展的属性值只有在构建脚本配置后才能知道。</li>
+<li>避免在构建阶段进行资源密集型工作，比如当属性值时从文件中解析时</li>
+</ol>
+<p>使用也比较简单，首先我们先声明一个<code>Property&lt;String&gt;</code> 然后使用 <code>ObjectFactor</code> 去创建：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Property&lt;String&gt; testProperty;</span><br><span class="line"></span><br><span class="line">testProperty = project.getObjects().property(String.class);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Gradle 会自动为 <code>Property</code> 生成 setter 方法，同时允许你使用 “=” 操作符来设置属性值</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在这篇文章中，我们主要讲的是，在自定义 Plugin 中经常用的到扩展功能，下一篇文章中，我们就开始进入 Plugin 的编写。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-05-27T04:41:56.275Z" itemprop="dateUpdated">2018-05-27 12:41:56</time>
+</span><br>
+
+
+        
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指教，感激不尽！
+        
+    </div>
+    
+    <footer>
+        <a href="https://linxiaotao.github.io">
+            <img src="/img/avatar.jpeg" alt="Leo">
+            Leo
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/&title=《Gradle插件-提高篇》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/&title=《Gradle插件-提高篇》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Gradle插件-提高篇》 — My World&url=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/05/16/Gradle插件-基础篇/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Gradle插件-基础篇</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Leo &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/&title=《Gradle插件-提高篇》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/&title=《Gradle插件-提高篇》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Gradle插件-提高篇》 — My World&url=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2018/05/21/Gradle插件-提高篇/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
