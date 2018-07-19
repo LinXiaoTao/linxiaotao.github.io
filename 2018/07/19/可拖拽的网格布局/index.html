@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>可拖拽的网格布局 | My World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="效果                                                                                             效果图              背景在之前的项目中为了实现类似微信朋友圈的图片九宫格效果，手写了一个简单的网格控件，继承于 ViewGroup，后面因为准备做小组的技术分享，关于自定义控件的，所以就想把这个控">
+<meta property="og:type" content="article">
+<meta property="og:title" content="可拖拽的网格布局">
+<meta property="og:url" content="https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="效果                                                                                             效果图              背景在之前的项目中为了实现类似微信朋友圈的图片九宫格效果，手写了一个简单的网格控件，继承于 ViewGroup，后面因为准备做小组的技术分享，关于自定义控件的，所以就想把这个控">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/DragGridLayout.gif">
+<meta property="og:updated_time" content="2018-07-19T03:47:38.876Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="可拖拽的网格布局">
+<meta name="twitter:description" content="效果                                                                                             效果图              背景在之前的项目中为了实现类似微信朋友圈的图片九宫格效果，手写了一个简单的网格控件，继承于 ViewGroup，后面因为准备做小组的技术分享，关于自定义控件的，所以就想把这个控">
+<meta name="twitter:image" content="http://oy017242u.bkt.clouddn.com/DragGridLayout.gif">
+    
+        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Leo</h5>
+          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/LinXiaoTao" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">可拖拽的网格布局</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">可拖拽的网格布局</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-07-19T03:42:26.000Z" itemprop="datePublished" class="page-time">
+  2018-07-19
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#效果"><span class="post-toc-number">1.</span> <span class="post-toc-text">效果</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#背景"><span class="post-toc-number">2.</span> <span class="post-toc-text">背景</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#思路"><span class="post-toc-number">3.</span> <span class="post-toc-text">思路</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#实现"><span class="post-toc-number">4.</span> <span class="post-toc-text">实现</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-可拖拽的网格布局"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">可拖拽的网格布局</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-07-19 11:42:26" datetime="2018-07-19T03:42:26.000Z"  itemprop="datePublished">2018-07-19</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://oy017242u.bkt.clouddn.com/DragGridLayout.gif" alt="效果图" title="">
+                </div>
+                <div class="image-caption">效果图</div>
+            </figure>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>在之前的项目中为了实现类似微信朋友圈的图片九宫格效果，手写了一个简单的网格控件，继承于 ViewGroup，后面因为准备做小组的技术分享，关于自定义控件的，所以就想把这个控件优化下，来作为这次分享的例子。自定义控件一般涉及测量、布局、绘制三大流程，再加上触摸事件的处理。之前的已完成的部分，已经包括了测量和布局，绘制暂时没有好想法，所以这次就想再加上触摸事件的处理。在使用微信发布朋友圈的时候，看到可以通过拖拽来重新排序图片，所以这次就加上可拖拽的功能。</p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>因为网格控件是位置是比较固定的，所以可以通过实时计算每个 Item 的位置，这里我们为了方便，所以缓存了每个 Item 的位置。当我们拖拽某个 Item 靠近新的位置时，如果新位置大于原来的位置，我们将原来位置到新位置的 Item 向后移动一位，反之，则向前移动一位。不知道这样解释是否清晰。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p><strong><a href="https://github.com/LinXiaoTao/DragGridLayout" target="_blank" rel="noopener">源码</a></strong></p>
+<p>首先我们要保存初始布局时的位置信息，这里我们使用 <code>SparseArray&lt;Point&gt;</code> 去缓存，相关代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> childTop = getPaddingTop();                                                                </span><br><span class="line"><span class="keyword">int</span> childLeft = getPaddingLeft();                                                              </span><br><span class="line">                                                                                               </span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; getChildCount(); i++) &#123;                                                    </span><br><span class="line">    <span class="keyword">final</span> View childView = getChildAt(i);                                                      </span><br><span class="line">    Point point = mLayoutPositionArray.get(i);                                                 </span><br><span class="line">                                                                                               </span><br><span class="line">    <span class="keyword">if</span>(point == <span class="keyword">null</span>)&#123;                                                                         </span><br><span class="line">        point = acquireTempPoint();                                                            </span><br><span class="line">    &#125;                                                                                          </span><br><span class="line">                                                                                               </span><br><span class="line">    point.x = childLeft;                                                                       </span><br><span class="line">    point.y = childTop;                                                                        </span><br><span class="line">    mLayoutPositionArray.put(i, point);                                                        </span><br><span class="line">                                                                                               </span><br><span class="line">    childView.layout(childLeft, childTop, childLeft + itemWidth, childTop + itemHeight);       </span><br><span class="line">                                                                                               </span><br><span class="line">    <span class="keyword">if</span> (mGridAdapter != <span class="keyword">null</span>) &#123;                                                                </span><br><span class="line">        mGridAdapter.handleItemView(childView, i);                                             </span><br><span class="line">    &#125;                                                                                          </span><br><span class="line">    childLeft += itemWidth + mHGap;                                                            </span><br><span class="line">    <span class="keyword">if</span> ((i + <span class="number">1</span>) % mColumnCount == <span class="number">0</span>) &#123;                                                         </span><br><span class="line">        childTop += itemHeight + mVGap;                                                        </span><br><span class="line">        childLeft = getPaddingLeft();                                                          </span><br><span class="line">    &#125;                                                                                          </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来是 Item 的拖拽移动处理，同样的我们可以通过手动处理 <code>onTouchEvent()</code> 和 <code>onInterceptTouchEvent()</code> 去实现，为了节约时间，我们使用 <code>ViewDragHelper</code> 去实现，关于 <code>ViewDragHelper</code> 的使用，这里我们就不去细讲，可以参考这篇<a href="https://blog.csdn.net/lmj623565791/article/details/46858663" target="_blank" rel="noopener">博客</a>，关于触发拖动操作，这里我们使用长按开始拖动，同样的，长按等手势判定，我们交给  <code>GestureDetector</code> 去处理，下面是两个类的集成代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>                                                                   </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onInterceptTouchEvent</span><span class="params">(MotionEvent ev)</span> </span>&#123;                      </span><br><span class="line">    <span class="keyword">boolean</span> intercept = mDragHelper.shouldInterceptTouchEvent(ev);          </span><br><span class="line">    <span class="keyword">if</span> (mDragHelper.getViewDragState() == ViewDragHelper.STATE_DRAGGING) &#123;  </span><br><span class="line">        <span class="keyword">if</span> (getParent() != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 这里需要禁止父视图拦截事件，防止父视图为滚动控件，发生滑动冲突</span></span><br><span class="line">            getParent().requestDisallowInterceptTouchEvent(<span class="keyword">true</span>);           </span><br><span class="line">        &#125;                                                                   </span><br><span class="line">    &#125;                                                                       </span><br><span class="line">    <span class="keyword">return</span> intercept;                                                       </span><br><span class="line">&#125;                                                                           </span><br><span class="line">                                                                            </span><br><span class="line"><span class="meta">@SuppressLint</span>(<span class="string">"ClickableViewAccessibility"</span>)                                 </span><br><span class="line"><span class="meta">@Override</span>                                                                   </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123;                            </span><br><span class="line">    mDragHelper.processTouchEvent(event);                                   </span><br><span class="line">    <span class="keyword">if</span> (mDragHelper.getViewDragState() == ViewDragHelper.STATE_DRAGGING) &#123;  </span><br><span class="line">        <span class="keyword">if</span> (getParent() != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 这里需要禁止父视图拦截事件，防止父视图为滚动控件，发生滑动冲突</span></span><br><span class="line">            getParent().requestDisallowInterceptTouchEvent(<span class="keyword">true</span>);           </span><br><span class="line">        &#125;                                                                   </span><br><span class="line">    &#125;                                                                       </span><br><span class="line">    <span class="comment">// 手势判断                                                                 </span></span><br><span class="line">    mGestureDetector.onTouchEvent(event);                                   </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;                                                            </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时候，我们的长按开始拖拽已经实现了，接下来，当我们拖拽时，如何让目标位置的子视图移动出位置呢？在上面，我们已经提到了思路，即将部分视图进行整体移动去实现。我们通过代码来看下实现思路：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>                                                                                                                                          </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onViewPositionChanged</span><span class="params">(@NonNull View changedView, <span class="keyword">int</span> left, <span class="keyword">int</span> top, <span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 当子视图拖拽移动时，ViewDragHelper 会回调这个方法返回新的位置</span></span><br><span class="line">    <span class="keyword">super</span>.onViewPositionChanged(changedView, left, top, dx, dy);                                                                                   </span><br><span class="line">    Log.d(TAG,<span class="string">"dx: "</span> + dx + <span class="string">"，dy: "</span> + dy);</span><br><span class="line">    <span class="comment">// findFirstContactView 拖拽到新的目标位置</span></span><br><span class="line">    <span class="keyword">int</span> targetPosition = findFirstContactView(left, top, left + changedView.getWidth(), top + changedView.getHeight(), changedView);               </span><br><span class="line">    <span class="keyword">int</span> sourcePosition = indexOfChild(changedView);                                                                                                </span><br><span class="line">    <span class="keyword">if</span> (targetPosition == -<span class="number">1</span> || sourcePosition == targetPosition) &#123;                                                                                </span><br><span class="line">        <span class="keyword">if</span> (targetPosition == -<span class="number">1</span>) &#123;                                                                                                                </span><br><span class="line">            Log.d(TAG, <span class="string">"targetPosition == -1"</span>);                                                                                                    </span><br><span class="line">        &#125;                                                                                                                                          </span><br><span class="line">        <span class="keyword">if</span> (sourcePosition == targetPosition) &#123;                                                                                                    </span><br><span class="line">            Log.w(TAG, <span class="string">"sourcePosition == targetPosition"</span>);                                                                                        </span><br><span class="line">        &#125;                                                                                                                                          </span><br><span class="line">        <span class="keyword">return</span>;                                                                                                                                    </span><br><span class="line">    &#125;                                                                                                                                              </span><br><span class="line">    <span class="keyword">if</span> (mAnimatorCountDown.get() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 上一次整体移动的动画还没结束</span></span><br><span class="line">        <span class="keyword">return</span>;                                                                                                                                    </span><br><span class="line">    &#125;                                                                                                                                              </span><br><span class="line">    Log.d(TAG, <span class="string">"sourcePositon: "</span> + sourcePosition + <span class="string">" ,targetPosition: "</span> + targetPosition);                                                        </span><br><span class="line">    <span class="comment">// 移动位置                                                                                                                                        </span></span><br><span class="line">    <span class="keyword">if</span> (targetPosition &lt; sourcePosition &amp;&amp; (dx &lt; <span class="number">0</span> || dy &lt; <span class="number">0</span>)) &#123;</span><br><span class="line">        <span class="comment">// 当前目标位置小于拖拽视图的原位置，同时手势为向左或者向上</span></span><br><span class="line">        mTargetPosition = targetPosition;                                                                                                          </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = targetPosition; i &lt; sourcePosition; i++) &#123;                                                                                    </span><br><span class="line">            moveAnimation(getChildAt(i), mLayoutPositionArray.get(i + <span class="number">1</span>), i + <span class="number">1</span>, <span class="keyword">null</span>);                                                            </span><br><span class="line">        &#125;                                                                                                                                          </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (targetPosition &gt; sourcePosition &amp;&amp; (dx &gt; <span class="number">0</span> || dy &gt; <span class="number">0</span>)) &#123;</span><br><span class="line">        <span class="comment">// 当前目标位置大于拖拽视图的原位置，同时手势为向右或者向下</span></span><br><span class="line">        mTargetPosition = targetPosition;                                                                                                          </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = sourcePosition + <span class="number">1</span>; i &lt; (targetPosition + <span class="number">1</span>); i++) &#123;                                                                          </span><br><span class="line">            moveAnimation(getChildAt(i), mLayoutPositionArray.get(i - <span class="number">1</span>), i - <span class="number">1</span>, <span class="keyword">null</span>);                                                            </span><br><span class="line">        &#125;                                                                                                                                          </span><br><span class="line">    &#125;                                                                                                                                              </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过上面的代码和注释，实现的思路应该很清晰了。接下来，我们再看下 <code>findFirstContactView</code> 这个方法，这是获取拖拽视图移动目标位置，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">findFirstContactView</span><span class="params">(<span class="keyword">int</span> left, <span class="keyword">int</span> top, <span class="keyword">int</span> right, <span class="keyword">int</span> bottom, View excludeView)</span> </span>&#123;                          </span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> childCount = getChildCount();                                                                             </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = childCount - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        <span class="comment">// 这里我们遍历子视图</span></span><br><span class="line">        <span class="keyword">final</span> View child = getChildAt(i);                                                                               </span><br><span class="line">        <span class="keyword">if</span> (child == excludeView) &#123;                                                                                     </span><br><span class="line">            <span class="keyword">continue</span>;                                                                                                   </span><br><span class="line">        &#125;                                                                                                               </span><br><span class="line">        <span class="keyword">if</span> (left &lt; child.getRight() &amp;&amp; child.getLeft() &lt; right &amp;&amp; top &lt; child.getBottom() &amp;&amp; child.getTop() &lt; bottom) &#123; </span><br><span class="line">            <span class="comment">// 是否存在相交的子视图                                                                                                       </span></span><br><span class="line">            <span class="keyword">int</span> calculateLeft = left;                                                                                   </span><br><span class="line">            <span class="keyword">int</span> calculateRight = right;                                                                                 </span><br><span class="line">            <span class="keyword">int</span> caluculateTop = top;                                                                                    </span><br><span class="line">            <span class="keyword">int</span> caluculateBottom = bottom;                                                                              </span><br><span class="line">            <span class="keyword">if</span> (child.getLeft() &gt; calculateLeft)&#123;                                                                       </span><br><span class="line">                calculateLeft = child.getLeft();                                                                        </span><br><span class="line">            &#125;                                                                                                           </span><br><span class="line">            <span class="keyword">if</span> (child.getRight() &lt; calculateRight)&#123;                                                                     </span><br><span class="line">                calculateRight = child.getRight();                                                                      </span><br><span class="line">            &#125;                                                                                                           </span><br><span class="line">            <span class="keyword">if</span> (child.getTop() &gt; caluculateTop)&#123;                                                                        </span><br><span class="line">                caluculateTop = child.getTop();                                                                         </span><br><span class="line">            &#125;                                                                                                           </span><br><span class="line">            <span class="keyword">if</span> (child.getBottom() &lt; caluculateBottom)&#123;                                                                  </span><br><span class="line">                caluculateBottom = child.getBottom();                                                                   </span><br><span class="line">            &#125;                                                                                                           </span><br><span class="line">            <span class="keyword">int</span> unionArea = (calculateRight - calculateLeft) * (caluculateBottom - caluculateTop);                      </span><br><span class="line">            <span class="keyword">if</span> (unionArea &gt; (child.getWidth() * child.getHeight() * <span class="number">0.5f</span>))&#123;</span><br><span class="line">                <span class="comment">// 这里我们再通过 相交面积是否大于视图面积的一半 去判定</span></span><br><span class="line">                <span class="comment">// 这是为了不那么敏感</span></span><br><span class="line">                <span class="keyword">return</span> i;                                                                                               </span><br><span class="line">            &#125;                                                                                                           </span><br><span class="line">        &#125;                                                                                                               </span><br><span class="line">    &#125;                                                                                                                   </span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;                                                                                                          </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过上面的步骤，我们已经实现了百分之八十的代码，这时，我们还需要考虑几个问题。</p>
+<ul>
+<li><p>位置交换后，我们通过 <code>indexOfChild</code> 或 <code>getChildAt</code> 得到的数据还是原来的，即我们通过调用 <code>addView</code> 添加的顺序。这里我们自己去缓存一个子视图列表，重写上面两个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>                             </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">indexOfChild</span><span class="params">(View child)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">return</span> mChildViews.indexOf(child);</span><br><span class="line">&#125;                                     </span><br><span class="line">                                      </span><br><span class="line"><span class="meta">@Override</span>                             </span><br><span class="line"><span class="function"><span class="keyword">public</span> View <span class="title">getChildAt</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;   </span><br><span class="line">    <span class="keyword">return</span> mChildViews.get(index);    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时在视图移动时，去修改这个列表：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mChildViews.set(targetPosition, targetView);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>绘制顺序问题，ViewGroup 的默认绘制顺序是根据 <code>addView</code>  的调用顺序，这样会带来一个问题，当你拖拽到比当前拖拽视图更晚添加的子视图时，会显示在这个视图下面，同样我们可以通过 <code>setChildrenDrawingOrderEnabled</code> 和 </p>
+<p><code>getChildDrawingOrder</code> 去自定义绘制顺序，这里为了方便，我们通过设置拖拽视图的 Z 值来实现同样的效果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ViewCompat.setZ(capturedChild, <span class="number">100f</span>);     </span><br><span class="line">postInvalidate();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>最后我们顺便把 Item 的点击事件实现下。。。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>                                                                                 </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onSingleTapConfirmed</span><span class="params">(MotionEvent e)</span> </span>&#123;                                      </span><br><span class="line">    <span class="keyword">final</span> View targetView = mDragHelper.findTopChildUnder((<span class="keyword">int</span>) e.getX(), (<span class="keyword">int</span>) e.getY());</span><br><span class="line">    <span class="keyword">if</span> (targetView == <span class="keyword">null</span>) &#123;                                                             </span><br><span class="line">        <span class="keyword">return</span> performClick();                                                            </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mGridItemClickListener != <span class="keyword">null</span>) &#123;                                          </span><br><span class="line">        mGridItemClickListener.onClickItem(indexOfChild(targetView), targetView);         </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;                                                                      </span><br><span class="line">    &#125;                                                                                     </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;                                                                         </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2018-07-19T03:47:38.876Z" itemprop="dateUpdated">2018-07-19 11:47:38</time>
+</span><br>
+
+
+        
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指教，感激不尽！
+        
+    </div>
+    
+    <footer>
+        <a href="https://linxiaotao.github.io">
+            <img src="/img/avatar.jpeg" alt="Leo">
+            Leo
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/&title=《可拖拽的网格布局》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/&title=《可拖拽的网格布局》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《可拖拽的网格布局》 — My World&url=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/05/21/Gradle插件-提高篇/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Gradle插件-提高篇</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Leo &copy; 2015 - 2018</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/&title=《可拖拽的网格布局》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/&title=《可拖拽的网格布局》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《可拖拽的网格布局》 — My World&url=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2018/07/19/可拖拽的网格布局/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
