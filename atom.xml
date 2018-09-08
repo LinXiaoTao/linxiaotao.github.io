@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://linxiaotao.github.io/"/>
-  <updated>2018-09-08T07:25:13.568Z</updated>
+  <updated>2018-09-08T07:27:50.515Z</updated>
   <id>https://linxiaotao.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>灵活使用位运算符</title>
+    <link href="https://linxiaotao.github.io/2018/09/08/%E7%81%B5%E6%B4%BB%E4%BD%BF%E7%94%A8%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/"/>
+    <id>https://linxiaotao.github.io/2018/09/08/灵活使用位运算符/</id>
+    <published>2018-09-08T07:26:00.000Z</published>
+    <updated>2018-09-08T07:27:50.515Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="复习"><a href="#复习" class="headerlink" title="复习"></a>复习</h3><h4 id="移位运算"><a href="#移位运算" class="headerlink" title="移位运算"></a>移位运算</h4><ul><li>“&lt;&lt;” 左移：右边空出的位上补 0，相当于乘以 2</li><li>“&gt;&gt;” 右移：左边空出的位上，如果正数，则补 0，否则，可能补 0 或者 1，取决于计算机系统。正数情况下，相当于除以 2</li><li>“&gt;&gt;&gt;” 无符号右移：左边空出的位上一律补上 0，相当于除以 2</li></ul><h4 id="位运算符"><a href="#位运算符" class="headerlink" title="位运算符"></a>位运算符</h4><ul><li>&amp; 与运算符：两个操作数相同位上同时为 1，结果数相同位上才为 1</li><li>| 或运算符：两个操作数相同位上只要有一个为 1，结果数相同位上就为 1</li><li>^ 异或运算符：两个操作数相同位上不相同，结果数相同位上才为 1</li></ul><h3 id="灵活使用"><a href="#灵活使用" class="headerlink" title="灵活使用"></a>灵活使用</h3><h4 id="状态管理"><a href="#状态管理" class="headerlink" title="状态管理"></a>状态管理</h4><ol><li><p>清除特定位（即设置为 0）</p><p>mask 特定位为 0，其他位为 1：s = s &amp; mask</p></li><li><p>获取指定位</p><p>mask 特定位为 1，其他位为 0：r = s &amp; mask</p></li><li><p>设置特定位（即设置为 1）</p><p>mask 特定位为 1，其他位为 0：s = s | mask</p></li><li><p>特定位取反</p><p>mask 特定位置为 1,其他位为 0：s = s ^ mask</p></li></ol><h4 id="交换变量"><a href="#交换变量" class="headerlink" title="交换变量"></a>交换变量</h4><p>a ^= b;</p><p>b ^= a;</p><p>a ^= b;</p><h4 id="判断奇偶"><a href="#判断奇偶" class="headerlink" title="判断奇偶"></a>判断奇偶</h4><p>a &amp; 1 = 0 偶数</p><p>a &amp; 1 = 1 奇数</p><h4 id="取模"><a href="#取模" class="headerlink" title="取模"></a>取模</h4><p>a % (2^n) = a &amp; (2^n -1);</p><p>2^n - 1 刚好是最高位 1 变成 0，剩下的低位 0 变成 1</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;复习&quot;&gt;&lt;a href=&quot;#复习&quot; class=&quot;headerlink&quot; title=&quot;复习&quot;&gt;&lt;/a&gt;复习&lt;/h3&gt;&lt;h4 id=&quot;移位运算&quot;&gt;&lt;a href=&quot;#移位运算&quot; class=&quot;headerlink&quot; title=&quot;移位运算&quot;&gt;&lt;/a&gt;移位运算&lt;/h
+      
+    
+    </summary>
+    
+      <category term="Java" scheme="https://linxiaotao.github.io/categories/Java/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>复习</title>
