@@ -1030,5 +1030,5 @@ public void callActivityOnRestart() {
 
 ### 时序图
 
-![Android启动流程](http://oy017242u.bkt.clouddn.com/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png)
+![Android启动流程](http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B.png?Expires=1541944888&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=%2B2V3%2F6ISiMmu0ySirN3f1%2Br2RNs%3D)
 

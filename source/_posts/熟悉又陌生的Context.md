@@ -555,9 +555,9 @@ private void addEditText(@Nullable Context context) {
 <color name="colorAccent">#FF4081</color>
 ```
 
-![ActivityContextEditText](http://oy017242u.bkt.clouddn.com/ActivityContextEditText.png?time=123)
+![ActivityContextEditText](http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/ActivityContextEditText.png?Expires=1541945464&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=8zpC%2FxinAs%2FzZv4Ir2QH%2FYenUlU%3D)
 
-![ApplicationContextEditText](http://oy017242u.bkt.clouddn.com/ApplicationContextEditText.png)
+![ApplicationContextEditText](http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/ApplicationContextEditText.png?Expires=1541945481&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=UCqpz5R%2BOaa4ImfXjkz5K%2BXg9sM%3D)
 
 我们发现使用 Activity Context 的 EditText 使用了 theme 中的配置，回顾我们最开始的 Context 类图，Activity 是继承于 ContextThemeWrapper，而 Application 则是继承于 ContextWrapper，那我们是不是可以猜测只有 ContextThemeWrapper 的继承类才会读取 theme 中配置信息呢？我们可以看下 ContextThemeWrapper 中跟 theme 相关的方法：
 
