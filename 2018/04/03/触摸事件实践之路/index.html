@@ -28,14 +28,14 @@
 <meta property="og:site_name" content="My World">
 <meta property="og:description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123">
+<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/TouchEvent.png?Expires=1541945544&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=kzIw9u29ApGkQsZoA64CUQFfEuQ%3D">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim">
-<meta property="og:image" content="http://oy017242u.bkt.clouddn.com/more.gif">
-<meta property="og:updated_time" content="2018-04-11T14:05:30.096Z">
+<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/more.gif?Expires=1541945573&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=PgAh5gWynrW4xduggsk1kN7iERY%3D">
+<meta property="og:updated_time" content="2018-11-11T13:13:22.877Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="触摸事件实践之路">
 <meta name="twitter:description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
-<meta name="twitter:image" content="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123">
+<meta name="twitter:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/TouchEvent.png?Expires=1541945544&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=kzIw9u29ApGkQsZoA64CUQFfEuQ%3D">
     
         <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
     
@@ -194,7 +194,7 @@
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://oy017242u.bkt.clouddn.com/TouchEvent.png?time=123" alt="TouchEvent" title="">
+                    <img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/TouchEvent.png?Expires=1541945544&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=kzIw9u29ApGkQsZoA64CUQFfEuQ%3D" alt="TouchEvent" title="">
                 </div>
                 <div class="image-caption">TouchEvent</div>
             </figure>
@@ -257,7 +257,7 @@
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://oy017242u.bkt.clouddn.com/more.gif" alt="TapeView" title="">
+                    <img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/more.gif?Expires=1541945573&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=PgAh5gWynrW4xduggsk1kN7iERY%3D" alt="TapeView" title="">
                 </div>
                 <div class="image-caption">TapeView</div>
             </figure>
@@ -282,7 +282,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-04-11T14:05:30.096Z" itemprop="dateUpdated">2018-04-11 22:05:30</time>
+    最后更新时间：<time datetime="2018-11-11T13:13:22.877Z" itemprop="dateUpdated">2018-11-11 21:13:22</time>
 </span><br>
 
 
