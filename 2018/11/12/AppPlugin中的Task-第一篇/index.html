@@ -14,26 +14,26 @@
     
     
     
-    <title>No title | My World</title>
+    <title>AppPlugin中的Task-第一篇 | My World</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     <meta name="theme-color" content="#3F51B5">
     
     
     <meta name="keywords" content="">
-    <meta name="description" content="title: AppPlugin中的Task-第一篇date: 2018-11-12 10:26:03categories: Gradletags: 前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.ap">
+    <meta name="description" content="前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.application 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 tas">
 <meta property="og:type" content="article">
-<meta property="og:title" content="No title">
+<meta property="og:title" content="AppPlugin中的Task-第一篇">
 <meta property="og:url" content="https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/index.html">
 <meta property="og:site_name" content="My World">
-<meta property="og:description" content="title: AppPlugin中的Task-第一篇date: 2018-11-12 10:26:03categories: Gradletags: 前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.ap">
+<meta property="og:description" content="前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.application 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 tas">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?Expires=1542103872&OSSAccessKeyId=TMP.AQENpUUcTLcomzSiGWl0-CmNbeXq6V6iIRS0lzkhIe9Umup34ZwsjSUaROrlAAAwLAIUaGSzQeUW2zznFQDX1SE8_VvGY90CFC4lq8IRElnZnZmCHXSTshTykCte&Signature=7P%2BFcNO80TIg%2FB%2F2gPAq4MiCcL8%3D">
-<meta property="og:updated_time" content="2018-11-16T09:50:28.738Z">
+<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?Expires=1542365731&OSSAccessKeyId=TMP.AQGrlWPFfXZCYLmFBKE90_r8zPYeeY71CcYxTmuc83TvOAK2EZanlDQu_N0OMC4CFQCEwFEpQ9GOLHnzdN8KuFrQ3wjI2QIVALlHHDCES3x4JttIg1oa4JRd1s_8&Signature=rC7JkuLytj7MPbPbdQfh8YHWOhs%3D">
+<meta property="og:updated_time" content="2018-11-16T09:56:11.852Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="No title">
-<meta name="twitter:description" content="title: AppPlugin中的Task-第一篇date: 2018-11-12 10:26:03categories: Gradletags: 前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.ap">
-<meta name="twitter:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?Expires=1542103872&OSSAccessKeyId=TMP.AQENpUUcTLcomzSiGWl0-CmNbeXq6V6iIRS0lzkhIe9Umup34ZwsjSUaROrlAAAwLAIUaGSzQeUW2zznFQDX1SE8_VvGY90CFC4lq8IRElnZnZmCHXSTshTykCte&Signature=7P%2BFcNO80TIg%2FB%2F2gPAq4MiCcL8%3D">
+<meta name="twitter:title" content="AppPlugin中的Task-第一篇">
+<meta name="twitter:description" content="前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.application 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 tas">
+<meta name="twitter:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?Expires=1542365731&OSSAccessKeyId=TMP.AQGrlWPFfXZCYLmFBKE90_r8zPYeeY71CcYxTmuc83TvOAK2EZanlDQu_N0OMC4CFQCEwFEpQ9GOLHnzdN8KuFrQ3wjI2QIVALlHHDCES3x4JttIg1oa4JRd1s_8&Signature=rC7JkuLytj7MPbPbdQfh8YHWOhs%3D">
     
         <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
     
@@ -114,7 +114,7 @@
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
           <i class="icon icon-lg icon-navicon"></i>
         </a>
-        <div class="flex-col header-title ellipsis">No title</div>
+        <div class="flex-col header-title ellipsis">AppPlugin中的Task-第一篇</div>
         
         <div class="search-wrap" id="search-wrap">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
@@ -136,13 +136,15 @@
 <header class="content-header post-header">
 
     <div class="container fade-scale">
-        <h1 class="title">No title</h1>
+        <h1 class="title">AppPlugin中的Task-第一篇</h1>
         <h5 class="subtitle">
             
-                <time datetime="2018-11-12T02:26:03.500Z" itemprop="datePublished" class="page-time">
+                <time datetime="2018-11-12T02:26:03.000Z" itemprop="datePublished" class="page-time">
   2018-11-12
 </time>
 
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Gradle/">Gradle</a></li></ul>
 
             
         </h5>
@@ -168,11 +170,13 @@
   class="post-article article-type-post fade" itemprop="blogPost">
 
     <div class="post-card">
-        <h1 class="post-card-title">No title</h1>
+        <h1 class="post-card-title">AppPlugin中的Task-第一篇</h1>
         <div class="post-meta">
-            <time class="post-time" title="2018-11-12 10:26:03" datetime="2018-11-12T02:26:03.500Z"  itemprop="datePublished">2018-11-12</time>
+            <time class="post-time" title="2018-11-12 10:26:03" datetime="2018-11-12T02:26:03.000Z"  itemprop="datePublished">2018-11-12</time>
 
             
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Gradle/">Gradle</a></li></ul>
+
 
 
             
@@ -183,8 +187,7 @@
 
         </div>
         <div class="post-content" id="post-content" itemprop="postContent">
-            <p>title: AppPlugin中的Task-第一篇<br>date: 2018-11-12 10:26:03<br>categories: Gradle<br>tags:</p>
-<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用<code>com.android.application</code> 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 task 组成，task 可以相互依赖，比如最基本的 <code>Task.dependsOn()</code>，所以理解 Android 编译过程就是理解各个 task 的作用。</p>
+            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用<code>com.android.application</code> 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 task 组成，task 可以相互依赖，比如最基本的 <code>Task.dependsOn()</code>，所以理解 Android 编译过程就是理解各个 task 的作用。</p>
 <blockquote>
 <p>本文涉及的源码：</p>
 <ul>
@@ -206,7 +209,7 @@
 <p>assemble task 用于将源文件编译为最终产物，比如 jar、aar、apk 等，在 <code>createTasksForVariantData()</code> 中会生成对应 BuildType 的 assemble task，比如 <code>assembleDebug</code> 和 <code>assembleRelease</code> ，接着设置 <code>assemble</code> 依赖于这两个 task，最后根据 variant 生成对应的 assemble task，比如 <code>assembleTestDebug</code></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">createAssembleTaskForVariantData</span><span class="params">(<span class="keyword">final</span> BaseVariantData variantData)</span> </span>&#123;                      </span><br><span class="line">    <span class="keyword">final</span> VariantScope variantScope = variantData.getScope();                                           </span><br><span class="line">    <span class="keyword">if</span> (variantData.getType().isForTesting()) &#123;                                                         </span><br><span class="line">        variantScope.setAssembleTask(taskManager.createAssembleTask(variantData));                      </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                                                                                            </span><br><span class="line">        BuildTypeData buildTypeData =                                                                   </span><br><span class="line">                buildTypes.get(variantData.getVariantConfiguration().getBuildType().getName());         </span><br><span class="line">                                                                                                        </span><br><span class="line">        Preconditions.checkNotNull(buildTypeData.getAssembleTask());                                    </span><br><span class="line">                                                                                                        </span><br><span class="line">        <span class="keyword">if</span> (productFlavors.isEmpty()) &#123;                                                                 </span><br><span class="line">            <span class="comment">// Reuse assemble task for build type if there is no product flavor.                        </span></span><br><span class="line">            variantScope.setAssembleTask(buildTypeData.getAssembleTask());                              </span><br><span class="line">                                                                                                        </span><br><span class="line">            variantData.addTask(                                                                        </span><br><span class="line">                    TaskContainer.TaskKind.ASSEMBLE, buildTypeData.getAssembleTask());                  </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 根据 variant 创建对应的 assemble task，比如 assembleTesDebug</span></span><br><span class="line">            variantScope.setAssembleTask(taskManager.createAssembleTask(variantData));                  </span><br><span class="line">                                                                                                        </span><br><span class="line">            <span class="comment">// setup the task dependencies                                                              </span></span><br><span class="line">            <span class="comment">// build type</span></span><br><span class="line">            <span class="comment">// build type assemble task 依赖于 具体的 assemble task</span></span><br><span class="line">            buildTypeData.getAssembleTask().dependsOn(variantScope.getAssembleTask());                  </span><br><span class="line">                                                                                                        </span><br><span class="line">            <span class="comment">// each flavor                                                                              </span></span><br><span class="line">            GradleVariantConfiguration variantConfig = variantData.getVariantConfiguration();           </span><br><span class="line">            <span class="keyword">for</span> (CoreProductFlavor flavor : variantConfig.getProductFlavors()) &#123;                        </span><br><span class="line">                ProductFlavorData productFlavorData = productFlavors.get(flavor.getName());             </span><br><span class="line">                                                                                                        </span><br><span class="line">                DefaultTask flavorAssembleTask = productFlavorData.getAssembleTask();                   </span><br><span class="line">                <span class="keyword">if</span> (flavorAssembleTask == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 创建 flavor 的 assemble task</span></span><br><span class="line">                    <span class="comment">// 比如 assembleTes</span></span><br><span class="line">                    flavorAssembleTask = taskManager.createAssembleTask(productFlavorData);             </span><br><span class="line">                    productFlavorData.setAssembleTask(flavorAssembleTask);                              </span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// flavor assemble task 依赖于具体的 assemble task</span></span><br><span class="line">                flavorAssembleTask.dependsOn(variantScope.getAssembleTask());                           </span><br><span class="line">            &#125;                                                                                           </span><br><span class="line">                                                                                                        </span><br><span class="line">            <span class="comment">// assembleTask for this flavor(dimension), created on demand if needed.                    </span></span><br><span class="line">            <span class="keyword">if</span> (variantConfig.getProductFlavors().size() &gt; <span class="number">1</span>) &#123;                                         </span><br><span class="line">                <span class="keyword">final</span> String name = StringHelper.capitalize(variantConfig.getFlavorName());             </span><br><span class="line">                <span class="keyword">final</span> String variantAssembleTaskName =                                                  </span><br><span class="line">                        StringHelper.appendCapitalized(<span class="string">"assemble"</span>, name);                               </span><br><span class="line">                <span class="keyword">if</span> (!taskManager.getTaskFactory().containsKey(variantAssembleTaskName)) &#123;               </span><br><span class="line">                    Task task = taskManager.getTaskFactory().create(variantAssembleTaskName);           </span><br><span class="line">                    task.setDescription(<span class="string">"Assembles all builds for flavor combination: "</span> + name);        </span><br><span class="line">                    task.setGroup(<span class="string">"Build"</span>);                                                             </span><br><span class="line">                    task.dependsOn(variantScope.getAssembleTask().getName());                           </span><br><span class="line">                &#125;                                                                                       </span><br><span class="line">                taskManager                                                                             </span><br><span class="line">                        .getTaskFactory()                                                               </span><br><span class="line">                        .configure(                                                                     </span><br><span class="line">                                <span class="string">"assemble"</span>, task1 -&gt; task1.dependsOn(variantAssembleTaskName));         </span><br><span class="line">            &#125;                                                                                           </span><br><span class="line">        &#125;                                                                                               </span><br><span class="line">    &#125;                                                                                                   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面会生成包括 BuildType、Flavor、BuildType + Flavor + VariantType 的 assemble task，同时 task 之间存在依赖关系：<code>assemble &gt; buildType/flavor &gt; 具体</code> </p>
-<p><img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?Expires=1542103872&amp;OSSAccessKeyId=TMP.AQENpUUcTLcomzSiGWl0-CmNbeXq6V6iIRS0lzkhIe9Umup34ZwsjSUaROrlAAAwLAIUaGSzQeUW2zznFQDX1SE8_VvGY90CFC4lq8IRElnZnZmCHXSTshTykCte&amp;Signature=7P%2BFcNO80TIg%2FB%2F2gPAq4MiCcL8%3D" alt="assemble-task-demo"></p>
+<p><img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?Expires=1542365731&amp;OSSAccessKeyId=TMP.AQGrlWPFfXZCYLmFBKE90_r8zPYeeY71CcYxTmuc83TvOAK2EZanlDQu_N0OMC4CFQCEwFEpQ9GOLHnzdN8KuFrQ3wjI2QIVALlHHDCES3x4JttIg1oa4JRd1s_8&amp;Signature=rC7JkuLytj7MPbPbdQfh8YHWOhs%3D" alt="assemble-task-demo"></p>
 <p>除了上面所说的 assemble task，还将生成以下 task：</p>
 <table>
 <thead>
@@ -441,7 +444,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-11-16T09:50:28.738Z" itemprop="dateUpdated">2018-11-16 17:50:28</time>
+    最后更新时间：<time datetime="2018-11-16T09:56:11.852Z" itemprop="dateUpdated">2018-11-16 17:56:11</time>
 </span><br>
 
 
@@ -471,7 +474,7 @@
 <div class="page-share" id="pageShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&title=《No title》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&title=《AppPlugin中的Task-第一篇》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -481,7 +484,7 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&title=《No title》 — My World&source=linxiaotao's blog" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&title=《AppPlugin中的Task-第一篇》 — My World&source=linxiaotao's blog" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
@@ -491,7 +494,7 @@
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《No title》 — My World&url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&via=https://linxiaotao.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《AppPlugin中的Task-第一篇》 — My World&url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&via=https://linxiaotao.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
@@ -594,7 +597,7 @@
 <div class="global-share" id="globalShare">
     <ul class="reset share-icons">
       <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&title=《No title》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&title=《AppPlugin中的Task-第一篇》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
           <i class="icon icon-weibo"></i>
         </a>
       </li>
@@ -604,7 +607,7 @@
         </a>
       </li>
       <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&title=《No title》 — My World&source=linxiaotao's blog" data-title=" QQ">
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&title=《AppPlugin中的Task-第一篇》 — My World&source=linxiaotao's blog" data-title=" QQ">
           <i class="icon icon-qq"></i>
         </a>
       </li>
@@ -614,7 +617,7 @@
         </a>
       </li>
       <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《No title》 — My World&url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&via=https://linxiaotao.github.io" data-title=" Twitter">
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《AppPlugin中的Task-第一篇》 — My World&url=https://linxiaotao.github.io/2018/11/12/AppPlugin中的Task-第一篇/&via=https://linxiaotao.github.io" data-title=" Twitter">
           <i class="icon icon-twitter"></i>
         </a>
       </li>
