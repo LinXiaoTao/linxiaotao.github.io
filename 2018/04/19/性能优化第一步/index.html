@@ -28,20 +28,20 @@
 <meta property="og:site_name" content="My World">
 <meta property="og:description" content="感谢cpu-profiler 前言对于有一定 Android 应用开发经验的同学来说，性能优化是避不开的话题，一般来说，Android 上我们常说的性能优化包括，内存优化和界面优化，当然还有电量优化、网络优化等等。性能优化知识的学习是一个长期的过程，也不可能通过一两篇文章就能说的清楚，需要在具有相关的理论知识的前提下，同时在日常开发中加以实践，才能在这方面的工作中得心应手。 同时作者也并不是这方面">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/source.gif?Expires=1541945222&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=QMTZDKRy0nDDvcYw30Ju2eK%2FlVQ%3D">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/low.gif?Expires=1541945250&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=zv5jQk6wLVzbuvYyAs74%2BndGmlM%3D">
-<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cpu_profiler_L2-2X.png?Expires=1541945698&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=y67YXAGLk1VZPyFjtbyMYoLOeUA%3D">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cpu_profiler_L3-2X.png?Expires=1541945279&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=m8ANktyQeTGVKjgkIWgqN0ZIq1g%3D">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/call-chart.png?Expires=1541945296&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=Z9qxqhcdAcvAJsmDzfWHLYihoYo%3D">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/flame-chart.png?Expires=1541945318&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=G%2FjjsSDpVC%2FAV1GKWDNCfEAU6bo%3D">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/top-down.png?Expires=1541945338&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=b%2BdhBQ2hjvhqG%2Bc8Ehgommipyf8%3D">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/bottom-up.png?Expires=1541945357&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=tu0ojS1tMk7keS2Pes9n3Iyirdw%3D">
-<meta property="og:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/max-self-method.png?Expires=1541945375&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=%2FXNYLW2e3ppwhm%2B2gAyA%2B6NXr9Q%3D">
-<meta property="og:updated_time" content="2018-11-11T13:15:57.510Z">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/source.gif?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/low.gif?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cpu_profiler_L2-2X.png?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cpu_profiler_L3-2X.png?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/call-chart.png?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/flame-chart.png?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/top-down.png?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/bottom-up.png?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/max-self-method.png?x-oss-process=style/doc-img">
+<meta property="og:updated_time" content="2018-11-16T10:20:49.371Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="性能优化第一步">
 <meta name="twitter:description" content="感谢cpu-profiler 前言对于有一定 Android 应用开发经验的同学来说，性能优化是避不开的话题，一般来说，Android 上我们常说的性能优化包括，内存优化和界面优化，当然还有电量优化、网络优化等等。性能优化知识的学习是一个长期的过程，也不可能通过一两篇文章就能说的清楚，需要在具有相关的理论知识的前提下，同时在日常开发中加以实践，才能在这方面的工作中得心应手。 同时作者也并不是这方面">
-<meta name="twitter:image" content="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/source.gif?Expires=1541945222&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=QMTZDKRy0nDDvcYw30Ju2eK%2FlVQ%3D">
+<meta name="twitter:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/source.gif?x-oss-process=style/doc-img">
     
         <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
     
@@ -204,14 +204,14 @@
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/source.gif?Expires=1541945222&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=QMTZDKRy0nDDvcYw30Ju2eK%2FlVQ%3D" alt="正常" title="">
+                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/source.gif?x-oss-process=style/doc-img" alt="正常" title="">
                 </div>
                 <div class="image-caption">正常</div>
             </figure>
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/low.gif?Expires=1541945250&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=zv5jQk6wLVzbuvYyAs74%2BndGmlM%3D" alt="问题代码" title="">
+                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/low.gif?x-oss-process=style/doc-img" alt="问题代码" title="">
                 </div>
                 <div class="image-caption">问题代码</div>
             </figure>
@@ -221,7 +221,7 @@
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cpu_profiler_L2-2X.png?Expires=1541945698&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=y67YXAGLk1VZPyFjtbyMYoLOeUA%3D" alt="cpu-profiler" title="">
+                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cpu_profiler_L2-2X.png?x-oss-process=style/doc-img" alt="cpu-profiler" title="">
                 </div>
                 <div class="image-caption">cpu-profiler</div>
             </figure>
@@ -235,7 +235,7 @@
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cpu_profiler_L3-2X.png?Expires=1541945279&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=m8ANktyQeTGVKjgkIWgqN0ZIq1g%3D" alt="method-traces" title="">
+                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cpu_profiler_L3-2X.png?x-oss-process=style/doc-img" alt="method-traces" title="">
                 </div>
                 <div class="image-caption">method-traces</div>
             </figure>
@@ -256,24 +256,24 @@
 <blockquote>
 <p>这里我们的父函数指的是，调用其他函数的函数，而被调用的函数称为该父函数的子函数。</p>
 </blockquote>
-<p><img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/call-chart.png?Expires=1541945296&amp;OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&amp;Signature=Z9qxqhcdAcvAJsmDzfWHLYihoYo%3D" alt="call-chart"></p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/call-chart.png?x-oss-process=style/doc-img" alt="call-chart"></p>
 <p>可以看到，应用的执行开始于 <code>ZygoteInit.main()</code> 其中系统 API 的调用表示为橙色，第三方 API 包括 Java 的调用表示为蓝色，应用自有函数的调用表示为绿色。</p>
 </li>
 <li><p>Flame Chart：提供一个倒置的调用图表，其汇总相同的调用堆栈，简单来说就是将 Call Chart 倒置过来</p>
-<p><img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/flame-chart.png?Expires=1541945318&amp;OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&amp;Signature=G%2FjjsSDpVC%2FAV1GKWDNCfEAU6bo%3D" alt="flame-chart"></p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/flame-chart.png?x-oss-process=style/doc-img" alt="flame-chart"></p>
 </li>
 <li><p>Top Down：显示一个函数调用列表，在该列表中展开函数节点会被调用的子函数</p>
-<p><img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/top-down.png?Expires=1541945338&amp;OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&amp;Signature=b%2BdhBQ2hjvhqG%2Bc8Ehgommipyf8%3D" alt="top-down"></p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/top-down.png?x-oss-process=style/doc-img" alt="top-down"></p>
 </li>
 <li><p>Bottom Up：显示一个函数调用列表，在该列表中展开函数节点将显示函数的父函数</p>
-<p><img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/bottom-up.png?Expires=1541945357&amp;OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&amp;Signature=tu0ojS1tMk7keS2Pes9n3Iyirdw%3D" alt="bottom-up"></p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/bottom-up.png?x-oss-process=style/doc-img" alt="bottom-up"></p>
 </li>
 </ul>
 <p>简单了解每个选项的功能后，我们针对上面的 demo 来实践下，这里我们选择 bottom up 选项，从上面图看出，每个函数所展示的信息有：Total（函数总共花费的时间）、%（所占的百分比）、Self（函数自身花费的时间）、%（所占的百分比）、Children（函数所调用的子函数花费的时间），%（所占百分比）。可以看到 <code>main()</code> <code>run()</code> 这些方法的时间主要都是花费在调用子函数上。那么我们先找出本身最耗时的方法，使用 Self 进行排序：</p>
 <figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/max-self-method.png?Expires=1541945375&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=%2FXNYLW2e3ppwhm%2B2gAyA%2B6NXr9Q%3D" alt="max-self-method" title="">
+                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/max-self-method.png?x-oss-process=style/doc-img" alt="max-self-method" title="">
                 </div>
                 <div class="image-caption">max-self-method</div>
             </figure>
@@ -292,7 +292,7 @@
     <div class="content">
         
 <span class="post-time">
-    最后更新时间：<time datetime="2018-11-11T13:15:57.510Z" itemprop="dateUpdated">2018-11-11 21:15:57</time>
+    最后更新时间：<time datetime="2018-11-16T10:20:49.371Z" itemprop="dateUpdated">2018-11-16 18:20:49</time>
 </span><br>
 
 
