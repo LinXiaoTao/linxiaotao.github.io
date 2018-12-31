@@ -14,7 +14,7 @@ categories: Android Framework
 
 Context 又叫上下文，用于提供应用环境的信息。常用的操作包括启动 Activity、Service，或者通过 `getResources()` 返回 Resources 用于获取应用的资源文件，比如字符串、Drawable 等等。对于这些用法，我们就不去一一列举了，这篇文章的最终目的是，通过对 Context 体系的整体了解，能在平时的应用开发中，正确使用不同类型的 Context。首先我们看下 Context 的类图：
 
-![Context](http://oy017242u.bkt.clouddn.com/Context.png)
+![Context](https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/Context.png?x-oss-process=style/doc-img)
 
 其中 ContextImpl 负责 Context 核心功能的实现，而我们常见的 Activity Context，Application Context 等则是继承于 ContextWrapper，从类名可以猜测，这个是 Context 的包装类。实际上也是如此：
 
@@ -555,9 +555,9 @@ private void addEditText(@Nullable Context context) {
 <color name="colorAccent">#FF4081</color>
 ```
 
-![ActivityContextEditText](http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/ActivityContextEditText.png?Expires=1541945464&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=8zpC%2FxinAs%2FzZv4Ir2QH%2FYenUlU%3D)
+![ActivityContextEditText](https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/ActivityContextEditText.png?x-oss-process=style/doc-img)
 
-![ApplicationContextEditText](http://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/ApplicationContextEditText.png?Expires=1541945481&OSSAccessKeyId=TMP.AQECpn-ahaS9xRw0GCijqd4AieYiToz0qdemMUn0fbR0QTtKpuaqBQaBufKLAAAwLAIUdqhFX1KaLKXeJn11KBuTmyyI8nwCFDa2mjDCIKRPhKWHwrpWV0fD-uh6&Signature=UCqpz5R%2BOaa4ImfXjkz5K%2BXg9sM%3D)
+![ApplicationContextEditText](https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/ApplicationContextEditText.png?x-oss-process=style/doc-img)
 
 我们发现使用 Activity Context 的 EditText 使用了 theme 中的配置，回顾我们最开始的 Context 类图，Activity 是继承于 ContextThemeWrapper，而 Application 则是继承于 ContextWrapper，那我们是不是可以猜测只有 ContextThemeWrapper 的继承类才会读取 theme 中配置信息呢？我们可以看下 ContextThemeWrapper 中跟 theme 相关的方法：
 
