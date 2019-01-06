@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Jetpack中的ViewModel | My World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="前言首先祝大家在新的一年中，身体健康，心想事成。 算了下，去年技术类博客写了 15 篇，看下数量还算比较满意，可是基本都是前半年写的，那时候刚刚下定决心要好好写博客，后半年因为工作上还有自己偷懒心理，基本都没怎么写了，真是惭愧。 不过经过去年写了这些文章，慢慢也学习到了一些写技术文章上的技巧，希望今年能方得始终，提升文章的质量。 关于 Jetpack相信已经有不少人对 Google 推出的 Jet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jetpack中的ViewModel">
+<meta property="og:url" content="https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="前言首先祝大家在新的一年中，身体健康，心想事成。 算了下，去年技术类博客写了 15 篇，看下数量还算比较满意，可是基本都是前半年写的，那时候刚刚下定决心要好好写博客，后半年因为工作上还有自己偷懒心理，基本都没怎么写了，真是惭愧。 不过经过去年写了这些文章，慢慢也学习到了一些写技术文章上的技巧，希望今年能方得始终，提升文章的质量。 关于 Jetpack相信已经有不少人对 Google 推出的 Jet">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/activity_lifecycle.png?x-oss-process=style/doc-img">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/viewmodel/ViewModelProvider%23create.png?x-oss-process=style/doc-img">
+<meta property="og:updated_time" content="2019-01-06T12:56:38.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jetpack中的ViewModel">
+<meta name="twitter:description" content="前言首先祝大家在新的一年中，身体健康，心想事成。 算了下，去年技术类博客写了 15 篇，看下数量还算比较满意，可是基本都是前半年写的，那时候刚刚下定决心要好好写博客，后半年因为工作上还有自己偷懒心理，基本都没怎么写了，真是惭愧。 不过经过去年写了这些文章，慢慢也学习到了一些写技术文章上的技巧，希望今年能方得始终，提升文章的质量。 关于 Jetpack相信已经有不少人对 Google 推出的 Jet">
+<meta name="twitter:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/activity_lifecycle.png?x-oss-process=style/doc-img">
+    
+        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Leo</h5>
+          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/LinXiaoTao" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Jetpack中的ViewModel</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Jetpack中的ViewModel</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-01-05T03:36:18.000Z" itemprop="datePublished" class="page-time">
+  2019-01-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android-Application</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#关于-Jetpack"><span class="post-toc-number">2.</span> <span class="post-toc-text">关于 Jetpack</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#关于本文"><span class="post-toc-number">3.</span> <span class="post-toc-text">关于本文</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#ViewModel"><span class="post-toc-number">4.</span> <span class="post-toc-text">ViewModel</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Jetpack中的ViewModel"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Jetpack中的ViewModel</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-01-05 11:36:18" datetime="2019-01-05T03:36:18.000Z"  itemprop="datePublished">2019-01-05</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android-Application</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>首先祝大家在新的一年中，身体健康，心想事成。</p>
+<p>算了下，去年技术类博客写了 15 篇，看下数量还算比较满意，可是基本都是前半年写的，那时候刚刚下定决心要好好写博客，后半年因为工作上还有自己偷懒心理，基本都没怎么写了，真是惭愧。</p>
+<p>不过经过去年写了这些文章，慢慢也学习到了一些写技术文章上的技巧，希望今年能方得始终，提升文章的质量。</p>
+<h3 id="关于-Jetpack"><a href="#关于-Jetpack" class="headerlink" title="关于 Jetpack"></a>关于 Jetpack</h3><p>相信已经有不少人对 Google 推出的 Jetpack 系列组件都有所耳闻，现在网上已经有不少的分析文章了，涵盖了用法和源码解析，所以我就不重复造轮子，在这个系列文章中，不会涉及使用教程等，只写一些个人的使用体会，也当作给自己做笔记。</p>
+<h3 id="关于本文"><a href="#关于本文" class="headerlink" title="关于本文"></a>关于本文</h3><p>这篇文章主要讲 Jetpack 中的 ViewModel</p>
+<h3 id="ViewModel"><a href="#ViewModel" class="headerlink" title="ViewModel"></a>ViewModel</h3><blockquote>
+<p>The <a href="https://developer.android.com/reference/android/arch/lifecycle/ViewModel.html" target="_blank" rel="noopener"><code>ViewModel</code></a> class is designed to store and manage UI-related data in a lifecycle conscious way. </p>
+</blockquote>
+<p>简而言之，就是在生命周期中管理数据。说到生命周期，我们都知道 Android 中 <code>Activity</code> 和 <code>Fragment</code> 都有各自对应的生命周期，比如 <code>Activity</code>，它的生命周期如下图：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/activity_lifecycle.png?x-oss-process=style/doc-img" alt="activity_lifecycle" title="">
+                </div>
+                <div class="image-caption">activity_lifecycle</div>
+            </figure>
+<p>通常我们会在 <code>onCreate()</code> 初始化数据，在 <code>onResume()</code> 中展示数据，<code>onDestroy()</code> 中释放数据，类似下面这些伪代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">onCreate() &#123;</span><br><span class="line">    initData();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">onResume() &#123;</span><br><span class="line">    displayData()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">onDestory() &#123;</span><br><span class="line">    recycleData();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果没有在 <code>onDestory()</code> 中及时释放某些资源，可能还会导致内存泄漏，这是第一个问题。</p>
+<p>第二个问题，Android 系统可能会在内存不足的情况下，回收了 <code>Activity</code>，导致 <code>Activity</code> 重建时数据会丢失，对于这种情况，Android 提供了 <code>onSaveInstanceState</code> 中保存数据，在 <code>onRestoreInstanceState</code> 和 <code>onCreate</code> 中获取。类似下面这些伪代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">onSaveInstanceState(Bundle outState) &#123;</span><br><span class="line"> 	outState.putData();   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">onRestoreInstanceState(Bundle outState) &#123;</span><br><span class="line">    outState.getData();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">    <span class="keyword">if</span> (savedInstanceState != <span class="keyword">null</span>) &#123;</span><br><span class="line">        savedInstanceState.getData();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种方式除了重复的胶水代码以外，还存在 <code>Bundle</code> 存储只适用于支持序列化（Serializable 和 Parcelable）的少量数据，当然除了使用 Android SDK 提供的这种方案以外，我们也可以自己实现类似的方案，类似以下伪代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Data Repository</span></span><br><span class="line">Map&lt;String,Data&gt; map;</span><br><span class="line"></span><br><span class="line">getData(String id) &#123;</span><br><span class="line">    <span class="keyword">if</span> (map.get(id) == <span class="keyword">null</span>)&#123;</span><br><span class="line">        Data data = createData();</span><br><span class="line">        map.put(id,data);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> map.get(id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">removeData(String id) &#123;</span><br><span class="line">    map.removeByKey(id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Activity</span></span><br><span class="line">onCreate() &#123;</span><br><span class="line">    getData(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">onDestory() &#123;</span><br><span class="line">    <span class="keyword">if</span> (!isChangingConfigurations)&#123;</span><br><span class="line">            removeData(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看了上面解决思路后，我们再来看看 Google 提供的 <code>ViewModel</code>，它是如何解决上面提到的两个问题的。首先看下，<code>ViewModel</code> 的典型用法，来源于官方文档：</p>
+<p>首先定义一个 <code>MyViewModel</code> 继承于 <code>ViewModel</code>，这里使用 <code>LiveData</code> 作为数据源，这里我们只需要知道 <code>LiveData</code> 和 <code>RxJava</code> 是差不多的东西就可以了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyViewModel</span> <span class="keyword">extends</span> <span class="title">ViewModel</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> MutableLiveData&lt;List&lt;User&gt;&gt; users;</span><br><span class="line">    <span class="keyword">public</span> LiveData&lt;List&lt;User&gt;&gt; getUsers() &#123;</span><br><span class="line">        <span class="keyword">if</span> (users == <span class="keyword">null</span>) &#123;</span><br><span class="line">            users = <span class="keyword">new</span> MutableLiveData&lt;List&lt;User&gt;&gt;();</span><br><span class="line">            loadUsers();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> users;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadUsers</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Do an asynchronous operation to fetch users.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义好 <code>ViewModel</code> 之后，我们在 <code>Activity</code> 中使用它：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Create a ViewModel the first time the system calls an activity's onCreate() method.</span></span><br><span class="line">        <span class="comment">// Re-created activities receive the same MyViewModel instance created by the first activity.</span></span><br><span class="line"></span><br><span class="line">        MyViewModel model = ViewModelProviders.of(<span class="keyword">this</span>).get(MyViewModel.class);</span><br><span class="line">        model.getUsers().observe(<span class="keyword">this</span>, users -&gt; &#123;</span><br><span class="line">            <span class="comment">// update UI</span></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们先看下 <code>ViewModelProviders.of</code> 的函数签名：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ViewModelProvider <span class="title">of</span><span class="params">(@NonNull Fragment fragment)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ViewModelProvider <span class="title">of</span><span class="params">(@NonNull FragmentActivity activity)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ViewModelProvider <span class="title">of</span><span class="params">(@NonNull Fragment fragment, @Nullable Factory factory)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ViewModelProvider <span class="title">of</span><span class="params">(@NonNull FragmentActivity activity,</span></span></span><br><span class="line"><span class="function"><span class="params">            @Nullable Factory factory)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>需要将当前 <code>Activity</code> 或 <code>Fragment</code> 作为参数，这也是 <code>ViewModel</code> 将数据与生命周期结合起来的地方。那具体也是如何实现的呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NonNull</span>                                                                             </span><br><span class="line"><span class="meta">@MainThread</span>                                                                          </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ViewModelProvider <span class="title">of</span><span class="params">(@NonNull FragmentActivity activity,               </span></span></span><br><span class="line"><span class="function"><span class="params">        @Nullable Factory factory)</span> </span>&#123;                                                 </span><br><span class="line">    Application application = checkApplication(activity);                            </span><br><span class="line">    <span class="keyword">if</span> (factory == <span class="keyword">null</span>) &#123;                                                           </span><br><span class="line">        factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application);</span><br><span class="line">    &#125;                                                                                </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ViewModelProvider(activity.getViewModelStore(), factory);             </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>factory</code> 顾名思义就是 <code>ViewModel</code> 的工厂类，这里默认使用 <code>AndroidViewModelFactory</code> 最后返回 <code>ViewModelProvider</code> 实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ViewModelProvider</span></span><br><span class="line"><span class="meta">@NonNull</span>                                                                                 </span><br><span class="line"><span class="meta">@MainThread</span>                                                                              </span><br><span class="line"><span class="keyword">public</span> &lt;T extends ViewModel&gt; <span class="function">T <span class="title">get</span><span class="params">(@NonNull String key, @NonNull Class&lt;T&gt; modelClass)</span> </span>&#123;  </span><br><span class="line">    ViewModel viewModel = mViewModelStore.get(key);                                      </span><br><span class="line">                                                                                         </span><br><span class="line">    <span class="keyword">if</span> (modelClass.isInstance(viewModel)) &#123;                                              </span><br><span class="line">        <span class="comment">//noinspection unchecked                                                         </span></span><br><span class="line">        <span class="keyword">return</span> (T) viewModel;                                                            </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                                                                             </span><br><span class="line">        <span class="comment">//noinspection StatementWithEmptyBody                                            </span></span><br><span class="line">        <span class="keyword">if</span> (viewModel != <span class="keyword">null</span>) &#123;                                                         </span><br><span class="line">            <span class="comment">// <span class="doctag">TODO:</span> log a warning.                                                      </span></span><br><span class="line">        &#125;                                                                                </span><br><span class="line">    &#125;                                                                                    </span><br><span class="line">                                                                                         </span><br><span class="line">    viewModel = mFactory.create(modelClass);                                             </span><br><span class="line">    mViewModelStore.put(key, viewModel);                                                 </span><br><span class="line">    <span class="comment">//noinspection unchecked                                                             </span></span><br><span class="line">    <span class="keyword">return</span> (T) viewModel;                                                                </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// AndroidViewModelFactory</span></span><br><span class="line"><span class="meta">@NonNull</span>                                                                                   </span><br><span class="line"><span class="meta">@Override</span>                                                                                  </span><br><span class="line"><span class="keyword">public</span> &lt;T extends ViewModel&gt; <span class="function">T <span class="title">create</span><span class="params">(@NonNull Class&lt;T&gt; modelClass)</span> </span>&#123;                      </span><br><span class="line">    <span class="keyword">if</span> (AndroidViewModel.class.isAssignableFrom(modelClass)) &#123;                             </span><br><span class="line">        <span class="comment">//noinspection TryWithIdenticalCatches                                             </span></span><br><span class="line">        <span class="keyword">try</span> &#123;                                                                              </span><br><span class="line">            <span class="keyword">return</span> modelClass.getConstructor(Application.class).newInstance(mApplication); </span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;                                                </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Cannot create an instance of "</span> + modelClass, e);   </span><br><span class="line">        &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;                                               </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Cannot create an instance of "</span> + modelClass, e);   </span><br><span class="line">        &#125; <span class="keyword">catch</span> (InstantiationException e) &#123;                                               </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Cannot create an instance of "</span> + modelClass, e);   </span><br><span class="line">        &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;                                            </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Cannot create an instance of "</span> + modelClass, e);   </span><br><span class="line">        &#125;                                                                                  </span><br><span class="line">    &#125;                                                                                      </span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.create(modelClass);                                                       </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们将以上两段代码合起来看，其实逻辑是比较清晰的：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/viewmodel/ViewModelProvider%23create.png?x-oss-process=style/doc-img" alt="ViewModelProvider#create" title="">
+                </div>
+                <div class="image-caption">ViewModelProvider#create</div>
+            </figure>
+<p><code>Factor</code> 的实现可以通过反射来实现，比如默认的 <code>AndroidViewModelFactory</code> 会优先调用使用 <code>Application</code> 作为参数的构造方法，来创建实例。所以，如果自定义的 <code>ViewModel</code> 构造方法有其他参数，就需要自定义 <code>Factor</code></p>
+<p>而 <code>ViewModelStore</code> 则是 <code>Activity</code> 重建时还能拥有之前数据的保障。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> HashMap&lt;String, ViewModel&gt; mMap = <span class="keyword">new</span> HashMap&lt;&gt;();                  </span><br><span class="line">                                                                                  </span><br><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String key, ViewModel viewModel)</span> </span>&#123;                                 </span><br><span class="line">    ViewModel oldViewModel = mMap.put(key, viewModel);                            </span><br><span class="line">    <span class="keyword">if</span> (oldViewModel != <span class="keyword">null</span>) &#123;                                                   </span><br><span class="line">        oldViewModel.onCleared();                                                 </span><br><span class="line">    &#125;                                                                             </span><br><span class="line">&#125;                                                                                 </span><br><span class="line">                                                                                  </span><br><span class="line"><span class="function"><span class="keyword">final</span> ViewModel <span class="title">get</span><span class="params">(String key)</span> </span>&#123;                                                 </span><br><span class="line">    <span class="keyword">return</span> mMap.get(key);                                                         </span><br><span class="line">&#125;                                                                                 </span><br><span class="line">                                                                                  </span><br><span class="line"><span class="comment">/**                                                                               </span></span><br><span class="line"><span class="comment"> *  Clears internal storage and notifies ViewModels that they are no longer used. </span></span><br><span class="line"><span class="comment"> */</span>                                                                               </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;                                                       </span><br><span class="line">    <span class="keyword">for</span> (ViewModel vm : mMap.values()) &#123;                                          </span><br><span class="line">        vm.onCleared();                                                           </span><br><span class="line">    &#125;                                                                             </span><br><span class="line">    mMap.clear();                                                                 </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ViewModelStore</code> 的源码很短，可以看到其实就是使用 <code>HashMap</code> 作为数据载体。既然有使用，那就需要清理操作，可以看到有个 <code>clear</code> 它会清除 <code>HashMap</code> 中的缓存数据。我们首先看下 <code>ViewModelProvider</code> 中的 <code>mViewModelStore</code> 是在哪里赋值的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ViewModelProvider</span><span class="params">(@NonNull ViewModelStoreOwner owner, @NonNull Factory factory)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">this</span>(owner.getViewModelStore(), factory);                                            </span><br><span class="line">&#125;                                                                                        </span><br><span class="line">                                                                                                                                                                             </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ViewModelProvider</span><span class="params">(@NonNull ViewModelStore store, @NonNull Factory factory)</span> </span>&#123;      </span><br><span class="line">    mFactory = factory;                                                                  </span><br><span class="line">    <span class="keyword">this</span>.mViewModelStore = store;                                                        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过 <code>ViewModelStoreOwner.getViewModelStore</code> 获取 <code>ViewModelStore</code> 实例对象，而 <code>ViewModelStoreOwner</code> 实际就是我们调用 <code>ViewModelProviders.of</code> 中传递的 <code>FragmentActivity</code> 和 <code>Fragment</code></p>
+<blockquote>
+<p><code>FragmentActivity</code> 中会通过 <code>onRetainNonConfigurationInstance</code> 和 <code>getLastNonConfigurationInstance</code> 去保持 <code>Activity</code> 因为屏幕旋转等配置发生改变而导致重建时，数据的唯一性</p>
+</blockquote>
+<p>而 <code>Fragment</code> 和 <code>FragmentActivity</code> 会在 <code>onDestory</code> 时判断是否需要调用 <code>ViewModelStore.clear</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>                                                            </span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;                                         </span><br><span class="line">    <span class="keyword">super</span>.onDestroy();                                               </span><br><span class="line">                                                                     </span><br><span class="line">    <span class="keyword">if</span> (mViewModelStore != <span class="keyword">null</span> &amp;&amp; !isChangingConfigurations()) &#123;    </span><br><span class="line">        mViewModelStore.clear();                                     </span><br><span class="line">    &#125;                                                                </span><br><span class="line">                                                                     </span><br><span class="line">    mFragments.dispatchDestroy();                                    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>讲完 <code>ViewModelStore</code> 的缓存功能之后，我们再来看下，<code>ViewModelProvider.of</code> 不同签名的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NonNull</span>                                                         </span><br><span class="line"><span class="meta">@MainThread</span>                                                      </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ViewModelProvider <span class="title">of</span><span class="params">(@NonNull Fragment fragment)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">return</span> of(fragment, <span class="keyword">null</span>);                                   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@NonNull</span>                                                                    </span><br><span class="line"><span class="meta">@MainThread</span>                                                                 </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ViewModelProvider <span class="title">of</span><span class="params">(@NonNull FragmentActivity activity)</span> </span>&#123;    </span><br><span class="line">    <span class="keyword">return</span> of(activity, <span class="keyword">null</span>);                                              </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的是，<code>ViewModel</code> 在不同作用域下的实例，首先，<code>FragmentActivity</code> 和 <code>Fragment</code> 都实现了 <code>ViewModelStoreOwner</code> 即它们都有各自的 <code>ViewModelStore</code> 简单来说，如果想在 <code>Fragment</code> 中获取依附的 <code>Activity</code> 的 <code>ViewModel</code> 实例，那需要使用 <code>of(FragmentActivity)</code> 的方法，这也是一种 <code>Activity</code> 和 <code>Fragment</code> 之间通信的好方式。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>现在我们来比较下自定义实现的方案和 <code>ViewModel</code> ，可以发现其实核心思想是共通，首先我们需要一个保存于 <code>Activity</code> 和 <code>Fragment</code> 生命周期之外的存储空间，在 <code>ViewModel</code> 中是 <code>ViewModelStore</code>，其次我们需要在 <code>Activity</code> 和 <code>Fragment</code> 对应的生命周期中，去初始化和清理这个 <code>ViewModelStore</code></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-01-06T12:56:38.441Z" itemprop="dateUpdated">2019-01-06 20:56:38</time>
+</span><br>
+
+
+        
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指教，感激不尽！
+        
+    </div>
+    
+    <footer>
+        <a href="https://linxiaotao.github.io">
+            <img src="/img/avatar.jpeg" alt="Leo">
+            Leo
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/&title=《Jetpack中的ViewModel》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/&title=《Jetpack中的ViewModel》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Jetpack中的ViewModel》 — My World&url=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/12/31/2018年复盘/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">2018年复盘</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Leo &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/&title=《Jetpack中的ViewModel》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/&title=《Jetpack中的ViewModel》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Jetpack中的ViewModel》 — My World&url=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2019/01/05/Jetpack中的ViewModel/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
