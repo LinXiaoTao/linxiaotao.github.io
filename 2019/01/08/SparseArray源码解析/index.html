@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>SparseArray源码解析 | My World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="">
+    <meta name="description" content="关于SparseArraySparseArray 是 Android SDK 提供的将 integers 映射到对象的容器。相对于 HashMap 更节省内存，因为它避免了 key 发生自动装箱，同时不用额外的对象来表示映射关系。 SparseArray 使用二分查找来查询 key，这意味着，key 是有序存储的，而且不适用于大量数据的情况。通常情况下，它的查找比 HashMap 慢。 为了提高性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SparseArray源码解析">
+<meta property="og:url" content="https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="关于SparseArraySparseArray 是 Android SDK 提供的将 integers 映射到对象的容器。相对于 HashMap 更节省内存，因为它避免了 key 发生自动装箱，同时不用额外的对象来表示映射关系。 SparseArray 使用二分查找来查询 key，这意味着，key 是有序存储的，而且不适用于大量数据的情况。通常情况下，它的查找比 HashMap 慢。 为了提高性">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-08T15:03:03.367Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SparseArray源码解析">
+<meta name="twitter:description" content="关于SparseArraySparseArray 是 Android SDK 提供的将 integers 映射到对象的容器。相对于 HashMap 更节省内存，因为它避免了 key 发生自动装箱，同时不用额外的对象来表示映射关系。 SparseArray 使用二分查找来查询 key，这意味着，key 是有序存储的，而且不适用于大量数据的情况。通常情况下，它的查找比 HashMap 慢。 为了提高性">
+    
+        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpeg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Leo</h5>
+          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/LinXiaoTao" target="_blank" >
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
+                <i class="icon icon-lg icon-weibo"></i>
+                Weibo
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">SparseArray源码解析</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">SparseArray源码解析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-01-08T13:58:23.000Z" itemprop="datePublished" class="page-time">
+  2019-01-08
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#关于SparseArray"><span class="post-toc-number">1.</span> <span class="post-toc-text">关于SparseArray</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#源码分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">源码分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#构造函数"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">构造函数</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#put"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">put</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#get"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">get</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#remove"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">remove</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#size"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">size</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#gc"><span class="post-toc-number">2.6.</span> <span class="post-toc-text">gc</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-SparseArray源码解析"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">SparseArray源码解析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-01-08 21:58:23" datetime="2019-01-08T13:58:23.000Z"  itemprop="datePublished">2019-01-08</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h3 id="关于SparseArray"><a href="#关于SparseArray" class="headerlink" title="关于SparseArray"></a>关于SparseArray</h3><p><code>SparseArray</code> 是 Android SDK 提供的将 integers 映射到对象的容器。相对于 <code>HashMap</code> 更节省内存，因为它避免了 key 发生自动装箱，同时不用额外的对象来表示映射关系。</p>
+<p><code>SparseArray</code> 使用二分查找来查询 key，这意味着，key 是有序存储的，而且不适用于大量数据的情况。通常情况下，它的查找比 <code>HashMap</code> 慢。</p>
+<p>为了提高性能，<code>SparseArray</code> 在删除 key 时，不会立即调整数据结构，而是将该条目标记为删除，在之后使用相同 key 时可以复用或者垃圾回收操作中进行调整。</p>
+<blockquote>
+<p>垃圾回收操作会发生在需要扩容、获取size 或者检索条目值时</p>
+</blockquote>
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><h4 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h4><p><code>SparseArray</code> 有两个构造函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span>[] mKeys;</span><br><span class="line"><span class="keyword">private</span> Object[] mValues;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">SparseArray</span><span class="params">()</span> </span>&#123;                                                  </span><br><span class="line">    <span class="keyword">this</span>(<span class="number">10</span>);                                                           </span><br><span class="line">&#125;                                                                       </span><br><span class="line">                                                                                                                                            </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">SparseArray</span><span class="params">(<span class="keyword">int</span> initialCapacity)</span> </span>&#123;                               </span><br><span class="line">    <span class="keyword">if</span> (initialCapacity == <span class="number">0</span>) &#123;                                         </span><br><span class="line">        mKeys = EmptyArray.INT;                                         </span><br><span class="line">        mValues = EmptyArray.OBJECT;                                    </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                                                            </span><br><span class="line">        mValues = ArrayUtils.newUnpaddedObjectArray(initialCapacity);   </span><br><span class="line">        mKeys = <span class="keyword">new</span> <span class="keyword">int</span>[mValues.length];                                </span><br><span class="line">    &#125;                                                                   </span><br><span class="line">    mSize = <span class="number">0</span>;                                                          </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果使用不指定初始化容量，将使用默认 10，可以看到，<code>SparseArray</code> 内部使用两个数组来分别存储 key 和 value</p>
+<h4 id="put"><a href="#put" class="headerlink" title="put"></a>put</h4><p>如果 key 没有存在，则添加，否则进行替换操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(<span class="keyword">int</span> key, E value)</span> </span>&#123;                                           </span><br><span class="line">    <span class="keyword">int</span> i = ContainerHelpers.binarySearch(mKeys, mSize, key);                 </span><br><span class="line">                                                                              </span><br><span class="line">    <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) &#123; </span><br><span class="line">        <span class="comment">// key 已经存在，替换</span></span><br><span class="line">        mValues[i] = value;                                                   </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// key 不存在，取反获取 key 应该插入的下标</span></span><br><span class="line">        i = ~i;                                                               </span><br><span class="line">                                                                              </span><br><span class="line">        <span class="keyword">if</span> (i &lt; mSize &amp;&amp; mValues[i] == DELETED) &#123;</span><br><span class="line">            <span class="comment">// 复用被标记为 DELETED 的条目</span></span><br><span class="line">            mKeys[i] = key;                                                   </span><br><span class="line">            mValues[i] = value;                                               </span><br><span class="line">            <span class="keyword">return</span>;                                                           </span><br><span class="line">        &#125;                                                                     </span><br><span class="line">                                                                              </span><br><span class="line">        <span class="keyword">if</span> (mGarbage &amp;&amp; mSize &gt;= mKeys.length) &#123; </span><br><span class="line">            <span class="comment">// 需要扩容</span></span><br><span class="line">            gc();                                                             </span><br><span class="line">                                                                              </span><br><span class="line">            <span class="comment">// Search again because indices may have changed.                 </span></span><br><span class="line">            i = ~ContainerHelpers.binarySearch(mKeys, mSize, key);            </span><br><span class="line">        &#125;                                                                     </span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 插入新的条目</span></span><br><span class="line">        mKeys = GrowingArrayUtils.insert(mKeys, mSize, i, key);               </span><br><span class="line">        mValues = GrowingArrayUtils.insert(mValues, mSize, i, value);         </span><br><span class="line">        mSize++;                                                              </span><br><span class="line">    &#125;                                                                         </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] array, <span class="keyword">int</span> size, <span class="keyword">int</span> value)</span> </span>&#123;       </span><br><span class="line">    <span class="keyword">int</span> lo = <span class="number">0</span>;                                                   </span><br><span class="line">    <span class="keyword">int</span> hi = size - <span class="number">1</span>;                                            </span><br><span class="line">                                                                  </span><br><span class="line">    <span class="keyword">while</span> (lo &lt;= hi) &#123;                                            </span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> mid = (lo + hi) &gt;&gt;&gt; <span class="number">1</span>;                          </span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> midVal = array[mid];                            </span><br><span class="line">                                                                  </span><br><span class="line">        <span class="keyword">if</span> (midVal &lt; value) &#123;                                     </span><br><span class="line">            lo = mid + <span class="number">1</span>;                                         </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (midVal &gt; value) &#123;                              </span><br><span class="line">            hi = mid - <span class="number">1</span>;                                         </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;                                                  </span><br><span class="line">            <span class="keyword">return</span> mid;  <span class="comment">// value found                           </span></span><br><span class="line">        &#125;                                                         </span><br><span class="line">    &#125;                                                             </span><br><span class="line">    <span class="keyword">return</span> ~lo;  <span class="comment">// value not present                             </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>binarySearch</code> 就是二分查找算法的实现 ，需要注意的是，如果没有查找到，则返回 <code>~lo</code></p>
+<blockquote>
+<p>这里的 <code>lo</code> 可以认为是，虽然没有查找到指定的值，但这是最接近的，换句话说，这个是指定值应该插入的位置</p>
+<p>比如：在 1,2,3,4,6,7 查找 5，那么 <code>binarySearch</code> 将返回 <code>~4</code></p>
+</blockquote>
+<h4 id="get"><a href="#get" class="headerlink" title="get"></a>get</h4><p>get 操作比较简单，同样的先二分查找 key，存在则返回，否则返回默认值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> key, E valueIfKeyNotFound)</span> </span>&#123;                 </span><br><span class="line">    <span class="keyword">int</span> i = ContainerHelpers.binarySearch(mKeys, mSize, key); </span><br><span class="line">                                                              </span><br><span class="line">    <span class="keyword">if</span> (i &lt; <span class="number">0</span> || mValues[i] == DELETED) &#123;                     </span><br><span class="line">        <span class="keyword">return</span> valueIfKeyNotFound;                            </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                                                  </span><br><span class="line">        <span class="keyword">return</span> (E) mValues[i];                                </span><br><span class="line">    &#125;                                                         </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="remove"><a href="#remove" class="headerlink" title="remove"></a>remove</h4><p>remove 操作实际调用 <code>delete</code> 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">(<span class="keyword">int</span> key)</span> </span>&#123;                                   </span><br><span class="line">    <span class="keyword">int</span> i = ContainerHelpers.binarySearch(mKeys, mSize, key);   </span><br><span class="line">                                                                </span><br><span class="line">    <span class="keyword">if</span> (i &gt;= <span class="number">0</span>) &#123;                                               </span><br><span class="line">        <span class="keyword">if</span> (mValues[i] != DELETED) &#123;</span><br><span class="line">            <span class="comment">// 只是标记为 DELETED</span></span><br><span class="line">            mValues[i] = DELETED;</span><br><span class="line">            <span class="comment">// 需要回收</span></span><br><span class="line">            mGarbage = <span class="keyword">true</span>;                                    </span><br><span class="line">        &#125;                                                       </span><br><span class="line">    &#125;                                                           </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="size"><a href="#size" class="headerlink" title="size"></a>size</h4><p>调用 <code>size</code> 之后，会先检查是否需要 <code>gc</code> 即回收操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;   </span><br><span class="line">    <span class="keyword">if</span> (mGarbage) &#123;   </span><br><span class="line">        gc();         </span><br><span class="line">    &#125;                 </span><br><span class="line">                      </span><br><span class="line">    <span class="keyword">return</span> mSize;     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="gc"><a href="#gc" class="headerlink" title="gc"></a>gc</h4><p>在调用 <code>size</code> 和涉及 index 相关的方法时，都会检查是否需要 <code>gc</code>，比如 <code>keyAt</code> 等</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">gc</span><span class="params">()</span> </span>&#123;                                          </span><br><span class="line">    <span class="comment">// Log.e("SparseArray", "gc start with " + mSize);       </span></span><br><span class="line">                                                             </span><br><span class="line">    <span class="keyword">int</span> n = mSize;                                           </span><br><span class="line">    <span class="keyword">int</span> o = <span class="number">0</span>;                                               </span><br><span class="line">    <span class="keyword">int</span>[] keys = mKeys;                                      </span><br><span class="line">    Object[] values = mValues;                               </span><br><span class="line">                                                             </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="comment">// 将没有标记为 DELETED 的条目移到新位置，清除 DELETED</span></span><br><span class="line">        Object val = values[i];                              </span><br><span class="line">                                                             </span><br><span class="line">        <span class="keyword">if</span> (val != DELETED) &#123;                                </span><br><span class="line">            <span class="keyword">if</span> (i != o) &#123;</span><br><span class="line">                keys[o] = keys[i];                           </span><br><span class="line">                values[o] = val;                             </span><br><span class="line">                values[i] = <span class="keyword">null</span>;                            </span><br><span class="line">            &#125;                                                </span><br><span class="line">                                                             </span><br><span class="line">            o++;                                             </span><br><span class="line">        &#125;                                                    </span><br><span class="line">    &#125;                                                        </span><br><span class="line">                                                             </span><br><span class="line">    mGarbage = <span class="keyword">false</span>;                                        </span><br><span class="line">    mSize = o;                                               </span><br><span class="line">                                                             </span><br><span class="line">    <span class="comment">// Log.e("SparseArray", "gc end with " + mSize);         </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>SparseArray</code> 是用两个数组来分别存储 key 和 value，其中 key 是 <code>int[]</code> 避免了自动装箱，同时是升序的，所以查找 key 可以使用二分查找，相对于 <code>HashMap</code> 更省内存，但检索速度更慢。在数据量较少的情况下，可以使用 <code>SparseArray</code> 代替 <code>HashMap</code></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2019-01-08T15:03:03.367Z" itemprop="dateUpdated">2019-01-08 23:03:03</time>
+</span><br>
+
+
+        
+        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指教，感激不尽！
+        
+    </div>
+    
+    <footer>
+        <a href="https://linxiaotao.github.io">
+            <img src="/img/avatar.jpeg" alt="Leo">
+            Leo
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/&title=《SparseArray源码解析》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/&title=《SparseArray源码解析》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《SparseArray源码解析》 — My World&url=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/01/05/Jetpack中的ViewModel/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Jetpack中的ViewModel</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Leo &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/&title=《SparseArray源码解析》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/&title=《SparseArray源码解析》 — My World&source=linxiaotao's blog" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《SparseArray源码解析》 — My World&url=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/&via=https://linxiaotao.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2019/01/08/SparseArray源码解析/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
