@@ -62,7 +62,7 @@ private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 private void grow(int minCapacity) {                           
     // overflow-conscious code 考虑溢出情况                                 
     int oldCapacity = elementData.length;
-    // 增加旧容量 * 2 = 旧容量 * 3
+    // 增加旧容量 * 0.5 = 旧容量 * 1.5
     int newCapacity = oldCapacity + (oldCapacity >> 1);        
     if (newCapacity - minCapacity < 0)                         
         newCapacity = minCapacity;     // 还不够大，直接用 minCapacity                       
