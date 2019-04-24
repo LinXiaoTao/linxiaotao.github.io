@@ -1,7 +1,7 @@
 ---
 title: Jetpack中的ViewModel
 date: 2019-01-05 11:36:18
-categories: Android-Application
+categories: Android Application
 tags:
 ---
 
