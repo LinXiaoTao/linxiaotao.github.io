@@ -1,203 +1,403 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
 <head>
-    
-
-    
-
-    
-
-
-
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Leo">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Leo">
     
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
-    
-    
-    <title>触摸事件实践之路 | My World</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="">
-    <meta name="description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
-<meta property="og:type" content="article">
-<meta property="og:title" content="触摸事件实践之路">
-<meta property="og:url" content="https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/index.html">
-<meta property="og:site_name" content="My World">
-<meta property="og:description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/TouchEvent.png?x-oss-process=style/doc-img">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim">
-<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/more.gif?x-oss-process=style/doc-img">
-<meta property="og:updated_time" content="2018-11-16T10:13:16.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="触摸事件实践之路">
-<meta name="twitter:description" content="前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发">
-<meta name="twitter:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/TouchEvent.png?x-oss-process=style/doc-img">
-    
-        <link rel="alternate" type="application/atom+xml" title="My World" href="/atom.xml">
-    
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
+    <meta name="description" content="linxiaotao's blog">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>触摸事件实践之路 · fi3ework&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
 
-    <!-- custom head -->
-    
+    body {
+        margin: 0;
+    }
 
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
 </head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpeg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">Leo</h5>
-          <a href="mailto:linxiaotao1993@vip.qq.com" title="linxiaotao1993@vip.qq.com" class="mail">linxiaotao1993@vip.qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                文章
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/categories"  >
-                <i class="icon icon-lg icon-th-list"></i>
-                分类
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://github.com/LinXiaoTao" target="_blank" >
-                <i class="icon icon-lg icon-github"></i>
-                Github
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://weibo.com/linxiaotao1993" target="_blank" >
-                <i class="icon icon-lg icon-weibo"></i>
-                Weibo
-              </a>
-            </li>
-        
-      </ul>
-    </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">触摸事件实践之路</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
-    </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">触摸事件实践之路</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2018-04-03T01:17:20.000Z" itemprop="datePublished" class="page-time">
-  2018-04-03
-</time>
-
-
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
-
-            
-        </h5>
-    </div>
-
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+        <body class="post-body">
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#触摸事件简单回顾"><span class="post-toc-number">2.</span> <span class="post-toc-text">触摸事件简单回顾</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#手势判定"><span class="post-toc-number">3.</span> <span class="post-toc-text">手势判定</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#onInterceptTouchEvent"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">onInterceptTouchEvent</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-DOWN"><span class="post-toc-number">3.1.1.</span> <span class="post-toc-text">TOUCH_DOWN</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-MOVE"><span class="post-toc-number">3.1.2.</span> <span class="post-toc-text">TOUCH_MOVE</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-CANCEL-amp-amp-TOUCH-UP"><span class="post-toc-number">3.1.3.</span> <span class="post-toc-text">TOUCH_CANCEL &amp;&amp; TOUCH_UP</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ACTION-POINTER-UP"><span class="post-toc-number">3.1.4.</span> <span class="post-toc-text">ACTION_POINTER_UP</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#小结"><span class="post-toc-number">3.1.5.</span> <span class="post-toc-text">小结</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#onTouchEvent"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">onTouchEvent</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-DOWN-1"><span class="post-toc-number">3.2.1.</span> <span class="post-toc-text">TOUCH_DOWN</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-MOVE-1"><span class="post-toc-number">3.2.2.</span> <span class="post-toc-text">TOUCH_MOVE</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-UP"><span class="post-toc-number">3.2.3.</span> <span class="post-toc-text">TOUCH_UP</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#TOUCH-CANCEL"><span class="post-toc-number">3.2.4.</span> <span class="post-toc-text">TOUCH_CANCEL</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ACTION-POINTER-DOWN"><span class="post-toc-number">3.2.5.</span> <span class="post-toc-text">ACTION_POINTER_DOWN</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#ACTION-POINTER-UP-1"><span class="post-toc-number">3.2.6.</span> <span class="post-toc-text">ACTION_POINTER_UP</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#小结-1"><span class="post-toc-number">3.2.7.</span> <span class="post-toc-text">小结</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">总结</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实战"><span class="post-toc-number">4.</span> <span class="post-toc-text">实战</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#滚轮控件"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">滚轮控件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#卷尺控件"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">卷尺控件</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结语"><span class="post-toc-number">5.</span> <span class="post-toc-text">结语</span></a></li></ol>
-        </nav>
-    </aside>
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >fi3ework&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">触摸事件实践之路</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>fi3ework's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
 
 
-<article id="post-触摸事件实践之路"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">触摸事件实践之路</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2018-04-03 09:17:20" datetime="2018-04-03T01:17:20.000Z"  itemprop="datePublished">2018-04-03</time>
 
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Android-Application/">Android Application</a></li></ul>
-
-
-
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
             
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
-
-
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发的理解，同时能实现相关需求。</p>
-<h2 id="触摸事件简单回顾"><a href="#触摸事件简单回顾" class="headerlink" title="触摸事件简单回顾"></a>触摸事件简单回顾</h2><p>我们都知道触摸事件的分发严格意义上讲，是从 Activity 开始进行分发，但一般我们谈论的，只从 ViewGroup 开始分发。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/TouchEvent.png?x-oss-process=style/doc-img" alt="TouchEvent" title="">
+            触摸事件实践之路
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.5k</span>阅读时长: <span class="post-count reading-time">13 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/04/03</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
                 </div>
-                <div class="image-caption">TouchEvent</div>
-            </figure>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发的理解，同时能实现相关需求。</p>
+<h2 id="触摸事件简单回顾"><a href="#触摸事件简单回顾" class="headerlink" title="触摸事件简单回顾"></a>触摸事件简单回顾</h2><p>我们都知道触摸事件的分发严格意义上讲，是从 Activity 开始进行分发，但一般我们谈论的，只从 ViewGroup 开始分发。</p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/TouchEvent.png?x-oss-process=style/doc-img" alt="TouchEvent"></p>
 <p>上面的图只是粗略地画出触摸事件的分发流程，从 ViewGroup 的 <code>dispatchTouchEvent</code> 开始分发，先判断 ViewGroup 的 <code>onInterceptTouchEvent</code> 是否拦截，同时这里也可以调用 ViewGroup 的 <code>requestDisallowInterceptTouchEvent</code> 让 ViewGroup 不调用 <code>onInterceptTouchEvent</code>，如果事件被拦截，则调用 ViewGroup 的超类即 View 的 <code>dispatchTouchEvent</code>，反之，则调用子视图的 <code>dispatchTouchEvent</code>，注意：这里我们做了简单处理，假设当前 ViewGroup 的子视图为 View，如果子视图为 ViewGroup，那么还是先执行 ViewGroup 的 <code>dispatchTouchEvent</code>。</p>
 <p>最终都会调用到 View 的 <code>onTouchEvent</code> 中，这个方法是真正处理触摸事件的，一般如果我们需要自己处理触摸事件，也是在这个方法中处理。</p>
 <h2 id="手势判定"><a href="#手势判定" class="headerlink" title="手势判定"></a>手势判定</h2><p>上面我们简单回顾了触摸事件分发，具体细节可以看下源码。其实上面所讲的分发流程，很多同学都能说出个大概，但就是在动手写的时候，不知道如何入手。</p>
@@ -247,20 +447,8 @@
 <h4 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h4><p><code>onTouchEvent</code> 和 <code>onInterceptTouchEvent</code> 处理有些相似，主要是在 <code>TOUCH_MOVE</code> 中在判定为拖动手势后进行真正的业务逻辑处理，同时在 <code>TOUCH_UP</code> 中根据速度跟踪器的获取的速度，判定是否符合 fling 手势，如果符合，则使用 Scroller 进行计算。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>在分析完 ScrollView 的触摸事件处理，我们应该对事件处理有个基本理解，可以按照这个思路去分析其他的类似的系统控件，比如 <code>NestedScrollView</code>、<code>RecyclerView</code>  等等，我们可以发现处理的思路基本一致，那我们是不是可以将这些判定逻辑封装下呢？是的，并且系统已经提供 GestureDetector 来进行手势的判定，我们只需要在相应的手势回调方法中进行我们的业务逻辑即可。还有更强大的 <code>ViewDragHelper</code> ，但不管怎样，只要能理解好触摸事件分发，对工具类的熟练使用就不在话下。</p>
 <h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p>理论说的再多，也是纸上谈兵，只有真正去实践，才能熟练掌握。因为业务需求或者兴趣爱好，我写了以下两个自定义控件，正好一个是纵向滑动和一个是横向滑动，效果如下：</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim" alt="WheelView" title="">
-                </div>
-                <div class="image-caption">WheelView</div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/more.gif?x-oss-process=style/doc-img" alt="TapeView" title="">
-                </div>
-                <div class="image-caption">TapeView</div>
-            </figure>
+<p><img src="https://user-gold-cdn.xitu.io/2018/2/22/161bd1e1f4774f80?imageslim" alt="WheelView"></p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/more.gif?x-oss-process=style/doc-img" alt="TapeView"></p>
 <p>详细的代码分析我们就不进行了，因为阅读源码是最快的方式，第一个是<a href="https://github.com/LinXiaoTao/WheelView" target="_blank" rel="noopener">滚轮控件</a>，第二个是之前参加活动的仿薄荷健康的<a href="https://github.com/LinXiaoTao/CustomViewProject/blob/master/app/src/main/java/com/leo/customviewproject/tape/README.md" target="_blank" rel="noopener">卷尺控件</a>。在这里我们只分析部分代码：</p>
 <h3 id="滚轮控件"><a href="#滚轮控件" class="headerlink" title="滚轮控件"></a>滚轮控件</h3><p>在前面手势判定中的分析中，我们提到在 <code>onTouchEvent</code> 判定拖动手势成功后，进行真正的业务逻辑处理，在这个控件中也是一样的：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mIsBeingDragged) &#123;</span><br><span class="line">    mDistanceY += mLastY - moveY;</span><br><span class="line">    postInvalidateOnAnimation();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -275,271 +463,692 @@
 </ul>
 <p>感谢大家的阅读。</p>
 
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://linxiaotao.github.io">Leo</a>
+            <p>原文链接：<a href="https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/">https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/</a>
+            <p>发表日期：<a href="https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/">April 3rd 2018, 9:17:20 am</a>
+            <p>更新日期：<a href="https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/">November 16th 2018, 6:13:16 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
-
-        <blockquote class="post-copyright">
     
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2018-11-16T10:13:16.000Z" itemprop="dateUpdated">2018-11-16 18:13:16</time>
-</span><br>
-
-
-        
-        作者诚惶诚恐写下每篇文章，生怕误人子弟，无奈水平有限，如有瑕疵，敬请指教，感激不尽！
-        
-    </div>
-    
-    <footer>
-        <a href="https://linxiaotao.github.io">
-            <img src="/img/avatar.jpeg" alt="Leo">
-            Leo
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
             
-
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/04/11/hello-world/" title= "Hello World">
+                    <div class="nextTitle">Hello World</div>
+                </a>
             
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&title=《触摸事件实践之路》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&title=《触摸事件实践之路》 — My World&source=linxiaotao's blog" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《触摸事件实践之路》 — My World&url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&via=https://linxiaotao.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/03/27/Activity启动流程-基于Android26/" title= "Activity启动流程(基于Android26)">
+                    <div class="prevTitle">Activity启动流程(基于Android26)</div>
+                </a>
+            
+        </li>
     </ul>
- </div>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
 
 
+    
+    
 
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
         </div>
-    </div>
-
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
     
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2018/04/11/hello-world/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">Hello World</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2018/03/27/Activity启动流程-基于Android26/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">Activity启动流程(基于Android26)</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</article>
-
-
-
-</div>
-
-        <footer class="footer">
-    <div class="top">
+    <div class="social">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
+    
+        
             
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                <a href="mailto:12345@qq.com" class="iconfont-archer email" title=email ></a>
             
-            <span>博客内容遵循 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
+        
+    
+        
+            
+                <a href="//github.com/fi3ework" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/example_qr.png" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
     </div>
-    <div class="bottom">
-        <p><span>Leo &copy; 2015 - 2019</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
     </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
 </footer>
-
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
-
-
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&title=《触摸事件实践之路》 — My World&pic=https://linxiaotao.github.io/img/avatar.jpeg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&title=《触摸事件实践之路》 — My World&source=linxiaotao's blog" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《触摸事件实践之路》 — My World&url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/&via=https://linxiaotao.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://linxiaotao.github.io/2018/04/03/触摸事件实践之路/" alt="微信分享二维码">
-</div>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
 
 
 
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
 
 
-</script>
 
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+top:50vh;
 
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
-    });
-})();
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#触摸事件简单回顾"><span class="toc-number">2.</span> <span class="toc-text">触摸事件简单回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#手势判定"><span class="toc-number">3.</span> <span class="toc-text">手势判定</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#onInterceptTouchEvent"><span class="toc-number">3.1.</span> <span class="toc-text">onInterceptTouchEvent</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TOUCH-DOWN"><span class="toc-number">3.1.1.</span> <span class="toc-text">TOUCH_DOWN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TOUCH-MOVE"><span class="toc-number">3.1.2.</span> <span class="toc-text">TOUCH_MOVE</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TOUCH-CANCEL-amp-amp-TOUCH-UP"><span class="toc-number">3.1.3.</span> <span class="toc-text">TOUCH_CANCEL &amp;&amp; TOUCH_UP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ACTION-POINTER-UP"><span class="toc-number">3.1.4.</span> <span class="toc-text">ACTION_POINTER_UP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#小结"><span class="toc-number">3.1.5.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#onTouchEvent"><span class="toc-number">3.2.</span> <span class="toc-text">onTouchEvent</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#TOUCH-DOWN-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">TOUCH_DOWN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TOUCH-MOVE-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">TOUCH_MOVE</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TOUCH-UP"><span class="toc-number">3.2.3.</span> <span class="toc-text">TOUCH_UP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TOUCH-CANCEL"><span class="toc-number">3.2.4.</span> <span class="toc-text">TOUCH_CANCEL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ACTION-POINTER-DOWN"><span class="toc-number">3.2.5.</span> <span class="toc-text">ACTION_POINTER_DOWN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ACTION-POINTER-UP-1"><span class="toc-number">3.2.6.</span> <span class="toc-text">ACTION_POINTER_UP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#小结-1"><span class="toc-number">3.2.7.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">3.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实战"><span class="toc-number">4.</span> <span class="toc-text">实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#滚轮控件"><span class="toc-number">4.1.</span> <span class="toc-text">滚轮控件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#卷尺控件"><span class="toc-number">4.2.</span> <span class="toc-text">卷尺控件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 23
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2019/05/06/scoped-model源码解析/" >scoped_model源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href= "/2019/04/25/Looper中的死循环/" >Looper中的死循环</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/2019/02/05/Jetpack中的LiveData/" >Jetpack中的LiveData</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/14</span><a class="archive-post-title" href= "/2019/01/14/Jetpack中的Lifecycle/" >Jetpack中的Lifecycle</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span><a class="archive-post-title" href= "/2019/01/08/SparseArray源码解析/" >SparseArray源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href= "/2019/01/05/Jetpack中的ViewModel/" >Jetpack中的ViewModel</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2018/12/31/2018年复盘/" >2018年复盘</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/AppPlugin中的Task-第一篇/" >AppPlugin中的Task-第一篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/ArrayList源码分析/" >ArrayList源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/07</span><a class="archive-post-title" href= "/2018/11/07/HashMap源码分析/" >HashMap源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2018/09/08/JavaScript正则表达式/" >JavaScript正则表达式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2018/09/08/灵活使用位运算符/" >灵活使用位运算符</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href= "/2018/07/19/可拖拽的网格布局/" >可拖拽的网格布局</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/21</span><a class="archive-post-title" href= "/2018/05/21/Gradle插件-提高篇/" >Gradle插件-提高篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2018/05/16/Gradle插件-基础篇/" >Gradle插件-基础篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2018/05/08/Gradle多项目实践/" >Gradle多项目实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/29</span><a class="archive-post-title" href= "/2018/04/29/Gradle多项目构建/" >Gradle多项目构建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2018/04/19/性能优化第一步/" >性能优化第一步</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/2018/04/12/熟悉又陌生的Context/" >熟悉又陌生的Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/11</span><a class="archive-post-title" href= "/2018/04/11/hello-world/" >Hello World</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/03</span><a class="archive-post-title" href= "/2018/04/03/触摸事件实践之路/" >触摸事件实践之路</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/27</span><a class="archive-post-title" href= "/2018/03/27/Activity启动流程-基于Android26/" >Activity启动流程(基于Android26)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2018/03/23/Android消息机制-Handler/" >Android消息机制-Handler</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="随笔"><span class="iconfont-archer">&#xe60a;</span>随笔</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+    
+        <span class="sidebar-category-name" data-categories="Android-Framework"><span class="iconfont-archer">&#xe60a;</span>Android-Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="Gradle"><span class="iconfont-archer">&#xe60a;</span>Gradle</span>
+    
+        <span class="sidebar-category-name" data-categories="Android-Application"><span class="iconfont-archer">&#xe60a;</span>Android-Application</span>
+    
+        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Leo"
+    }
 </script>
-
-
-
-</body>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
 </html>
+
+
