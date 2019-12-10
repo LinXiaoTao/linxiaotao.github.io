@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Leo">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Leo">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="linxiaotao's blog">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>浅谈Flutter热重载(上) · Leo&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Leo&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">浅谈Flutter热重载(上)</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Leo's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            浅谈Flutter热重载(上)
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.6k</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/09/09</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="更新记录"><a href="#更新记录" class="headerlink" title="更新记录"></a>更新记录</h2><ul>
+<li>本文完成于 本文写于 2019.09.10，Flutter SDK 版本为 v1.5.4-hotfix.2</li>
+<li>2019.09.12 更新，将<strong>差异包</strong>字眼变更为<strong>增量包</strong></li>
+<li>2019.09.12 更新，<strong>–not-hot</strong> 写错，应该为 <strong>–no-hot</strong></li>
+</ul>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是浅谈 Flutter 系列的第二篇，上一篇是 <a href="https://juejin.im/post/5d68fb1af265da03d063b69e" target="_blank" rel="noopener">浅谈Flutter构建</a>，在上一篇中，主要是理清 Flutter 在 debug 和 release 模式下生成的不同产物分别是什么，怎么调试 build_tools 源码等等，这些不会在后面重复讨论，所以有需要的同学可以先看下第一篇。</p>
+<p>热重载是 Flutter 的一个大杀器，非常受欢迎，特别是对于客户端开发的同学来说，项目大了以后，可能就会出现，代码改一行，构建半小时的场面。之前非常火热的组件化方案其实一点就是为了解决构建时间过长的痛点。而对于 Flutter 来说，有两种模式可以快速应用修改：hot reload（热重载）和 hot restart（热重启），其中 hot reload 只需要几百毫秒就可以完成更新，速度非常快，hot restart 稍微慢一点，需要秒单位。在修改了资源文件或需要重新构建状态，只能使用 hot restart。</p>
+<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><p>在第一篇文章中，我们说到，对于每个 Flutter 命令，都有一个 Command 类与之对应，我们使用的 <code>flutter run</code> 是由 RunCommand 类处理的。</p>
+<p>默认在 debug 模式下会开启 hot mode，release 模式下默认关闭，可以在执行 run 命令的时候，添加 <code>--no-hot</code> 来禁用 hot mode。</p>
+<p>当启用 hot mode 时，会使用 HotRunner 来启动 Flutter 应用。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (hotMode) &#123;                                          </span><br><span class="line">  runner = HotRunner(                                   </span><br><span class="line">    flutterDevices,                                     </span><br><span class="line">    target: targetFile,                                 </span><br><span class="line">    debuggingOptions: _createDebuggingOptions(),        </span><br><span class="line">    benchmarkMode: argResults[<span class="string">'benchmark'</span>],             </span><br><span class="line">    applicationBinary: applicationBinaryPath == <span class="keyword">null</span>    </span><br><span class="line">        ? <span class="keyword">null</span>                                          </span><br><span class="line">        : fs.file(applicationBinaryPath),               </span><br><span class="line">    projectRootPath: argResults[<span class="string">'project-root'</span>],        </span><br><span class="line">    packagesFilePath: globalResults[<span class="string">'packages'</span>],        </span><br><span class="line">    dillOutputPath: argResults[<span class="string">'output-dill'</span>],          </span><br><span class="line">    saveCompilationTrace: argResults[<span class="string">'train'</span>],          </span><br><span class="line">    stayResident: stayResident,                         </span><br><span class="line">    ipv6: ipv6,                                         </span><br><span class="line">  );                                                    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>hot mode 开启后，首先会进行初始化，这部分相关的代码在 <code>HotRunner run()</code>。</p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><ul>
+<li><p>构建应用，以 Anroid 为例，这里会调用 gradle 去执行 assemble task 来生成 APK 文件</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!prebuiltApplication || androidSdk.licensesAvailable &amp;&amp; androidSdk.latestVersion == <span class="keyword">null</span>) &#123;   </span><br><span class="line">  printTrace(<span class="string">'Building APK'</span>);                                                                     </span><br><span class="line">  <span class="keyword">final</span> FlutterProject project = FlutterProject.current();                                        </span><br><span class="line">  <span class="keyword">await</span> buildApk(                                                                                 </span><br><span class="line">      project: project,                                                                           </span><br><span class="line">      target: mainPath,                                                                           </span><br><span class="line">      androidBuildInfo: AndroidBuildInfo(debuggingOptions.buildInfo,                              </span><br><span class="line">        targetArchs: &lt;AndroidArch&gt;[androidArch]                                                   </span><br><span class="line">      ),                                                                                           </span><br><span class="line">  );                                                                                              </span><br><span class="line">  <span class="comment">// Package has been built, so we can get the updated application ID and                         </span></span><br><span class="line">  <span class="comment">// activity name from the .apk.                                                                 </span></span><br><span class="line">  package = <span class="keyword">await</span> AndroidApk.fromAndroidProject(project.android);                                 </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>构建 APK 成功，则会使用 adb 启动它，并建立 sockets 连接，转发主机的端口到设备上。</p>
+<blockquote>
+<p>这里的主机指的是，运行 Flutter 命令的环境，一般是 PC。设备指的是，运行 Flutter 应用的环境，这里指手机。</p>
+</blockquote>
+<p>转发端口的意义是为了与设备上 Dart VM（虚拟机）进行通信，这个后面会说到。</p>
+<p>在使用 adb 启动应用后，会监听 log 输出，使用正则表达式去获取 sockets 连接地址后，设置端口转发。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> _handleLine(<span class="built_in">String</span> line) &#123;                                                                                  </span><br><span class="line">  <span class="built_in">Uri</span> uri;                                                                                                       </span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">RegExp</span> r = <span class="built_in">RegExp</span>(<span class="string">'<span class="subst">$&#123;RegExp.escape(serviceName)&#125;</span> listening on ((http|\/\/)[a-zA-Z0-9:/=_\\-\.\\[\\]]+)'</span>);</span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">Match</span> match = r.firstMatch(line);                                                                        </span><br><span class="line">                                                                                                                 </span><br><span class="line">  <span class="keyword">if</span> (match != <span class="keyword">null</span>) &#123;                                                                                           </span><br><span class="line">    <span class="keyword">try</span> &#123;                                                                                                        </span><br><span class="line">      uri = <span class="built_in">Uri</span>.parse(match[<span class="number">1</span>]);                                                                                 </span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;                                                                                            </span><br><span class="line">      _stopScrapingLogs();                                                                                       </span><br><span class="line">      _completer.completeError(error);                                                                           </span><br><span class="line">    &#125;                                                                                                            </span><br><span class="line">  &#125;                                                                                                              </span><br><span class="line">                                                                                                                 </span><br><span class="line">  <span class="keyword">if</span> (uri != <span class="keyword">null</span>) &#123;                                                                                             </span><br><span class="line">    <span class="keyword">assert</span>(!_completer.isCompleted);                                                                             </span><br><span class="line">    _stopScrapingLogs();                                                                                         </span><br><span class="line">    _completer.complete(_forwardPort(uri));                                                                      </span><br><span class="line">  &#125;                                                                                                              </span><br><span class="line">                                                                                                                 </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转发端口</span></span><br><span class="line">Future&lt;<span class="built_in">Uri</span>&gt; _forwardPort(<span class="built_in">Uri</span> deviceUri) <span class="keyword">async</span> &#123;                                                         </span><br><span class="line">  printTrace(<span class="string">'$serviceName URL on device: $deviceUri'</span>);                                                 </span><br><span class="line">  <span class="built_in">Uri</span> hostUri = deviceUri;                                                                              </span><br><span class="line">                                                                                                        </span><br><span class="line">  <span class="keyword">if</span> (portForwarder != <span class="keyword">null</span>) &#123;                                                                          </span><br><span class="line">    <span class="keyword">final</span> <span class="built_in">int</span> actualDevicePort = deviceUri.port;                                                        </span><br><span class="line">    <span class="keyword">final</span> <span class="built_in">int</span> actualHostPort = <span class="keyword">await</span> portForwarder.forward(actualDevicePort, hostPort: hostPort);       </span><br><span class="line">    printTrace(<span class="string">'Forwarded host port $actualHostPort to device port $actualDevicePort for $serviceName'</span>);</span><br><span class="line">    hostUri = deviceUri.replace(port: actualHostPort);                                                  </span><br><span class="line">  &#125;                                                                                                     </span><br><span class="line">                                                                                                        </span><br><span class="line">  <span class="keyword">assert</span>(InternetAddress(hostUri.host).isLoopback);                                                     </span><br><span class="line">  <span class="keyword">if</span> (ipv6) &#123;                                                                                           </span><br><span class="line">    hostUri = hostUri.replace(host: InternetAddress.loopbackIPv6.host);                                 </span><br><span class="line">  &#125;                                                                                                     </span><br><span class="line">                                                                                                        </span><br><span class="line">  <span class="keyword">return</span> hostUri;                                                                                       </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在我的设备上，匹配地址如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">09-08 14:14:12.708  6122  6149 I flutter : Observatory listening on http://127.0.0.1:45093/6p_NsmXILHw=/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据第二步建立的 sockets 连接地址和转发的端口，建立 RPC 通信，这里使用的 <a href="https://github.com/dart-lang/json_rpc_2" target="_blank" rel="noopener">json_rpc_2</a> 。</p>
+<blockquote>
+<p>关于 Dart VM 支持的 RPC 方法可以看这里：<a href="https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md" target="_blank" rel="noopener">Dart VM Service Protocol 3.26</a></p>
+<p>关于 JSON-RPC，可以看这里：<a href="https://www.jsonrpc.org/specification" target="_blank" rel="noopener">JSON-RPC 2.0 Specification</a></p>
+<p>注意：Dart VM 只支持 WebSocket，不支持 HTTP。</p>
+<p>“The VM will start a webserver which services protocol requests via WebSocket. It is possible to make HTTP (non-WebSocket) requests, but this does not allow access to VM <em>events</em> and is not documented here.”</p>
+</blockquote>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> Future&lt;VMService&gt; connect(                                                                            </span><br><span class="line">  <span class="built_in">Uri</span> httpUri, &#123;                                                                                             </span><br><span class="line">  ReloadSources reloadSources,                                                                               </span><br><span class="line">  Restart restart,                                                                                           </span><br><span class="line">  CompileExpression compileExpression,                                                                       </span><br><span class="line">  io.CompressionOptions compression = io.CompressionOptions.compressionDefault,                              </span><br><span class="line">&#125;) <span class="keyword">async</span> &#123;                                                                                                   </span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">Uri</span> wsUri = httpUri.replace(scheme: <span class="string">'ws'</span>, path: fs.path.join(httpUri.path, <span class="string">'ws'</span>));                   </span><br><span class="line">  <span class="keyword">final</span> StreamChannel&lt;<span class="built_in">String</span>&gt; channel = <span class="keyword">await</span> _openChannel(wsUri, compression: compression);                 </span><br><span class="line">  <span class="keyword">final</span> rpc.Peer peer = rpc.Peer.withoutJson(jsonDocument.bind(channel), onUnhandledError: _unhandledError); </span><br><span class="line">  <span class="keyword">final</span> VMService service = VMService(peer, httpUri, wsUri, reloadSources, restart, compileExpression);      </span><br><span class="line">  <span class="comment">// This call is to ensure we are able to establish a connection instead of                                 </span></span><br><span class="line">  <span class="comment">// keeping on trucking and failing farther down the process.                                               </span></span><br><span class="line">  <span class="keyword">await</span> service._sendRequest(<span class="string">'getVersion'</span>, <span class="keyword">const</span> &lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt;&#123;&#125;);                                       </span><br><span class="line">  <span class="keyword">return</span> service;                                                                                            </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于 Dart VM 具体的使用，可以看 <code>FlutterDevice.getVMs()</code> 和 <code>FlutterDevice.refreshViews()</code> 两个函数。</p>
+<p><code>getVMs()</code> 用于获取 Dart VM 实例，最终调用的是 <strong>getVM</strong> 这个 RPC 方法：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span>                                                             </span><br><span class="line">Future&lt;<span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt;&gt; _fetchDirect() =&gt; invokeRpcRaw(<span class="string">'getVM'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>  <img src="https://user-gold-cdn.xitu.io/2019/9/9/16d14e728a12328b?w=904&amp;h=184&amp;f=png&amp;s=19281" alt="getVM"></p>
+<p>  <code>refreshVIews()</code> 用于获取最新的 FlutterView 实例，最终调用的是 <strong>_flutter.listViews</strong> 这个 RPC 方法：</p>
+  <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// When the future returned by invokeRpc() below returns,              </span></span><br><span class="line"><span class="comment">// the _viewCache will have been updated.                              </span></span><br><span class="line"><span class="comment">// This message updates all the views of every isolate.                </span></span><br><span class="line"><span class="keyword">await</span> vmService.vm.invokeRpc&lt;ServiceObject&gt;(<span class="string">'_flutter.listViews'</span>);</span><br></pre></td></tr></table></figure>
+<p>  这个方法不属于 Dart VM 定义的，是 Flutter 额外扩展的方法，定义位于 <a href="https://github.com/flutter/flutter/wiki/Engine-specific-Service-Protocol-extensions" target="_blank" rel="noopener">Engine-specific-Service-Protocol-extensions</a>：</p>
+<p>  <img src="https://user-gold-cdn.xitu.io/2019/9/9/16d14ec3de2b95e0?w=747&amp;h=535&amp;f=png&amp;s=61996" alt="listViews"></p>
+<ul>
+<li><p>这是初始化的最后一步，使用 devfs 管理设备文件，当执行热重载时，会重新生成增量包再同步到设备上。</p>
+<p>首先，会在设备上生成一个目录，用于存放重载的资源文件和增量包。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@override</span>                                                                             </span><br><span class="line">Future&lt;<span class="built_in">Uri</span>&gt; create(<span class="built_in">String</span> fsName) <span class="keyword">async</span> &#123;                                             </span><br><span class="line">  <span class="keyword">final</span> <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt; response = <span class="keyword">await</span> vmService.vm.createDevFS(fsName);       </span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Uri</span>.parse(response[<span class="string">'uri'</span>]);                                                  </span><br><span class="line">&#125;                                                                               </span><br><span class="line"></span><br><span class="line"><span class="comment">/// Create a new development file system on the device.                             </span></span><br><span class="line">Future&lt;<span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt;&gt; createDevFS(<span class="built_in">String</span> fsName) &#123;                           </span><br><span class="line">  <span class="keyword">return</span> invokeRpcRaw(<span class="string">'_createDevFS'</span>, params: &lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt;&#123;<span class="string">'fsName'</span>: fsName&#125;); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>生成的 Uri 类似这种：file:///data/user/0/com.example.my_app/code_cache/my_appLGHJYJ/my_app/，每个 FlutterDevice 都会有个 <code>DevFS devFS</code> 用于封装对设备文件的同步。设备上创建的目录如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/9/16d154533a74184f?w=429&amp;h=170&amp;f=png&amp;s=17910" alt="code_cache"></p>
+<p>每执行一次 <code>flutter run</code> 都会生成一个新的 <code>my_appXXXX</code> 目录，修改的资源都会同步到这个目录中。</p>
+<blockquote>
+<p>注意这里我是用的测试项目 my_app</p>
+</blockquote>
+<p>在生成目录后，会同步一次资源文件，将 fonts、packages、AssetManifest.json 等同步到设备中。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> UpdateFSReport devfsResult = <span class="keyword">await</span> _updateDevFS(fullRestart: <span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>  <img src="https://user-gold-cdn.xitu.io/2019/9/9/16d15520be20309e?w=463&amp;h=213&amp;f=png&amp;s=24775" alt="code_cache_my_app"></p>
+<h3 id="监听输入"><a href="#监听输入" class="headerlink" title="监听输入"></a>监听输入</h3><p>当修改了 dart 代码后，我们需要输入 r 或者 R 来使得我们的修改生效，其中 r 表示 hot reload，R 表示 hot restart。</p>
+<p>首先，需要先注册输入处理函数：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> setupTerminal() &#123;                               </span><br><span class="line">  <span class="keyword">assert</span>(stayResident);                              </span><br><span class="line">  <span class="keyword">if</span> (usesTerminalUI) &#123;                              </span><br><span class="line">    <span class="keyword">if</span> (!logger.quiet) &#123;                             </span><br><span class="line">      printStatus(<span class="string">''</span>);                               </span><br><span class="line">      printHelp(details: <span class="keyword">false</span>);                     </span><br><span class="line">    &#125;                                                </span><br><span class="line">    terminal.singleCharMode = <span class="keyword">true</span>;                  </span><br><span class="line">    terminal.keystrokes.listen(processTerminalInput);</span><br><span class="line">  &#125;                                                  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当输入 r 时，最终会调用到 <code>restart(false)</code> 这个方法：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (lower == <span class="string">'r'</span>) &#123;                                                             </span><br><span class="line">  OperationResult result;                                                       </span><br><span class="line">  <span class="keyword">if</span> (code == <span class="string">'R'</span>) &#123;                                                            </span><br><span class="line">    <span class="comment">// If hot restart is not supported for all devices, ignore the command.     </span></span><br><span class="line">    <span class="keyword">if</span> (!canHotRestart) &#123;                                                       </span><br><span class="line">      <span class="keyword">return</span>;                                                                   </span><br><span class="line">    &#125;                                                                           </span><br><span class="line">    result = <span class="keyword">await</span> restart(fullRestart: <span class="keyword">true</span>);                                  </span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;                                                                      </span><br><span class="line">    result = <span class="keyword">await</span> restart(fullRestart: <span class="keyword">false</span>);                                 </span><br><span class="line">  &#125;                                                                             </span><br><span class="line">  <span class="keyword">if</span> (!result.isOk) &#123;                                                           </span><br><span class="line">    printStatus(<span class="string">'Try again after fixing the above error(s).'</span>, emphasis: <span class="keyword">true</span>);  </span><br><span class="line">  &#125;                                                                             </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>restart()</code> 函数的核心代码在 <code>_reloadSources()</code> 函数中，这个函数的主要作用如下：</p>
+<ul>
+<li><p>调用 <code>_updateDevFS()</code> 方法，生成增量包，并同步到设备上，DevFS 用于管理设备文件系统。</p>
+<p>首先比较资源文件的修改时间，判断是否需要更新：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Only update assets if they have been modified, or if this is the      </span></span><br><span class="line"><span class="comment">// first upload of the asset bundle.                                     </span></span><br><span class="line"><span class="keyword">if</span> (content.isModified || (bundleFirstUpload &amp;&amp; archivePath != <span class="keyword">null</span>)) &#123;  </span><br><span class="line">  dirtyEntries[deviceUri] = content;                                     </span><br><span class="line">  syncedBytes += content.size;                                           </span><br><span class="line">  <span class="keyword">if</span> (archivePath != <span class="keyword">null</span> &amp;&amp; !bundleFirstUpload) &#123;                       </span><br><span class="line">    assetPathsToEvict.add(archivePath);                                  </span><br><span class="line">  &#125;                                                                      </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>dirtyEntries 用于存放需要更新的内容，syncedBytes 计算需要同步的字节数。</p>
+<p>接着，生成代码增量包，以 .incremental.dill 结尾：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> CompilerOutput compilerOutput = <span class="keyword">await</span> generator.recompile(                                              </span><br><span class="line">  mainPath,                                                                                                   </span><br><span class="line">  invalidatedFiles,                                                                                           </span><br><span class="line">  outputPath:  dillOutputPath ?? getDefaultApplicationKernelPath(trackWidgetCreation: trackWidgetCreation),   </span><br><span class="line">  packagesFilePath : _packagesFilePath,                                                                       </span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>最后通过 http 写入到设备中：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (dirtyEntries.isNotEmpty) &#123;                                                        </span><br><span class="line">  <span class="keyword">try</span> &#123;                                                                               </span><br><span class="line">    <span class="keyword">await</span> _httpWriter.write(dirtyEntries);                                            </span><br><span class="line">  &#125; on SocketException <span class="keyword">catch</span> (socketException, stackTrace) &#123;                          </span><br><span class="line">    printTrace(<span class="string">'DevFS sync failed. Lost connection to device: $socketException'</span>);     </span><br><span class="line">    <span class="keyword">throw</span> DevFSException(<span class="string">'Lost connection to device.'</span>, socketException, stackTrace);  </span><br><span class="line">  &#125; <span class="keyword">catch</span> (exception, stackTrace) &#123;                                                   </span><br><span class="line">    printError(<span class="string">'Could not update files on device: $exception'</span>);                       </span><br><span class="line">    <span class="keyword">throw</span> DevFSException(<span class="string">'Sync failed'</span>, exception, stackTrace);                       </span><br><span class="line">  &#125;                                                                                   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>调用 <code>reloadSources()</code> 方法通知 Dart VM 重新加载 Dart 增量包，同样的这里也是调用的 RPC 方法：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt; arguments = &lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt;&#123;                                      </span><br><span class="line">  <span class="string">'pause'</span>: pause,                                                                              </span><br><span class="line">&#125;;                                                                                             </span><br><span class="line"><span class="keyword">if</span> (rootLibUri != <span class="keyword">null</span>) &#123;                                                                      </span><br><span class="line">  arguments[<span class="string">'rootLibUri'</span>] = rootLibUri.toString();                                             </span><br><span class="line">&#125;                                                                                              </span><br><span class="line"><span class="keyword">if</span> (packagesUri != <span class="keyword">null</span>) &#123;                                                                     </span><br><span class="line">  arguments[<span class="string">'packagesUri'</span>] = packagesUri.toString();                                           </span><br><span class="line">&#125;                                                                                              </span><br><span class="line"><span class="keyword">final</span> <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt; response = <span class="keyword">await</span> invokeRpcRaw(<span class="string">'_reloadSources'</span>, params: arguments); </span><br><span class="line"><span class="keyword">return</span> response;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最后调用 <code>flutterReassemble()</code> 方法重新刷新页面，这里调用的是 RPC 方法 <strong>ext.flutter.reassemble</strong>：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;<span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="keyword">dynamic</span>&gt;&gt; flutterReassemble() &#123;                </span><br><span class="line">  <span class="keyword">return</span> invokeFlutterExtensionRpcRaw(<span class="string">'ext.flutter.reassemble'</span>);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="关于增量包"><a href="#关于增量包" class="headerlink" title="关于增量包"></a>关于增量包</h2><p>我们用一个非常简单的 DEMO 来看下生成的增量包的内容。DEMO 有两个 dart 文件，首先是 main.dart，这个是入口文件：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> main() =&gt; runApp(MyApp());          </span><br><span class="line">                                         </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyApp</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;    </span><br><span class="line">  <span class="meta">@override</span>                              </span><br><span class="line">  Widget build(BuildContext context) &#123;   </span><br><span class="line">    <span class="keyword">return</span> MaterialApp(                  </span><br><span class="line">      title: <span class="string">'Flutter Demo'</span>,             </span><br><span class="line">      theme: ThemeData(                  </span><br><span class="line">        primarySwatch: Colors.blue,      </span><br><span class="line">      ),                                 </span><br><span class="line">      home: HomePage(),                  </span><br><span class="line">    );                                   </span><br><span class="line">  &#125;                                      </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>home.dart 也非常简单，就显示一个文本：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HomePage</span> <span class="keyword">extends</span> <span class="title">StatelessWidget</span> </span>&#123;   </span><br><span class="line">  <span class="meta">@override</span>                                </span><br><span class="line">  Widget build(BuildContext context) &#123;     </span><br><span class="line">    <span class="keyword">return</span> Scaffold(                       </span><br><span class="line">      body: Center(                        </span><br><span class="line">        child: Text(<span class="string">'Hello World'</span>),        </span><br><span class="line">      ),                                   </span><br><span class="line">      appBar: AppBar(                      </span><br><span class="line">        title: Text(<span class="string">'My APP'</span>),             </span><br><span class="line">      ),                                   </span><br><span class="line">    );                                     </span><br><span class="line">  &#125;                                        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们做两个地方的修改，首先是将主题颜色从 <code>Colors.blue</code> 改成 <code>Colors.red</code>，将 HomePage 中的 “Hello World” 改成 “Hello Flutter”。</p>
+<p>修改完成后，在终端键入 r 后执行，会在 build 目录下生成 app.dill.incremental.dill，什么是 dill 文件？其实这里面就是我们的代码产物，用于提供给 Dart VM 执行的。我们用 <code>strings</code> 命令查看下内容：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/9/16d162fd0eda5b3e?w=804&amp;h=928&amp;f=png&amp;s=941410" alt="incremental.dill"></p>
+<p>修改的内容已经包含在增量包中了，当我们执行 <code>_updateDevFS()</code> 方法后，incremental.dill 也被同步到设备中了。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/9/16d1633c7395161b?w=758&amp;h=354&amp;f=png&amp;s=46822" alt="app_incremental_dill"></p>
+<p>名字虽然不一样，但内容一致的。现在设备是已经包含了增量包，接着下来就是通知 Dart VM 刷新了，先调用 <code>reloadSources()</code>，最后调用 <code>flutterReassemble()</code>，执行完之后，我们就可以看到新的界面了。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/9/9/16d1643f1380ac04?w=608&amp;h=1086&amp;f=png&amp;s=97611" alt="new_ui"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>热重载功能的实现，首先是增量包的实现，这里我们没有细讲，留到后面的文章中，生成的增量包，文件后缀以 incremental.dill 结尾，文件的同步则通过 adb 建立的 sockets 连接进行传输，而且这个 sockets 另外一个非常重要的功能就是，建立和 Dart VM 的 RPC 通信，Dart VM 本身就已经定义了一些 RPC 方法，Flutter 又扩展了一些，获取 Dart VM 信息，刷新 Flutter 视图等等都是通过 RPC 实现的。</p>
+<p>因为篇幅的原因，这里我们并没有讲解增量包的生成实现，还有 Dart VM 和 Flutter engine 对 RPC 方法的实现，这个留到后面的文章。</p>
+<p>写到这里，其实距离实现动态更新的目标也越来越清晰，第一，生成增量包；第二，在合适的时候，重新加载刷新增量包。</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://linxiaotao.github.io">Leo</a>
+            <p>原文链接：<a href="https://linxiaotao.github.io/2019/09/09/浅谈Flutter热重载-上/">https://linxiaotao.github.io/2019/09/09/浅谈Flutter热重载-上/</a>
+            <p>发表日期：<a href="https://linxiaotao.github.io/2019/09/09/浅谈Flutter热重载-上/">九月 9日 2019, 7:51:49 晚上</a>
+            <p>更新日期：<a href="https://linxiaotao.github.io/2019/09/09/浅谈Flutter热重载-上/">December 10th 2019, 7:52:22 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2019/12/04/优化包大小-PNG部分/" title= "优化包大小-PNG部分">
+                    <div class="nextTitle">优化包大小-PNG部分</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2019/08/30/浅谈Flutter构建/" title= "浅谈Flutter构建">
+                    <div class="prevTitle">浅谈Flutter构建</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:linxiaotao1993@vip.qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/LinXiaoTao" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat_qr.jpeg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#更新记录"><span class="toc-number">1.</span> <span class="toc-text">更新记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">2.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码解析"><span class="toc-number">3.</span> <span class="toc-text">源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化"><span class="toc-number">3.1.</span> <span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监听输入"><span class="toc-number">3.2.</span> <span class="toc-text">监听输入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于增量包"><span class="toc-number">4.</span> <span class="toc-text">关于增量包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 30
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/2019/12/04/优化包大小-PNG部分/" >优化包大小-PNG部分</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/09</span><a class="archive-post-title" href= "/2019/09/09/浅谈Flutter热重载-上/" >浅谈Flutter热重载(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/30</span><a class="archive-post-title" href= "/2019/08/30/浅谈Flutter构建/" >浅谈Flutter构建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2019/08/22/无侵入引入Flutter模块/" >无侵入引入Flutter模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2019/08/07/仿即刻Flutter版本/" >仿即刻Flutter版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/21</span><a class="archive-post-title" href= "/2019/06/21/解决Flutter版本不一致的flutterw/" >解决Flutter版本不一致的flutterw</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/17</span><a class="archive-post-title" href= "/2019/06/17/Flutter-ListView-源码分析/" >Flutter ListView 源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2019/05/06/scoped-model源码解析/" >scoped_model源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href= "/2019/04/25/Looper中的死循环/" >Looper中的死循环</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/2019/02/05/Jetpack中的LiveData/" >Jetpack中的LiveData</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/14</span><a class="archive-post-title" href= "/2019/01/14/Jetpack中的Lifecycle/" >Jetpack中的Lifecycle</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span><a class="archive-post-title" href= "/2019/01/08/SparseArray源码解析/" >SparseArray源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href= "/2019/01/05/Jetpack中的ViewModel/" >Jetpack中的ViewModel</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2018/12/31/2018年复盘/" >2018年复盘</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/AppPlugin中的Task-第一篇/" >AppPlugin中的Task-第一篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/ArrayList源码分析/" >ArrayList源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/07</span><a class="archive-post-title" href= "/2018/11/07/HashMap源码分析/" >HashMap源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2018/09/08/JavaScript正则表达式/" >JavaScript正则表达式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2018/09/08/灵活使用位运算符/" >灵活使用位运算符</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href= "/2018/07/19/可拖拽的网格布局/" >可拖拽的网格布局</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/21</span><a class="archive-post-title" href= "/2018/05/21/Gradle插件-提高篇/" >Gradle插件-提高篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2018/05/16/Gradle插件-基础篇/" >Gradle插件-基础篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2018/05/08/Gradle多项目实践/" >Gradle多项目实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/29</span><a class="archive-post-title" href= "/2018/04/29/Gradle多项目构建/" >Gradle多项目构建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2018/04/19/性能优化第一步/" >性能优化第一步</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/2018/04/12/熟悉又陌生的Context/" >熟悉又陌生的Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/11</span><a class="archive-post-title" href= "/2018/04/11/hello-world/" >Hello World</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/03</span><a class="archive-post-title" href= "/2018/04/03/触摸事件实践之路/" >触摸事件实践之路</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/27</span><a class="archive-post-title" href= "/2018/03/27/Activity启动流程-基于Android26/" >Activity启动流程(基于Android26)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2018/03/23/Android消息机制-Handler/" >Android消息机制-Handler</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="随笔"><span class="iconfont-archer">&#xe60a;</span>随笔</span>
+    
+        <span class="sidebar-category-name" data-categories="Android-Framework"><span class="iconfont-archer">&#xe60a;</span>Android-Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="Gradle"><span class="iconfont-archer">&#xe60a;</span>Gradle</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+    
+        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
+    
+        <span class="sidebar-category-name" data-categories="Android-Application"><span class="iconfont-archer">&#xe60a;</span>Android-Application</span>
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Leo"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

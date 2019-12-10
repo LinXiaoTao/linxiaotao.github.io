@@ -346,6 +346,213 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/12/04/优化包大小-PNG部分/" >
+            
+                <span>优化包大小-PNG部分</span>
+        </a>
+        <div class="abstract-content">
+            背景PNG 图片相对于 JPEG 图片来说，它是一种无损的图像存储格式，同时多了一条透明度通道，所以一般情况下，PNG 图片要比 JPEG 图片要大，并且 PNG 图片往往还是 APK 图片资源中的大头，所以优化 PNG 图片的大小，对于减小包的体积来说，是比较有回报的事情。
+
+关于 PNG 的 wiki：
+便携式网络图形（英语：Portable Network Graphics，PNG）是一种无损压缩的位图图形格式，支持索引、灰度、RGB三种颜色方案以及Alpha通道等特性。
+关于 JPEG 的 wiki：
+联合图像专家小组（英语：Joint Photographic Experts ...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/04</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "性能优化">性能优化</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2019/09/09/浅谈Flutter热重载-上/" >
+            
+                <span>浅谈Flutter热重载(上)</span>
+        </a>
+        <div class="abstract-content">
+            更新记录
+本文完成于 本文写于 2019.09.10，Flutter SDK 版本为 v1.5.4-hotfix.2
+2019.09.12 更新，将差异包字眼变更为增量包
+2019.09.12 更新，–not-hot 写错，应该为 –no-hot
+
+前言这是浅谈 Flutter 系列的第二篇，上一篇是 浅谈Flutter构建，在上一篇中，主要是理清 Flutter 在 debug 和 release 模式下生成的不同产物分别是什么，怎么调试 build_tools 源码等等，这些不会在后面重复讨论，所以有需要的同学可以先看下第一篇。
+热重载是 Flutter 的一个大杀器，非常受欢迎，特...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/09/09</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2019/08/30/浅谈Flutter构建/" >
+            
+                <span>浅谈Flutter构建</span>
+        </a>
+        <div class="abstract-content">
+            不同版本构建产物的差异写这篇文章的时间为：2019.08.25，当前 Flutter SDK 最新版本为 v1.9.5，其中 stable 最新版本为 v1.7.8+hotfix.4。
+随着版本的更新，Flutter 构建的产物也在调整，以 Android 为例，我们使用默认的 flutter_app 项目来测试，在不修改源码的情况下，使用不同的 SDK 版本来执行打包命令，每个版本都打两个包：debug 和 release。
+
+每个版本生成的 Flutter 产物如下所示，这里不列出 fonts、LICENSE 这些文件：
+
+
+
+版本
+类型
+内容
+说明
+
+
+
+
+1.5.4
+debug
+...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/30</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2019/08/22/无侵入引入Flutter模块/" >
+            
+                <span>无侵入引入Flutter模块</span>
+        </a>
+        <div class="abstract-content">
+            前言Flutter 作为当下比较流行的技术，不少公司已经开始在原生项目中接入它，但这也带来了一些问题：
+
+Flutter SDK 问题，在 Android 中，Flutter 的代码和 Framework 会被编译成产物，而且 debug 和 release 生成的产物也是不太一样的。要编译就需要有 SDK，这意味着其他成员也需要下载 Flutter SDK，即使他不需要开发 Flutter 模块，还有 Flutter 版本的管理也是一个问题，不过这个已经有解决方案了。
+Android 和 iOS 项目需要共用一套 Flutter 代码，这就需要用合适的方式去管理 Flutter 模块。...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/22</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2019/08/07/仿即刻Flutter版本/" >
+            
+                <span>仿即刻Flutter版本</span>
+        </a>
+        <div class="abstract-content">
+            题外话即刻是我个人用的比较频繁的 APP 之一，但在我的手机一直有个 bug，播放视频时总是画面没有变化，需要手动推动下进度条才行，在更新了几个版本也没解决这个问题。再加上刚学了 Flutter，就尝试做了个 Flutter 版本的即刻，即刻页面比较多，所以没有完全开发完，只开发了首页的信息流，信息详情，视频播放等几个用的最多的页面。
+
+接口用的是即刻的接口和图标，这里是为了学习，请勿用做其他用途，一切后果由自己承担，版权归即刻所有
+
+因为我本身学习 Flutter 的时间也才几个月，所以代码质量还是有所欠缺的。
+最近即刻被暂停服务了，所以 API 也调用不了，只能看看之前录制的片段。
+...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/07</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2019/06/21/解决Flutter版本不一致的flutterw/" >
+            
+                <span>解决Flutter版本不一致的flutterw</span>
+        </a>
+        <div class="abstract-content">
+            参考Flutter 混合开发组件化与工程化架构
+前言开发 Flutter 应用的同学都知道，有个痛点就是如果是团队协作开发的话，就会存在使用的 Flutter 版本不一致的问题，就算只是个人开发，如果需要用 ci 打包的话，打包机上的版本也需要去保持一致，比如 A 同学在开发时，发现 Flutter 低版本有个 bug，升级到高版本就可以解决，但 B 同学并没有同步升级，这就导致在两方打出来的包不一样，如果这个 bug 不明显，那这里就会有很大的隐患，使用 ci 同理。
+gradlew如果有使用 gradle 的同学会知道，在使用 gradle 构建应用时，会推荐使用 gradlew，这...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/21</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2019/06/17/Flutter-ListView-源码分析/" >
+            
+                <span>Flutter ListView 源码分析</span>
+        </a>
+        <div class="abstract-content">
+            前言不得不说，Flutter 绘制 UI 的速度和原生根本不是一个量级的，Flutter 要快的多了，比如常用的 ListView 控件，原生写的话，比如 Android，如果不封装的话，需要一个 Adapter、ViewHolder，再加个 xml 布局文件，而 Flutter 可能就几十行。
+对于越常用的控件，越要熟悉它的原理。Flutter 中的 ScrollView 家族，成员的划分其实和 Android 还是非常类似的，除了 ListView、GridView，还有 CustomScrollView 和 NestedScrollView。今天我们要讲主角就是 ListView。...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/17</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/05/06/scoped-model源码解析/" >
             
                 <span>scoped_model源码解析</span>
@@ -353,14 +560,14 @@
         <div class="abstract-content">
             参考
 ephemeral-vs-app
-inheritedwidget-inheritedmodel)
+inheritedwidget-inheritedmodel
 
 scoped_model 是 Google 推荐使用的应用状态管理库（Simple app state management），当然，除了它，还有其他选择，比如 Redux，Rx，hooks 等等。
 临时状态和应用状态我们说 scoped_model 用于应用状态管理，是因为除了应用状态（app state）以外，还有临时状态（ephemeral state）。
 临时状态也可以称为 UI 状态或者本地状态，是一种可以包含在单个 widget 的状态。
 比如以下定义：
 
-PageVie...
+PageView...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -414,189 +621,6 @@ PageVie...
             <!-- date  -->
             <div class="abstract-date">
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/02/05</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/01/14/Jetpack中的Lifecycle/" >
-            
-                <span>Jetpack中的Lifecycle</span>
-        </a>
-        <div class="abstract-content">
-            关于本文有很多项目都会使用 MVP 这种项目架构，使用 Presenter 来减轻 Activity 的负担，具体的 MVP 实现可以阅读 Google 推出的 android-architecture。
-一般使用 MVP，都会遇到一个问题，如何将 Presenter 和 View 的生命周期进行绑定，常见的做法是，在 Activity 的生命周期中手动调用 Presenter 的回调方法，更复杂的做法可能需要在 Presenter 或者 View 维护一个操作栈，在指定生命周期中去执行操作。
-关于Lifecyclelifecycle 是 Google 推出的用于响应 Activity ...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/14</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/01/08/SparseArray源码解析/" >
-            
-                <span>SparseArray源码解析</span>
-        </a>
-        <div class="abstract-content">
-            关于SparseArraySparseArray 是 Android SDK 提供的将 integers 映射到对象的容器。相对于 HashMap 更节省内存，因为它避免了 key 发生自动装箱，同时不用额外的对象来表示映射关系。
-SparseArray 使用二分查找来查询 key，这意味着，key 是有序存储的，而且不适用于大量数据的情况。通常情况下，它的查找比 HashMap 慢。
-为了提高性能，SparseArray 在删除 key 时，不会立即调整数据结构，而是将该条目标记为删除，在之后使用相同 key 时可以复用或者垃圾回收操作中进行调整。
-
-垃圾回收操作会发生在需要扩容、获取...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/08</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/01/05/Jetpack中的ViewModel/" >
-            
-                <span>Jetpack中的ViewModel</span>
-        </a>
-        <div class="abstract-content">
-            前言首先祝大家在新的一年中，身体健康，心想事成。
-算了下，去年技术类博客写了 15 篇，看下数量还算比较满意，可是基本都是前半年写的，那时候刚刚下定决心要好好写博客，后半年因为工作上还有自己偷懒心理，基本都没怎么写了，真是惭愧。
-不过经过去年写了这些文章，慢慢也学习到了一些写技术文章上的技巧，希望今年能方得始终，提升文章的质量。
-关于 Jetpack相信已经有不少人对 Google 推出的 Jetpack 系列组件都有所耳闻，现在网上已经有不少的分析文章了，涵盖了用法和源码解析，所以我就不重复造轮子，在这个系列文章中，不会涉及使用教程等，只写一些个人的使用体会，也当作给自己做笔记。
-关于...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/05</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/12/31/2018年复盘/" >
-            
-                <span>2018年复盘</span>
-        </a>
-        <div class="abstract-content">
-            2018也到了尾声，这一年感觉经历了较之往年更多的事情，比如有了想守护一辈子的另一半，一年之间换了两次工作，面了很多试。。。算算从毕业工作到现在也有三年多了，一直做着 Android 开发，说起来入门 Android 真的是非常巧合，大学的专业不是软件工程，虽然说跟计算机有点联系，但课程跟软件有点联系的，也就 C 语言，数据库和网络课程等，编程基础的数据结构算法，这些都没有。那时候对编程的认识，也仅限于很模糊的 “很酷的黑客”，大一大二的时候也开始自学数据结构和算法知识，很可惜都没有坚持下去，那时候感觉很枯燥，每次都是信心满满然后又半途而废，学过 c++，c#，还用过 qt，可惜要么是学...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/12/AppPlugin中的Task-第一篇/" >
-            
-                <span>AppPlugin中的Task-第一篇</span>
-        </a>
-        <div class="abstract-content">
-            前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.application 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 task 组成，task 可以相互依赖，比如最基本的 Task.dependsOn()，所以理解 Android 编译过程就是理解各个 task 的作用。
-
-本文涉及的源码：
-
-com.android...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/12</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/09/ArrayList源码分析/" >
-            
-                <span>ArrayList源码分析</span>
-        </a>
-        <div class="abstract-content">
-            构造函数ArrayList 的构造函数有三个：
-
-ArrayList()
-ArrayList(int)
-ArrayList(Collection&lt;? extends E&gt;)
-
-其中用的最多的是无参默认构造函数，ArrayList 底层是使用数组实现的，这里初始化一个空数组
-12345public ArrayList() &#123;                                         this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;&#125; private static final Ob...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/09</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/07/HashMap源码分析/" >
-            
-                <span>HashMap源码分析</span>
-        </a>
-        <div class="abstract-content">
-            构造方法从构造方法来看，我们可以指定初始化容量（initialCapacity）和负载因子（loadFactor），其中 loadFactor 的默认值为 0.75，如果指定了 initialCapacity，就会计算容量阙值（threshold）：
-123456789101112// tableSizeFor 会计算一个大于或等于 initialCapacity 的 2 的 N 次方的值this.threshold = tableSizeFor(initialCapacity);static final int tableSizeFor(int cap) &#123;         ...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/07</span>
             </div>
             <!-- tags  -->
             
@@ -975,9 +999,106 @@ ArrayList(Collection&lt;? extends E&gt;)
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 23
+        Total : 30
         </div>
         <!-- search  -->
         
@@ -990,6 +1111,41 @@ ArrayList(Collection&lt;? extends E&gt;)
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/2019/12/04/优化包大小-PNG部分/" >优化包大小-PNG部分</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/09</span><a class="archive-post-title" href= "/2019/09/09/浅谈Flutter热重载-上/" >浅谈Flutter热重载(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/30</span><a class="archive-post-title" href= "/2019/08/30/浅谈Flutter构建/" >浅谈Flutter构建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2019/08/22/无侵入引入Flutter模块/" >无侵入引入Flutter模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2019/08/07/仿即刻Flutter版本/" >仿即刻Flutter版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/21</span><a class="archive-post-title" href= "/2019/06/21/解决Flutter版本不一致的flutterw/" >解决Flutter版本不一致的flutterw</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/17</span><a class="archive-post-title" href= "/2019/06/17/Flutter-ListView-源码分析/" >Flutter ListView 源码分析</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1120,7 +1276,7 @@ ArrayList(Collection&lt;? extends E&gt;)
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
+        <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1163,9 +1319,13 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
+        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
+    
         <span class="sidebar-category-name" data-categories="Android-Application"><span class="iconfont-archer">&#xe60a;</span>Android-Application</span>
     
-        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>

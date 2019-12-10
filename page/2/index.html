@@ -359,6 +359,189 @@ height:50vh;
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/01/14/Jetpack中的Lifecycle/" >
+            
+                <span>Jetpack中的Lifecycle</span>
+        </a>
+        <div class="abstract-content">
+            关于本文有很多项目都会使用 MVP 这种项目架构，使用 Presenter 来减轻 Activity 的负担，具体的 MVP 实现可以阅读 Google 推出的 android-architecture。
+一般使用 MVP，都会遇到一个问题，如何将 Presenter 和 View 的生命周期进行绑定，常见的做法是，在 Activity 的生命周期中手动调用 Presenter 的回调方法，更复杂的做法可能需要在 Presenter 或者 View 维护一个操作栈，在指定生命周期中去执行操作。
+关于Lifecyclelifecycle 是 Google 推出的用于响应 Activity ...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/14</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2019/01/08/SparseArray源码解析/" >
+            
+                <span>SparseArray源码解析</span>
+        </a>
+        <div class="abstract-content">
+            关于SparseArraySparseArray 是 Android SDK 提供的将 integers 映射到对象的容器。相对于 HashMap 更节省内存，因为它避免了 key 发生自动装箱，同时不用额外的对象来表示映射关系。
+SparseArray 使用二分查找来查询 key，这意味着，key 是有序存储的，而且不适用于大量数据的情况。通常情况下，它的查找比 HashMap 慢。
+为了提高性能，SparseArray 在删除 key 时，不会立即调整数据结构，而是将该条目标记为删除，在之后使用相同 key 时可以复用或者垃圾回收操作中进行调整。
+
+垃圾回收操作会发生在需要扩容、获取...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/08</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2019/01/05/Jetpack中的ViewModel/" >
+            
+                <span>Jetpack中的ViewModel</span>
+        </a>
+        <div class="abstract-content">
+            前言首先祝大家在新的一年中，身体健康，心想事成。
+算了下，去年技术类博客写了 15 篇，看下数量还算比较满意，可是基本都是前半年写的，那时候刚刚下定决心要好好写博客，后半年因为工作上还有自己偷懒心理，基本都没怎么写了，真是惭愧。
+不过经过去年写了这些文章，慢慢也学习到了一些写技术文章上的技巧，希望今年能方得始终，提升文章的质量。
+关于 Jetpack相信已经有不少人对 Google 推出的 Jetpack 系列组件都有所耳闻，现在网上已经有不少的分析文章了，涵盖了用法和源码解析，所以我就不重复造轮子，在这个系列文章中，不会涉及使用教程等，只写一些个人的使用体会，也当作给自己做笔记。
+关于...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/05</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/12/31/2018年复盘/" >
+            
+                <span>2018年复盘</span>
+        </a>
+        <div class="abstract-content">
+            2018也到了尾声，这一年感觉经历了较之往年更多的事情，比如有了想守护一辈子的另一半，一年之间换了两次工作，面了很多试。。。算算从毕业工作到现在也有三年多了，一直做着 Android 开发，说起来入门 Android 真的是非常巧合，大学的专业不是软件工程，虽然说跟计算机有点联系，但课程跟软件有点联系的，也就 C 语言，数据库和网络课程等，编程基础的数据结构算法，这些都没有。那时候对编程的认识，也仅限于很模糊的 “很酷的黑客”，大一大二的时候也开始自学数据结构和算法知识，很可惜都没有坚持下去，那时候感觉很枯燥，每次都是信心满满然后又半途而废，学过 c++，c#，还用过 qt，可惜要么是学...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/12/31</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/11/12/AppPlugin中的Task-第一篇/" >
+            
+                <span>AppPlugin中的Task-第一篇</span>
+        </a>
+        <div class="abstract-content">
+            前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.application 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 task 组成，task 可以相互依赖，比如最基本的 Task.dependsOn()，所以理解 Android 编译过程就是理解各个 task 的作用。
+
+本文涉及的源码：
+
+com.android...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/12</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/11/09/ArrayList源码分析/" >
+            
+                <span>ArrayList源码分析</span>
+        </a>
+        <div class="abstract-content">
+            构造函数ArrayList 的构造函数有三个：
+
+ArrayList()
+ArrayList(int)
+ArrayList(Collection&lt;? extends E&gt;)
+
+其中用的最多的是无参默认构造函数，ArrayList 底层是使用数组实现的，这里初始化一个空数组
+12345public ArrayList() &#123;                                         this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;&#125; private static final Ob...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/09</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2018/11/07/HashMap源码分析/" >
+            
+                <span>HashMap源码分析</span>
+        </a>
+        <div class="abstract-content">
+            构造方法从构造方法来看，我们可以指定初始化容量（initialCapacity）和负载因子（loadFactor），其中 loadFactor 的默认值为 0.75，如果指定了 initialCapacity，就会计算容量阙值（threshold）：
+123456789101112// tableSizeFor 会计算一个大于或等于 initialCapacity 的 2 的 N 次方的值this.threshold = tableSizeFor(initialCapacity);static final int tableSizeFor(int cap) &#123;         ...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/07</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/09/08/JavaScript正则表达式/" >
             
                 <span>JavaScript正则表达式</span>
@@ -374,12 +557,6 @@ height:50vh;
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/08</span>
             </div>
             <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "JavaScript">JavaScript</a>
-    
-</div>
             
         </div>
     </article>
@@ -438,208 +615,6 @@ mask 特定...
             <!-- date  -->
             <div class="abstract-date">
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/07/19</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/05/21/Gradle插件-提高篇/" >
-            
-                <span>Gradle插件-提高篇</span>
-        </a>
-        <div class="abstract-content">
-            前言在上一篇文章 Gradle插件-基础篇 中，我们学习了 Plugin 的设计规范，并且通过一个非常简单的例子对自定义 Plugin 有了初步认识，在这篇文章中，我们来继续学习 Gradle Plugin 更为深入的知识点。
-
-本文参考 Gradle用户手册 
-
-Gradle插件
-本文涉及的所有源码都位于 github
-
-简单扩展当我们引入 Android Plugin 时，在 android{} 有一些常用的配置，比如：
-123android &#123;    compileSdkVersion 27&#125;
-如果我们想在自定义的 Plugin 中也使用这样的配置，可以使用 G...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/21</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/05/16/Gradle插件-基础篇/" >
-            
-                <span>Gradle插件-基础篇</span>
-        </a>
-        <div class="abstract-content">
-            前言本文是 Gradle 系列的第三篇，前两篇都是关于 Gradle 多项目构建，有兴趣的同学可以去翻看下。Gradle 系列作者会一直更新下去，这些知识大部分都来自于 Gradle 用户手册，但我并不想写成翻译类型的文章，从最基础的知识开始深入，因为这样前期枯燥的理论知识会让人感到厌倦，所以从用户最常用的知识入手，再穿插必要的基础知识，最终达到知识的融会贯通。因为作者从事 Android 开发，所以会更多提及 Android 中关于 Gradle 的知识。
-
-博客中的源码地址
-
-Gradle插件Gradle 是非常强大的构建工具，所有的知识都围绕着 project 和 task 这两个...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/16</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/05/08/Gradle多项目实践/" >
-            
-                <span>Gradle多项目实践</span>
-        </a>
-        <div class="abstract-content">
-            前言上篇文章中，我们说到了 Gradle多项目构建 的一些知识点，但这些总归只是纸上谈兵，今天我们在实际项目中通过之前学到的知识去改造下项目的 Gradle 构建脚本，充分利用 Gradle 带来的好处。
-虽然使用 Gradle 作为构建工具已经有一段时间了，但很多同学对它还是很陌生的，基本都是沿用 Android Studio 默认生成的配置，用的比较多的可能也只是 dependencies 配置，从不同的 repositories 去下载依赖，可能在需要实现一些自定义配置的时候，就去 google 后照搬代码，对其配置参数也是似懂非懂，出了问题不知道如何下手解决，所以这篇文章的主要目...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/05/08</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/04/29/Gradle多项目构建/" >
-            
-                <span>Gradle多项目构建</span>
-        </a>
-        <div class="abstract-content">
-            参考multi_project_builds
-概述在使用 Android Studio 作为 IDE 之后，Android 项目就开始使用 Gradle 作为构建脚本，Gradle 的优点就不用我多说了，使用 Groovy 作为开发语言，配合各种 Gradle 插件和 DSL 可以实现多样化的构建过程。
-Gradle 能讲的知识点很多，本文主要讲的是 Gradle 在多项目构建上提供的一些便捷的功能，希望能给大家一些启发。
-名词解释
-构建脚本：本文所说的构建脚本指的是 Gradle 文件，以 .gradle 为后缀的文件
-项目：在多项目构建中，有根项目和子项目。根项目的称呼是相对的，以执...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/04/29</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/04/19/性能优化第一步/" >
-            
-                <span>性能优化第一步</span>
-        </a>
-        <div class="abstract-content">
-            感谢cpu-profiler
-前言对于有一定 Android 应用开发经验的同学来说，性能优化是避不开的话题，一般来说，Android 上我们常说的性能优化包括，内存优化和界面优化，当然还有电量优化、网络优化等等。性能优化知识的学习是一个长期的过程，也不可能通过一两篇文章就能说的清楚，需要在具有相关的理论知识的前提下，同时在日常开发中加以实践，才能在这方面的工作中得心应手。
-同时作者也并不是这方面的大牛，还处于入门学习的阶段，所以也会遇到初学者经常碰到的问题，其中，我个人认为阻碍初学者在这方面深入学习的一个原因是，大部分的文章都偏向于理论知识和工具使用说明，很多同学包括作者在看完这些文章...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/04/19</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/04/12/熟悉又陌生的Context/" >
-            
-                <span>熟悉又陌生的Context</span>
-        </a>
-        <div class="abstract-content">
-            感谢android-context
-概述
-本文中涉及的源码分析都是基于 Android 27
-
-Context 又叫上下文，用于提供应用环境的信息。常用的操作包括启动 Activity、Service，或者通过 getResources() 返回 Resources 用于获取应用的资源文件，比如字符串、Drawable 等等。对于这些用法，我们就不去一一列举了，这篇文章的最终目的是，通过对 Context 体系的整体了解，能在平时的应用开发中，正确使用不同类型的 Context。首先我们看下 Context 的类图：
-
-其中 ContextImpl 负责 Context 核心功能的实现，...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/04/12</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/04/11/hello-world/" >
-            
-                <span>Hello World</span>
-        </a>
-        <div class="abstract-content">
-            面朝大海，春暖花开从明天起，做一个幸福的人
-喂马、劈柴、周游世界
-从明天起，关心粮食和蔬菜
-我有一所房子，面朝大海，春暖花开
-从明天起，和每一个亲人通信
-告诉他们我的幸福
-那幸福的闪电告诉我的
-我将告诉每一个人
-给每一条河每一座山取一个温暖的名字
-陌生人，我也为你祝福
-愿你有一个灿烂的前程
-愿你有情人总成眷属
-愿你在尘世获得幸福
-我只愿面朝大海，春暖花开
-
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/04/11</span>
             </div>
             <!-- tags  -->
             
@@ -1096,9 +1071,106 @@ Context 又叫上下文，用于提供应用环境的信息。常用的操作包
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 23
+        Total : 30
         </div>
         <!-- search  -->
         
@@ -1111,6 +1183,41 @@ Context 又叫上下文，用于提供应用环境的信息。常用的操作包
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/2019/12/04/优化包大小-PNG部分/" >优化包大小-PNG部分</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/09</span><a class="archive-post-title" href= "/2019/09/09/浅谈Flutter热重载-上/" >浅谈Flutter热重载(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/30</span><a class="archive-post-title" href= "/2019/08/30/浅谈Flutter构建/" >浅谈Flutter构建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2019/08/22/无侵入引入Flutter模块/" >无侵入引入Flutter模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2019/08/07/仿即刻Flutter版本/" >仿即刻Flutter版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/21</span><a class="archive-post-title" href= "/2019/06/21/解决Flutter版本不一致的flutterw/" >解决Flutter版本不一致的flutterw</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/17</span><a class="archive-post-title" href= "/2019/06/17/Flutter-ListView-源码分析/" >Flutter ListView 源码分析</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1241,7 +1348,7 @@ Context 又叫上下文，用于提供应用环境的信息。常用的操作包
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
+        <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1284,9 +1391,13 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
+        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
+    
         <span class="sidebar-category-name" data-categories="Android-Application"><span class="iconfont-archer">&#xe60a;</span>Android-Application</span>
     
-        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
