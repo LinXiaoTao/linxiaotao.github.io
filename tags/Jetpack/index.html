@@ -346,25 +346,26 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/04/12/熟悉又陌生的Context/" >
+        <a class="abstract-title" href = "/2019/02/05/Jetpack中的LiveData/" >
             
-                <span>熟悉又陌生的Context</span>
+                <span>Jetpack中的LiveData</span>
         </a>
         <div class="abstract-content">
-            感谢android-context
-概述
-本文中涉及的源码分析都是基于 Android 27
-
-Context 又叫上下文，用于提供应用环境的信息。常用的操作包括启动 Activity、Service，或者通过 getResources() 返回 Resources 用于获取应用的资源文件，比如字符串、Drawable 等等。对于这些用法，我们就不去一一列举了，这篇文章的最终目的是，通过对 Context 体系的整体了解，能在平时的应用开发中，正确使用不同类型的 Context。首先我们看下 Context 的类图：
-
-其中 ContextImpl 负责 Context 核心功能的实现，...
+            关于LiveDataLiveData 是一种可观察的数据持有类，下面是常用的写法：
+12345678910111213141516class DataViewModel(application: Application) : AndroidViewModel(application) &#123;    val dataSource: LiveData&lt;String&gt; = MutableLiveData()    fun postValue(text: String? = "Hello World") &#123;        (dataSource as MutableL...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/04/12</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/02/05</span>
             </div>
             <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Jetpack">Jetpack</a>
+    
+</div>
             
         </div>
     </article>
@@ -375,60 +376,29 @@ Context 又叫上下文，用于提供应用环境的信息。常用的操作包
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/27/Activity启动流程-基于Android26/" >
+        <a class="abstract-title" href = "/2019/01/05/Jetpack中的ViewModel/" >
             
-                <span>Activity启动流程(基于Android26)</span>
+                <span>Jetpack中的ViewModel</span>
         </a>
         <div class="abstract-content">
-            
-基于 Android 26，分析 Android Activity 启动流程
-
-参考startActivity启动过程分析
-源码源码篇幅可能过长，所以会省略一下不必要的代码和注释
-Activity12345678910111213@Override                                    public void startActivity() &#123;       this.startActivity(intent, null);        &#125;@Override                                       ...
+            前言首先祝大家在新的一年中，身体健康，心想事成。
+算了下，去年技术类博客写了 15 篇，看下数量还算比较满意，可是基本都是前半年写的，那时候刚刚下定决心要好好写博客，后半年因为工作上还有自己偷懒心理，基本都没怎么写了，真是惭愧。
+不过经过去年写了这些文章，慢慢也学习到了一些写技术文章上的技巧，希望今年能方得始终，提升文章的质量。
+关于 Jetpack相信已经有不少人对 Google 推出的 Jetpack 系列组件都有所耳闻，现在网上已经有不少的分析文章了，涵盖了用法和源码解析，所以我就不重复造轮子，在这个系列文章中，不会涉及使用教程等，只写一些个人的使用体会，也当作给自己做笔记。
+关于...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/03/27</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/05</span>
             </div>
             <!-- tags  -->
             
-        </div>
-    </article>
+            <div class= abstract-tags >
     
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Jetpack">Jetpack</a>
     
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/23/Android消息机制-Handler/" >
-            
-                <span>Android消息机制-Handler</span>
-        </a>
-        <div class="abstract-content">
-            参考Android消息机制1-Handler(Java层)
-Android消息机制2-Handler(Native层)
-Android应用程序消息处理机制（Looper、Handler）分析
-管道(Unix))
-Epoll
-文件描述符
-Handler 机制主要由四个部分组成：
-
-Looper
-MessageQueue
-Message
-Handler
-
-典型用法123456789101112131415class LooperThread extends Thread &#123;    public Handler mHandler;        public void run() &...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/03/23</span>
-            </div>
-            <!-- tags  -->
+</div>
             
         </div>
     </article>
@@ -1079,6 +1049,12 @@ Handler
     <div class="sidebar-tags-name">
     
         <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android Framework"><span class="iconfont-archer">&#xe606;</span>Android Framework</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android Jetpack"><span class="iconfont-archer">&#xe606;</span>Android Jetpack</span>
+    
+        <span class="sidebar-tag-name" data-tags="Jetpack"><span class="iconfont-archer">&#xe606;</span>Jetpack</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>

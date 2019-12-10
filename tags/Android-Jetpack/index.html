@@ -78,6 +78,8 @@
     <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
     
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
 - testing support for link[rel=preload]
@@ -201,10 +203,8 @@
 </head>
 
     
-        <body class="home-body">
     
-    
-<header class="header index-header">
+<header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
@@ -220,34 +220,21 @@
 
 
 
-
-height:50vh;
 ">
     
     <!-- 主页  -->
-    
-    
-    <!-- 文章页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/index-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Leo's Studio.
-            <!-- 文章页  -->
-            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
-            
-            
-                Focus on one thing
-            
-            <!-- 文章页  -->
             
         </p>
         <!-- 文章页meta -->
@@ -359,287 +346,25 @@ height:50vh;
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2019/12/04/优化包大小-PNG部分/" >
+        <a class="abstract-title" href = "/2019/01/14/Jetpack中的Lifecycle/" >
             
-                <span>优化包大小-PNG部分</span>
+                <span>Jetpack中的Lifecycle</span>
         </a>
         <div class="abstract-content">
-            背景PNG 图片相对于 JPEG 图片来说，它是一种无损的图像存储格式，同时多了一条透明度通道，所以一般情况下，PNG 图片要比 JPEG 图片要大，并且 PNG 图片往往还是 APK 图片资源中的大头，所以优化 PNG 图片的大小，对于减小包的体积来说，是比较有回报的事情。
-
-关于 PNG 的 wiki：
-便携式网络图形（英语：Portable Network Graphics，PNG）是一种无损压缩的位图图形格式，支持索引、灰度、RGB三种颜色方案以及Alpha通道等特性。
-关于 JPEG 的 wiki：
-联合图像专家小组（英语：Joint Photographic Experts ...
+            关于本文有很多项目都会使用 MVP 这种项目架构，使用 Presenter 来减轻 Activity 的负担，具体的 MVP 实现可以阅读 Google 推出的 android-architecture。
+一般使用 MVP，都会遇到一个问题，如何将 Presenter 和 View 的生命周期进行绑定，常见的做法是，在 Activity 的生命周期中手动调用 Presenter 的回调方法，更复杂的做法可能需要在 Presenter 或者 View 维护一个操作栈，在指定生命周期中去执行操作。
+关于Lifecyclelifecycle 是 Google 推出的用于响应 Activity ...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/04</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/14</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "性能优化">性能优化</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/09/09/浅谈Flutter热重载-上/" >
-            
-                <span>浅谈Flutter热重载(上)</span>
-        </a>
-        <div class="abstract-content">
-            更新记录
-本文完成于 本文写于 2019.09.10，Flutter SDK 版本为 v1.5.4-hotfix.2
-2019.09.12 更新，将差异包字眼变更为增量包
-2019.09.12 更新，–not-hot 写错，应该为 –no-hot
-
-前言这是浅谈 Flutter 系列的第二篇，上一篇是 浅谈Flutter构建，在上一篇中，主要是理清 Flutter 在 debug 和 release 模式下生成的不同产物分别是什么，怎么调试 build_tools 源码等等，这些不会在后面重复讨论，所以有需要的同学可以先看下第一篇。
-热重载是 Flutter 的一个大杀器，非常受欢迎，特...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/09/09</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/08/30/浅谈Flutter构建/" >
-            
-                <span>浅谈Flutter构建</span>
-        </a>
-        <div class="abstract-content">
-            不同版本构建产物的差异写这篇文章的时间为：2019.08.25，当前 Flutter SDK 最新版本为 v1.9.5，其中 stable 最新版本为 v1.7.8+hotfix.4。
-随着版本的更新，Flutter 构建的产物也在调整，以 Android 为例，我们使用默认的 flutter_app 项目来测试，在不修改源码的情况下，使用不同的 SDK 版本来执行打包命令，每个版本都打两个包：debug 和 release。
-
-每个版本生成的 Flutter 产物如下所示，这里不列出 fonts、LICENSE 这些文件：
-
-
-
-版本
-类型
-内容
-说明
-
-
-
-
-1.5.4
-debug
-...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/30</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/08/22/无侵入引入Flutter模块/" >
-            
-                <span>无侵入引入Flutter模块</span>
-        </a>
-        <div class="abstract-content">
-            前言Flutter 作为当下比较流行的技术，不少公司已经开始在原生项目中接入它，但这也带来了一些问题：
-
-Flutter SDK 问题，在 Android 中，Flutter 的代码和 Framework 会被编译成产物，而且 debug 和 release 生成的产物也是不太一样的。要编译就需要有 SDK，这意味着其他成员也需要下载 Flutter SDK，即使他不需要开发 Flutter 模块，还有 Flutter 版本的管理也是一个问题，不过这个已经有解决方案了。
-Android 和 iOS 项目需要共用一套 Flutter 代码，这就需要用合适的方式去管理 Flutter 模块。...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/22</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/08/07/仿即刻Flutter版本/" >
-            
-                <span>仿即刻Flutter版本</span>
-        </a>
-        <div class="abstract-content">
-            题外话即刻是我个人用的比较频繁的 APP 之一，但在我的手机一直有个 bug，播放视频时总是画面没有变化，需要手动推动下进度条才行，在更新了几个版本也没解决这个问题。再加上刚学了 Flutter，就尝试做了个 Flutter 版本的即刻，即刻页面比较多，所以没有完全开发完，只开发了首页的信息流，信息详情，视频播放等几个用的最多的页面。
-
-接口用的是即刻的接口和图标，这里是为了学习，请勿用做其他用途，一切后果由自己承担，版权归即刻所有
-
-因为我本身学习 Flutter 的时间也才几个月，所以代码质量还是有所欠缺的。
-最近即刻被暂停服务了，所以 API 也调用不了，只能看看之前录制的片段。
-...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/08/07</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/06/21/解决Flutter版本不一致的flutterw/" >
-            
-                <span>解决Flutter版本不一致的flutterw</span>
-        </a>
-        <div class="abstract-content">
-            参考Flutter 混合开发组件化与工程化架构
-前言开发 Flutter 应用的同学都知道，有个痛点就是如果是团队协作开发的话，就会存在使用的 Flutter 版本不一致的问题，就算只是个人开发，如果需要用 ci 打包的话，打包机上的版本也需要去保持一致，比如 A 同学在开发时，发现 Flutter 低版本有个 bug，升级到高版本就可以解决，但 B 同学并没有同步升级，这就导致在两方打出来的包不一样，如果这个 bug 不明显，那这里就会有很大的隐患，使用 ci 同理。
-gradlew如果有使用 gradle 的同学会知道，在使用 gradle 构建应用时，会推荐使用 gradlew，这...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/21</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/06/17/Flutter-ListView-源码分析/" >
-            
-                <span>Flutter ListView 源码分析</span>
-        </a>
-        <div class="abstract-content">
-            前言不得不说，Flutter 绘制 UI 的速度和原生根本不是一个量级的，Flutter 要快的多了，比如常用的 ListView 控件，原生写的话，比如 Android，如果不封装的话，需要一个 Adapter、ViewHolder，再加个 xml 布局文件，而 Flutter 可能就几十行。
-对于越常用的控件，越要熟悉它的原理。Flutter 中的 ScrollView 家族，成员的划分其实和 Android 还是非常类似的，除了 ListView、GridView，还有 CustomScrollView 和 NestedScrollView。今天我们要讲主角就是 ListView。...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/17</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/05/06/scoped-model源码解析/" >
-            
-                <span>scoped_model源码解析</span>
-        </a>
-        <div class="abstract-content">
-            参考
-ephemeral-vs-app
-inheritedwidget-inheritedmodel
-
-scoped_model 是 Google 推荐使用的应用状态管理库（Simple app state management），当然，除了它，还有其他选择，比如 Redux，Rx，hooks 等等。
-临时状态和应用状态我们说 scoped_model 用于应用状态管理，是因为除了应用状态（app state）以外，还有临时状态（ephemeral state）。
-临时状态也可以称为 UI 状态或者本地状态，是一种可以包含在单个 widget 的状态。
-比如以下定义：
-
-PageView...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/05/06</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/04/25/Looper中的死循环/" >
-            
-                <span>Looper中的死循环</span>
-        </a>
-        <div class="abstract-content">
-            Handler 应该是每个 Android 开发同学都非常熟悉的组件了，和大部分的 GUI 程序类似，Android 上的 UI 绘制只允许在单个线程上进行。这也是 Google 提供了 Handler 的原因之一，为了方便在其他线程使用 Handler 来通知 UI 线程更新。关于 Handler 的使用和源码解析不是本文的主题，网上已经有很多不错的文章了。本文的主题是探讨下 Looper 类中的 loop() 方法。
-我们知道，loop() 实质上是在一个无限的 for 循环中，从 MessageQueue 中不断地取出消息，再交由对应的 Handler 进行分发。这里实际上就涉及到...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/25</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/02/05/Jetpack中的LiveData/" >
-            
-                <span>Jetpack中的LiveData</span>
-        </a>
-        <div class="abstract-content">
-            关于LiveDataLiveData 是一种可观察的数据持有类，下面是常用的写法：
-12345678910111213141516class DataViewModel(application: Application) : AndroidViewModel(application) &#123;    val dataSource: LiveData&lt;String&gt; = MutableLiveData()    fun postValue(text: String? = "Hello World") &#123;        (dataSource as MutableL...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/02/05</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Jetpack">Jetpack</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android Jetpack">Android Jetpack</a>
     
 </div>
             
@@ -648,90 +373,8 @@ PageView...
     
     <!-- paginator  -->
     
-    <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">NEXT &#62;</a>
-    </nav>
-    
 </main>
             <!-- profile -->
-            
-            <div class="profile">
-    <img class="profile-avatar" alt="avatar" src= /avatar/L.jpeg >
-    <div class="profile-name">leo</div>
-    
-    <div class="profile-signature">
-        Focus on mobile client
-    </div>
-    
-    
-    <div class="profile-social">
-        
-    
-        
-            
-                <a href="mailto:linxiaotao1993@vip.qq.com" class="iconfont-archer email" title=email ></a>
-            
-        
-    
-        
-            
-                <a href="//github.com/LinXiaoTao" class="iconfont-archer github" target="_blank" title=github></a>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                  
-                  <img class="profile-qr" src="/assets/wechat_qr.jpeg" />
-                </span>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-
-    </div>
-    
-    
-    
-        <div class="about-me">
-            <a href = "/about" >ABOUT ME</a>
-        </div>
-    
-</div>
             
         </div>
         <footer class="footer footer-unloaded">
