@@ -346,6 +346,35 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/12/12/LeetCode-5-Longest-Palindromic-Substring/" >
+            
+                <span>LeetCode 5: Longest Palindromic Substring</span>
+        </a>
+        <div class="abstract-content">
+            题目描述给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+解题思路
+中心扩展算法
+计算以字符串中的每一个字符为中心，向两边扩展的最长回文串。
+以字符串 “babad” 为例，第一个字符 ‘b’，以它为中心的最长回文串就是它本身，再看第二个字符 ‘a’，以它为中心的最长回文串是 “bab”。
+代码如下：
+123456789101112131415161718192021222324public String longestPalindrome2(String s) &#123;    if (s.length() &lt; 2) &#123;    ...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/12/12</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/12/04/优化包大小-PNG部分/" >
             
                 <span>优化包大小-PNG部分</span>
@@ -603,40 +632,10 @@ PageView...
         </div>
     </article>
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/02/05/Jetpack中的LiveData/" >
-            
-                <span>Jetpack中的LiveData</span>
-        </a>
-        <div class="abstract-content">
-            关于LiveDataLiveData 是一种可观察的数据持有类，下面是常用的写法：
-12345678910111213141516class DataViewModel(application: Application) : AndroidViewModel(application) &#123;    val dataSource: LiveData&lt;String&gt; = MutableLiveData()    fun postValue(text: String? = "Hello World") &#123;        (dataSource as MutableL...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/02/05</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Jetpack">Jetpack</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/">NEXT &#62;</a>
+        <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/2/">NEXT &#62;</a>
     </nav>
     
 </main>
@@ -1102,9 +1101,38 @@ PageView...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 30
+        Total : 31
         </div>
         <!-- search  -->
         
@@ -1117,6 +1145,11 @@ PageView...
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/12</span><a class="archive-post-title" href= "/2019/12/12/LeetCode-5-Longest-Palindromic-Substring/" >LeetCode 5: Longest Palindromic Substring</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1282,13 +1315,11 @@ PageView...
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
-    
         <span class="sidebar-tag-name" data-tags="Android Framework"><span class="iconfont-archer">&#xe606;</span>Android Framework</span>
     
-        <span class="sidebar-tag-name" data-tags="Android Jetpack"><span class="iconfont-archer">&#xe606;</span>Android Jetpack</span>
-    
         <span class="sidebar-tag-name" data-tags="Jetpack"><span class="iconfont-archer">&#xe606;</span>Jetpack</span>
+    
+        <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1325,19 +1356,17 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="随笔"><span class="iconfont-archer">&#xe60a;</span>随笔</span>
     
-        <span class="sidebar-category-name" data-categories="Android-Framework"><span class="iconfont-archer">&#xe60a;</span>Android-Framework</span>
-    
         <span class="sidebar-category-name" data-categories="Gradle"><span class="iconfont-archer">&#xe60a;</span>Gradle</span>
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
     
         <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
-        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
-    
         <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
     
-        <span class="sidebar-category-name" data-categories="Android-Application"><span class="iconfont-archer">&#xe60a;</span>Android-Application</span>
+        <span class="sidebar-category-name" data-categories="LeetCode"><span class="iconfont-archer">&#xe60a;</span>LeetCode</span>
     
-        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>

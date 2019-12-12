@@ -346,6 +346,31 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2018/07/19/可拖拽的网格布局/" >
+            
+                <span>可拖拽的网格布局</span>
+        </a>
+        <div class="abstract-content">
+            效果
+背景在之前的项目中为了实现类似微信朋友圈的图片九宫格效果，手写了一个简单的网格控件，继承于 ViewGroup，后面因为准备做小组的技术分享，关于自定义控件的，所以就想把这个控件优化下，来作为这次分享的例子。自定义控件一般涉及测量、布局、绘制三大流程，再加上触摸事件的处理。之前的已完成的部分，已经包括了测量和布局，绘制暂时没有好想法，所以这次就想再加上触摸事件的处理。在使用微信发布朋友圈的时候，看到可以通过拖拽来重新排序图片，所以这次就加上可拖拽的功能。
+思路因为网格控件是位置是比较固定的，所以可以通过实时计算每个 Item 的位置，这里我们为了方便，所以缓存了每个 Item 的位...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/07/19</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/05/21/Gradle插件-提高篇/" >
             
                 <span>Gradle插件-提高篇</span>
@@ -608,46 +633,10 @@ Activity12345678910111213@Override                                    public voi
         </div>
     </article>
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/03/23/Android消息机制-Handler/" >
-            
-                <span>Android消息机制-Handler</span>
-        </a>
-        <div class="abstract-content">
-            参考Android消息机制1-Handler(Java层)
-Android消息机制2-Handler(Native层)
-Android应用程序消息处理机制（Looper、Handler）分析
-管道(Unix))
-Epoll
-文件描述符
-Handler 机制主要由四个部分组成：
-
-Looper
-MessageQueue
-Message
-Handler
-
-典型用法123456789101112131415class LooperThread extends Thread &#123;    public Handler mHandler;        public void run() &...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/03/23</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/archives/page/2/">&#60; PREV</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span>
+        <a class="extend prev" rel="prev" href="/archives/page/2/">&#60; PREV</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/4/">NEXT &#62;</a>
     </nav>
     
 </main>
@@ -1113,9 +1102,38 @@ Handler
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 30
+        Total : 31
         </div>
         <!-- search  -->
         
@@ -1128,6 +1146,11 @@ Handler
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/12</span><a class="archive-post-title" href= "/2019/12/12/LeetCode-5-Longest-Palindromic-Substring/" >LeetCode 5: Longest Palindromic Substring</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1293,13 +1316,11 @@ Handler
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
-    
         <span class="sidebar-tag-name" data-tags="Android Framework"><span class="iconfont-archer">&#xe606;</span>Android Framework</span>
     
-        <span class="sidebar-tag-name" data-tags="Android Jetpack"><span class="iconfont-archer">&#xe606;</span>Android Jetpack</span>
-    
         <span class="sidebar-tag-name" data-tags="Jetpack"><span class="iconfont-archer">&#xe606;</span>Jetpack</span>
+    
+        <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1336,19 +1357,17 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="随笔"><span class="iconfont-archer">&#xe60a;</span>随笔</span>
     
-        <span class="sidebar-category-name" data-categories="Android-Framework"><span class="iconfont-archer">&#xe60a;</span>Android-Framework</span>
-    
         <span class="sidebar-category-name" data-categories="Gradle"><span class="iconfont-archer">&#xe60a;</span>Gradle</span>
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
     
         <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
-        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
-    
         <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
     
-        <span class="sidebar-category-name" data-categories="Android-Application"><span class="iconfont-archer">&#xe60a;</span>Android-Application</span>
+        <span class="sidebar-category-name" data-categories="LeetCode"><span class="iconfont-archer">&#xe60a;</span>LeetCode</span>
     
-        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>

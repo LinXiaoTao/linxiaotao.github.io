@@ -346,31 +346,41 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2019/02/05/Jetpack中的LiveData/" >
+        <a class="abstract-title" href = "/2018/03/23/Android消息机制-Handler/" >
             
-                <span>Jetpack中的LiveData</span>
+                <span>Android消息机制-Handler</span>
         </a>
         <div class="abstract-content">
-            关于LiveDataLiveData 是一种可观察的数据持有类，下面是常用的写法：
-12345678910111213141516class DataViewModel(application: Application) : AndroidViewModel(application) &#123;    val dataSource: LiveData&lt;String&gt; = MutableLiveData()    fun postValue(text: String? = "Hello World") &#123;        (dataSource as MutableL...
+            参考Android消息机制1-Handler(Java层)
+Android消息机制2-Handler(Native层)
+Android应用程序消息处理机制（Looper、Handler）分析
+管道(Unix))
+Epoll
+文件描述符
+Handler 机制主要由四个部分组成：
+
+Looper
+MessageQueue
+Message
+Handler
+
+典型用法123456789101112131415class LooperThread extends Thread &#123;    public Handler mHandler;        public void run() &...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/02/05</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/03/23</span>
             </div>
             <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Jetpack">Jetpack</a>
-    
-</div>
             
         </div>
     </article>
     
     <!-- paginator  -->
+    
+    <nav class="page-nav">
+        <a class="extend prev" rel="prev" href="/archives/page/3/">&#60; PREV</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><span class="page-number current">4</span>
+    </nav>
     
 </main>
             <!-- profile -->
