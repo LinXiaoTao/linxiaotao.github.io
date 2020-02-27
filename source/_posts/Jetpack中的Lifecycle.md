@@ -1,8 +1,8 @@
 ---
 title: Jetpack中的Lifecycle
 date: 2019-01-14 15:57:11
-categories: Android Application
-tags:
+categories: Android
+tags: Jetpack
 ---
 
 ### 关于本文

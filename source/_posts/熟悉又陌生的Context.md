@@ -1,7 +1,7 @@
 ---
 title: 熟悉又陌生的Context
 date: 2018-04-12 10:45:36
-categories: Android Framework
+categories: Android
 ---
 
 ## 感谢

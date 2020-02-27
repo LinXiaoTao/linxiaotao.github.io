@@ -1,7 +1,7 @@
 ---
 title: SparseArray源码解析
 date: 2019-01-08 21:58:23
-categories: Android Application
+categories: Android
 tags:
 ---
 

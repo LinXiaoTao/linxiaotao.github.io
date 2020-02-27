@@ -1,7 +1,7 @@
 ---
 title: Android消息机制-Handler
 date: 2018-03-23 20:29:21
-categories: Android Framework
+categories: Android
 ---
 
 ### 参考

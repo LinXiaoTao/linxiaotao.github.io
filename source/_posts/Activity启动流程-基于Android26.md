@@ -1,8 +1,8 @@
 ---
 title: Activity启动流程(基于Android26)
 date: 2018-03-27 09:54:17
-categories: Android Framework
-tags:
+categories: Android
+tags: Android Framework
 ---
 
 > 基于 Android 26，分析 Android Activity 启动流程

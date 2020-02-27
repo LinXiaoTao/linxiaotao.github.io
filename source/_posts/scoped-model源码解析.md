@@ -8,7 +8,7 @@ tags:
 ### 参考
 
 * [ephemeral-vs-app](https://flutter.dev/docs/development/data-and-backend/state-mgmt/ephemeral-vs-app)
-* [inheritedwidget-inheritedmodel]([http://juju.one/inheritedwidget-inheritedmodel/](http://juju.one/inheritedwidget-inheritedmodel/))
+* [inheritedwidget-inheritedmodel]([http://juju.one/inheritedwidget-inheritedmodel/](http://juju.one/inheritedwidget-inheritedmodel/)
 
 
 

@@ -1,8 +1,8 @@
 ---
 title: Jetpack中的LiveData
 date: 2019-02-05 14:54:08
-categories: Android Application
-tags:
+categories: Android
+tags: Jetpack
 ---
 
 ### 关于LiveData

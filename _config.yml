@@ -90,15 +90,15 @@ jsonContent:
     title: true
     date: true
     path: true
-    text: true
+    text: false
     raw: false
     content: false
     slug: false
     updated: false
     comments: false
     link: false
-    permalink: false
+    permalink: true
     excerpt: false
-    categories: false
+    categories: true
     tags: true
 

@@ -1,8 +1,8 @@
 ---
 title: JavaScript正则表达式
 date: 2018-09-08 23:20:22
-categories:
-tags: JavaScript
+categories: JavaScript
+tags: 
 ---
 
 * 快速字符

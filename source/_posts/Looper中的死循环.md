@@ -1,7 +1,7 @@
 ---
 title: Looper中的死循环
 date: 2019-04-25 07:35:09
-categories: Android Application
+categories: Android
 tags:
 ---
 
