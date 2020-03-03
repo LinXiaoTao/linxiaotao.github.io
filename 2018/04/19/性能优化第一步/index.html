@@ -467,7 +467,7 @@ height:50vh;
         <div class="license-wrapper">
             <p>原文作者：<a href="https://linxiaotao.github.io">Leo</a>
             <p>原文链接：<a href="https://linxiaotao.github.io/2018/04/19/性能优化第一步/">https://linxiaotao.github.io/2018/04/19/性能优化第一步/</a>
-            <p>发表日期：<a href="https://linxiaotao.github.io/2018/04/19/性能优化第一步/">四月 19日 2018, 11:37:45 中午</a>
+            <p>发表日期：<a href="https://linxiaotao.github.io/2018/04/19/性能优化第一步/">April 19th 2018, 11:37:45 am</a>
             <p>更新日期：<a href="https://linxiaotao.github.io/2018/04/19/性能优化第一步/">December 10th 2019, 8:01:36 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
@@ -1288,7 +1288,25 @@ jsonContent:
     
         <script src="/scripts/share.js" async></script>    
      
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!--<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>-->
+
+</body>
 </html>
 
 
