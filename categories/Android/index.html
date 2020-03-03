@@ -346,6 +346,30 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2020/03/03/leakcanary2-source-analysis/" >
+            
+                <span>LeakCanary2 源码分析</span>
+        </a>
+        <div class="abstract-content">
+            最后更新时间2020.03.02
+背景在 Android 开发工作中，内存泄露一直是让人比较头疼的问题。首先内存泄露并不是一个 Java 异常，所以我们并不能实时感知到它，一般只有等到内存溢出的时候，我们才会去排除是否发生了内存泄露问题。而往往导致抛异常的代码并不是内存泄露的凶手，而只是压死骆驼的最后一根稻草而已，这是第一个问题。第二个问题则是，当我们想要分析内存问题时，首先需要先 dump 内存快照，通常是以 .hprof 结尾的文件，接着再使用 MAT 等内存分析工具去检测大内存可疑对象，分析对象到 GC Roots 节点的可达性等等。整个流程相对繁琐，这时候我们可能会考虑是否有自动...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/03</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/12/04/优化包大小-PNG部分/" >
             
                 <span>优化包大小-PNG部分</span>
@@ -598,32 +622,6 @@ Context 又叫上下文，用于提供应用环境的信息。常用的操作包
             <!-- date  -->
             <div class="abstract-date">
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/04/12</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/04/03/触摸事件实践之路/" >
-            
-                <span>触摸事件实践之路</span>
-        </a>
-        <div class="abstract-content">
-            前言最近帮公司面试 Android 岗位，面试的同学大部分具有两年以上的工作经验，但发现很多同学对触摸事件的分发都不是很熟悉，有的可能还能照本宣科地说个七七八八，有的却完全不熟悉，这让我感觉到诧异，因为我认为这 Android 中非常基础的知识，不仅要熟悉其中的分发流程，还要能实现简单的涉及手势处理的自定义控件。所以，这也是这篇文章的目的，希望能通过一些触摸事件处理的实际例子，来加深对触摸事件分发的理解，同时能实现相关需求。
-触摸事件简单回顾我们都知道触摸事件的分发严格意义上讲，是从 Activity 开始进行分发，但一般我们谈论的，只从 ViewGroup 开始分发。
-
-上面的图只是粗...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/04/03</span>
             </div>
             <!-- tags  -->
             
@@ -1128,9 +1126,22 @@ Context 又叫上下文，用于提供应用环境的信息。常用的操作包
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 31
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1140,6 +1151,20 @@ Context 又叫上下文，用于提供应用环境的信息。常用的操作包
     
     
     
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2020/03/03/leakcanary2-source-analysis/" >LeakCanary2 源码分析</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">

@@ -346,126 +346,25 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2019/02/05/Jetpack中的LiveData/" >
+        <a class="abstract-title" href = "/2020/03/03/leakcanary2-source-analysis/" >
             
-                <span>Jetpack中的LiveData</span>
+                <span>LeakCanary2 源码分析</span>
         </a>
         <div class="abstract-content">
-            关于LiveDataLiveData 是一种可观察的数据持有类，下面是常用的写法：
-12345678910111213141516class DataViewModel(application: Application) : AndroidViewModel(application) &#123;    val dataSource: LiveData&lt;String&gt; = MutableLiveData()    fun postValue(text: String? = "Hello World") &#123;        (dataSource as MutableL...
+            最后更新时间2020.03.02
+背景在 Android 开发工作中，内存泄露一直是让人比较头疼的问题。首先内存泄露并不是一个 Java 异常，所以我们并不能实时感知到它，一般只有等到内存溢出的时候，我们才会去排除是否发生了内存泄露问题。而往往导致抛异常的代码并不是内存泄露的凶手，而只是压死骆驼的最后一根稻草而已，这是第一个问题。第二个问题则是，当我们想要分析内存问题时，首先需要先 dump 内存快照，通常是以 .hprof 结尾的文件，接着再使用 MAT 等内存分析工具去检测大内存可疑对象，分析对象到 GC Roots 节点的可达性等等。整个流程相对繁琐，这时候我们可能会考虑是否有自动...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/02/05</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/03</span>
             </div>
             <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Jetpack">Jetpack</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/01/14/Jetpack中的Lifecycle/" >
-            
-                <span>Jetpack中的Lifecycle</span>
-        </a>
-        <div class="abstract-content">
-            关于本文有很多项目都会使用 MVP 这种项目架构，使用 Presenter 来减轻 Activity 的负担，具体的 MVP 实现可以阅读 Google 推出的 android-architecture。
-一般使用 MVP，都会遇到一个问题，如何将 Presenter 和 View 的生命周期进行绑定，常见的做法是，在 Activity 的生命周期中手动调用 Presenter 的回调方法，更复杂的做法可能需要在 Presenter 或者 View 维护一个操作栈，在指定生命周期中去执行操作。
-关于Lifecyclelifecycle 是 Google 推出的用于响应 Activity ...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/14</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Jetpack">Jetpack</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/01/08/SparseArray源码解析/" >
-            
-                <span>SparseArray源码解析</span>
-        </a>
-        <div class="abstract-content">
-            关于SparseArraySparseArray 是 Android SDK 提供的将 integers 映射到对象的容器。相对于 HashMap 更节省内存，因为它避免了 key 发生自动装箱，同时不用额外的对象来表示映射关系。
-SparseArray 使用二分查找来查询 key，这意味着，key 是有序存储的，而且不适用于大量数据的情况。通常情况下，它的查找比 HashMap 慢。
-为了提高性能，SparseArray 在删除 key 时，不会立即调整数据结构，而是将该条目标记为删除，在之后使用相同 key 时可以复用或者垃圾回收操作中进行调整。
-
-垃圾回收操作会发生在需要扩容、获取...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/08</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/01/05/Jetpack中的ViewModel/" >
-            
-                <span>Jetpack中的ViewModel</span>
-        </a>
-        <div class="abstract-content">
-            前言首先祝大家在新的一年中，身体健康，心想事成。
-算了下，去年技术类博客写了 15 篇，看下数量还算比较满意，可是基本都是前半年写的，那时候刚刚下定决心要好好写博客，后半年因为工作上还有自己偷懒心理，基本都没怎么写了，真是惭愧。
-不过经过去年写了这些文章，慢慢也学习到了一些写技术文章上的技巧，希望今年能方得始终，提升文章的质量。
-关于 Jetpack相信已经有不少人对 Google 推出的 Jetpack 系列组件都有所耳闻，现在网上已经有不少的分析文章了，涵盖了用法和源码解析，所以我就不重复造轮子，在这个系列文章中，不会涉及使用教程等，只写一些个人的使用体会，也当作给自己做笔记。
-关于...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/05</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Jetpack">Jetpack</a>
-    
-</div>
             
         </div>
     </article>
     
     <!-- paginator  -->
-    
-    <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/archives/2019/">&#60; PREV</a><a class="page-number" href="/archives/2019/">1</a><span class="page-number current">2</span>
-    </nav>
     
 </main>
             <!-- profile -->

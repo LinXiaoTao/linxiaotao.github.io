@@ -359,6 +359,30 @@ height:50vh;
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2020/03/03/leakcanary2-source-analysis/" >
+            
+                <span>LeakCanary2 源码分析</span>
+        </a>
+        <div class="abstract-content">
+            最后更新时间2020.03.02
+背景在 Android 开发工作中，内存泄露一直是让人比较头疼的问题。首先内存泄露并不是一个 Java 异常，所以我们并不能实时感知到它，一般只有等到内存溢出的时候，我们才会去排除是否发生了内存泄露问题。而往往导致抛异常的代码并不是内存泄露的凶手，而只是压死骆驼的最后一根稻草而已，这是第一个问题。第二个问题则是，当我们想要分析内存问题时，首先需要先 dump 内存快照，通常是以 .hprof 结尾的文件，接着再使用 MAT 等内存分析工具去检测大内存可疑对象，分析对象到 GC Roots 节点的可达性等等。整个流程相对繁琐，这时候我们可能会考虑是否有自动...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/03</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/12/12/LeetCode-5-Longest-Palindromic-Substring/" >
             
                 <span>LeetCode 5: Longest Palindromic Substring</span>
@@ -615,30 +639,6 @@ PageView...
             <!-- date  -->
             <div class="abstract-date">
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/05/06</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/04/25/Looper中的死循环/" >
-            
-                <span>Looper中的死循环</span>
-        </a>
-        <div class="abstract-content">
-            Handler 应该是每个 Android 开发同学都非常熟悉的组件了，和大部分的 GUI 程序类似，Android 上的 UI 绘制只允许在单个线程上进行。这也是 Google 提供了 Handler 的原因之一，为了方便在其他线程使用 Handler 来通知 UI 线程更新。关于 Handler 的使用和源码解析不是本文的主题，网上已经有很多不错的文章了。本文的主题是探讨下 Looper 类中的 loop() 方法。
-我们知道，loop() 实质上是在一个无限的 for 循环中，从 MessageQueue 中不断地取出消息，再交由对应的 Handler 进行分发。这里实际上就涉及到...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/25</span>
             </div>
             <!-- tags  -->
             
@@ -1221,9 +1221,22 @@ PageView...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 31
+        Total : 32
         </div>
         <!-- search  -->
         
@@ -1233,6 +1246,20 @@ PageView...
     
     
     
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2020/03/03/leakcanary2-source-analysis/" >LeakCanary2 源码分析</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
