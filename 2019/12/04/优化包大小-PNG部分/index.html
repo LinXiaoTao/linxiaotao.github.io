@@ -416,14 +416,14 @@ height:50vh;
 <p>在计算中，<strong>索引颜色</strong>是一种以有限的方式管理<a href="https://en.wikipedia.org/wiki/Digital_image" target="_blank" rel="noopener">数字图像</a>颜色的技术，以节省计算机<a href="https://en.wikipedia.org/wiki/Computer_data_storage" target="_blank" rel="noopener">内存</a>和<a href="https://en.wikipedia.org/wiki/Hard_disk_drive" target="_blank" rel="noopener">文件存储空间</a>，同时加快显示刷新和文件传输的速度。它是<a href="https://en.wikipedia.org/wiki/Vector_quantization#Use_in_data_compression" target="_blank" rel="noopener">矢量量化压缩的</a>一种形式。</p>
 </blockquote>
 <p>图片来自于 wiki：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/12/4/16ed048e29449106?w=150&amp;h=400&amp;f=png&amp;s=2151" alt="Indexed_color"></p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cp_04cf288c-5d27-11ea-8c76-acde48001122.png" alt="Indexed_color"></p>
 <p>这种算法很好，但也有缺点，调色板的大小通常只支持 4,16,256 这几种，也就是说最大不会超过 256 个，所以能应用这种算法的 PNG 图片中的颜色使用不能超过 256 个。</p>
 <h3 id="Color-quantization"><a href="#Color-quantization" class="headerlink" title="Color_quantization"></a>Color_quantization</h3><p>字面意思就是颜色矢量化，通过使用相似颜色来减少图像中使用的颜色种类，再配合调色板，来达到减少图片文件大小的目的，这是一种有损的压缩算法。</p>
 <p>图片来自于 wiki：</p>
 <p>这是使用标准的 24 位 RGB 颜色的图像： </p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/12/4/16ed048e2746717e?w=250&amp;h=200&amp;f=png&amp;s=83335" alt="24位RGB"></p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cp_06230885-5d27-11ea-92a1-acde48001122.png" alt="24位RGB"></p>
 <p>这是优化成只使用 16 种颜色的图像：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/12/4/16ed048e299d4616?w=250&amp;h=216&amp;f=png&amp;s=9121" alt="16种颜色"></p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/cp_08a49c4f-5d27-11ea-9c35-acde48001122.png" alt="16种颜色"></p>
 <p>这种算法的缺点就是质量有损，所以如何在质量和大小中间达到一个平衡点，这个至关重要。</p>
 <h2 id="谈谈-AAPT"><a href="#谈谈-AAPT" class="headerlink" title="谈谈 AAPT"></a>谈谈 AAPT</h2><p>AAPT 是 Android 的资源打包工具，我们常用的 R 文件就是用它生存的，除此之外，它还有压缩 PNG 图片的功能。AAPT 现在有 AAPT 和 AAPT2 了，默认我们都是说的是 AAPT2。</p>
 <blockquote>
@@ -480,8 +480,7 @@ height:50vh;
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> bpp = isOpaque ? <span class="number">3</span> : <span class="number">4</span>;</span><br></pre></td></tr></table></figure>
 <h3 id="PNG-COLOR-TYPE-GRAY"><a href="#PNG-COLOR-TYPE-GRAY" class="headerlink" title="PNG_COLOR_TYPE_GRAY"></a>PNG_COLOR_TYPE_GRAY</h3><p>要使用这种模式，需要满足支持灰度模式，同时不透明。代码位于 Code 4：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (isGrayscale) &#123;</span><br><span class="line">       <span class="keyword">if</span> (isOpaque) &#123;</span><br><span class="line">         <span class="comment">// ==&gt;&gt; Code 4</span></span><br><span class="line">           *colorType = PNG_COLOR_TYPE_GRAY; <span class="comment">// 1 byte/pixel</span></span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>###PNG_COLOR_TYPE_GRAY_ALPHA</p>
-<p>灰度，同时存在透明通道的模式。代码位于 Code 6 和 Code 8：</p>
+<h3 id="PNG-COLOR-TYPE-GRAY-ALPHA"><a href="#PNG-COLOR-TYPE-GRAY-ALPHA" class="headerlink" title="PNG_COLOR_TYPE_GRAY_ALPHA"></a>PNG_COLOR_TYPE_GRAY_ALPHA</h3><p>灰度，同时存在透明通道的模式。代码位于 Code 6 和 Code 8：</p>
 <p>Code 6</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (isGrayscale) &#123;</span><br><span class="line">       <span class="keyword">if</span> (isOpaque) &#123;</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">         <span class="keyword">if</span> (isPalette &amp;&amp; (paletteSize &lt; <span class="number">2</span> * w * h)) &#123;</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="comment">// ==&gt;&gt; Code 6</span></span><br><span class="line">           *colorType = PNG_COLOR_TYPE_GRAY_ALPHA; <span class="comment">// 2 bytes per pixel</span></span><br><span class="line">         &#125;</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Code 8</p>
@@ -503,6 +502,7 @@ height:50vh;
 <blockquote>
 <p>这里我找的是一个直播的项目，里面有比较多的图片资源文件，过滤了 JPEG 和 .9 图，大概有 1000多张 PNG 图片，只使用一个压缩线程。</p>
 </blockquote>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -524,18 +524,20 @@ height:50vh;
 </tr>
 </tbody>
 </table>
+</div>
 <h3 id="pngquant"><a href="#pngquant" class="headerlink" title="pngquant"></a>pngquant</h3><p>首先测试 pngquant，我们将pngquant 集成进去：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">exec &#123; ExecSpec spec -&gt;</span><br><span class="line">    spec.workingDir(project.file(<span class="string">'.'</span>))</span><br><span class="line">    spec.commandLine(<span class="string">"./pngquant"</span>, <span class="string">"--skip-if-larger"</span>, <span class="string">"--speed"</span>, <span class="string">"1"</span>, <span class="string">"--strip"</span>, <span class="string">"--nofs"</span>, <span class="string">"--force"</span>, <span class="string">"--output"</span>, file.path, <span class="string">"--"</span>, file.path)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这里我们用的基本都是默认配置：</p>
 <ul>
-<li>–skip-if-larger 表示如果压缩后的图片更大了，就跳过</li>
-<li>–speed 1 表示使用最慢的压缩速度，来换取更好的压缩质量</li>
-<li>–strip 删除图片的一些元数据</li>
-<li>–nofs 禁用 <a href="[https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering](https://en.wikipedia.org/wiki/Floyd–Steinberg_dithering">Floyd–Steinberg dithering</a>) 图像抖动处理</li>
-<li>–force 覆盖源文件</li>
-<li>–output 输出文件的路径</li>
+<li>—skip-if-larger 表示如果压缩后的图片更大了，就跳过</li>
+<li>—speed 1 表示使用最慢的压缩速度，来换取更好的压缩质量</li>
+<li>—strip 删除图片的一些元数据</li>
+<li>—nofs 禁用 <a href="[https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering](https://en.wikipedia.org/wiki/Floyd–Steinberg_dithering">Floyd–Steinberg dithering</a>) 图像抖动处理</li>
+<li>—force 覆盖源文件</li>
+<li>—output 输出文件的路径</li>
 </ul>
 <p>先执行 Clean Task，再重新执行打包，最终结果如下：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -562,6 +564,7 @@ height:50vh;
 </tr>
 </tbody>
 </table>
+</div>
 <h3 id="zopflipng"><a href="#zopflipng" class="headerlink" title="zopflipng"></a>zopflipng</h3><p>集成进去：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">exec &#123; ExecSpec spec -&gt;</span><br><span class="line">    spec.workingDir(<span class="keyword">new</span> File(<span class="string">'/Users/leo/Documents/projects/zopfli'</span>))</span><br><span class="line">    spec.commandLine(<span class="string">"./zopflipng"</span>, <span class="string">"-y"</span>, <span class="string">"-m"</span>, file.path, file.path)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>使用的也是基本配置：</p>
@@ -570,6 +573,7 @@ height:50vh;
 <li>-m 尽可能多压缩，依赖于文件的大小</li>
 </ul>
 <p>先执行 Clean Task，再重新执行打包，最终结果如下：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -601,6 +605,7 @@ height:50vh;
 </tr>
 </tbody>
 </table>
+</div>
 <h3 id="pngcursh"><a href="#pngcursh" class="headerlink" title="pngcursh"></a>pngcursh</h3><p>集成进去：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">exec &#123; ExecSpec spec -&gt;</span><br><span class="line">    spec.workingDir(<span class="keyword">new</span> File(<span class="string">'/Users/leo/Documents/projects/pngcrush-1.8.13'</span>))</span><br><span class="line">    spec.commandLine(<span class="string">"./pngcrush"</span>, <span class="string">"-ow"</span>,<span class="string">"-reduce"</span>, file.path)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>使用基本配置：</p>
@@ -610,6 +615,7 @@ height:50vh;
 <li>-brute 尝试 176 种压缩方法</li>
 </ul>
 <p>先执行 Clean Task，再重新执行打包，最终结果如下：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -646,6 +652,7 @@ height:50vh;
 </tr>
 </tbody>
 </table>
+</div>
 <h3 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h3><p>虽然从结果上来看，pngquant 是最好的选择，但因为 pngcursh 这块使用的只是默认的压缩配置，而且 pngcursh 提供的参数是最多的，所以具体哪个更优，只能靠调参数了，众所周知，调参数也是技术活。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>推荐使用 WebP 和 SVG 来代替 PNG 和 JPEG 图片的使用，但有些三方库的图片是我们没办法控制的，这块就可以用 PNG 压缩工具来进行优化。至于如果平衡压缩率、压缩耗时，这就是要靠大家去调参数了。</p>
 
@@ -656,7 +663,7 @@ height:50vh;
             <p>原文作者：<a href="https://linxiaotao.github.io">Leo</a>
             <p>原文链接：<a href="https://linxiaotao.github.io/2019/12/04/优化包大小-PNG部分/">https://linxiaotao.github.io/2019/12/04/优化包大小-PNG部分/</a>
             <p>发表日期：<a href="https://linxiaotao.github.io/2019/12/04/优化包大小-PNG部分/">December 4th 2019, 7:53:22 pm</a>
-            <p>更新日期：<a href="https://linxiaotao.github.io/2019/12/04/优化包大小-PNG部分/">December 10th 2019, 7:54:40 pm</a>
+            <p>更新日期：<a href="https://linxiaotao.github.io/2019/12/04/优化包大小-PNG部分/">March 3rd 2020, 4:14:43 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -793,7 +800,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用的压缩算法"><span class="toc-number">2.</span> <span class="toc-text">常用的压缩算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Indexed-color"><span class="toc-number">2.1.</span> <span class="toc-text">Indexed_color</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Color-quantization"><span class="toc-number">2.2.</span> <span class="toc-text">Color_quantization</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#谈谈-AAPT"><span class="toc-number">3.</span> <span class="toc-text">谈谈 AAPT</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-PALETTE"><span class="toc-number">3.1.</span> <span class="toc-text">PNG_COLOR_TYPE_PALETTE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-GRAY"><span class="toc-number">3.2.</span> <span class="toc-text">PNG_COLOR_TYPE_GRAY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-RGB"><span class="toc-number">3.3.</span> <span class="toc-text">PNG_COLOR_TYPE_RGB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-RGB-ALPHA"><span class="toc-number">3.4.</span> <span class="toc-text">PNG_COLOR_TYPE_RGB_ALPHA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小结"><span class="toc-number">3.5.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PNG-压缩工具对比"><span class="toc-number">4.</span> <span class="toc-text">PNG 压缩工具对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用-Gradle-集成"><span class="toc-number">4.1.</span> <span class="toc-text">使用 Gradle 集成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pngquant"><span class="toc-number">4.2.</span> <span class="toc-text">pngquant</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zopflipng"><span class="toc-number">4.3.</span> <span class="toc-text">zopflipng</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pngcursh"><span class="toc-number">4.4.</span> <span class="toc-text">pngcursh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小结-1"><span class="toc-number">4.5.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用的压缩算法"><span class="toc-number">2.</span> <span class="toc-text">常用的压缩算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Indexed-color"><span class="toc-number">2.1.</span> <span class="toc-text">Indexed_color</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Color-quantization"><span class="toc-number">2.2.</span> <span class="toc-text">Color_quantization</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#谈谈-AAPT"><span class="toc-number">3.</span> <span class="toc-text">谈谈 AAPT</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-PALETTE"><span class="toc-number">3.1.</span> <span class="toc-text">PNG_COLOR_TYPE_PALETTE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-GRAY"><span class="toc-number">3.2.</span> <span class="toc-text">PNG_COLOR_TYPE_GRAY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-GRAY-ALPHA"><span class="toc-number">3.3.</span> <span class="toc-text">PNG_COLOR_TYPE_GRAY_ALPHA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-RGB"><span class="toc-number">3.4.</span> <span class="toc-text">PNG_COLOR_TYPE_RGB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PNG-COLOR-TYPE-RGB-ALPHA"><span class="toc-number">3.5.</span> <span class="toc-text">PNG_COLOR_TYPE_RGB_ALPHA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小结"><span class="toc-number">3.6.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PNG-压缩工具对比"><span class="toc-number">4.</span> <span class="toc-text">PNG 压缩工具对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用-Gradle-集成"><span class="toc-number">4.1.</span> <span class="toc-text">使用 Gradle 集成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pngquant"><span class="toc-number">4.2.</span> <span class="toc-text">pngquant</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#zopflipng"><span class="toc-number">4.3.</span> <span class="toc-text">zopflipng</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pngcursh"><span class="toc-number">4.4.</span> <span class="toc-text">pngcursh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小结-1"><span class="toc-number">4.5.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
