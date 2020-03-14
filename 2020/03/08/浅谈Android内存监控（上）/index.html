@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Leo">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Leo">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="linxiaotao's blog">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>浅谈 Android 内存监控（上） · Leo&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Leo&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">浅谈 Android 内存监控（上）</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Leo's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            浅谈 Android 内存监控（上）
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "性能优化">性能优化</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.4k</span>阅读时长: <span class="post-count reading-time">13 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/03/08</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>文章最后更新时间：2020.03.08</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>性能优化是一个永不过时的话题，对于移动端来说也是如此。即使现在的终端设备更新速度日新月异，但用户总是希望你的应用能越快越好，秒启动，流畅无违和的操作，及时的操作响应等等。</p>
+<p>移动端性能优化是一个很泛的话题，以笔者目前的认知水平来说，大概可分以下几个方面：</p>
+<ul>
+<li>内存优化</li>
+<li>UI 渲染优化</li>
+<li>IO 优化</li>
+<li>弱网优化</li>
+<li>电量优化</li>
+</ul>
+<p>对于一般的应用来说，<strong>UI 渲染优化</strong> 和 <strong>内存优化</strong> 是两个必须要做的事情，因为这两个方面是日常开发比较常见的，同时对于用户来说，也是更直接的影响。比如，如果内存出现问题，常常会导致长时间内存占用过高，继而导致内存抖动，更极端的情况会出现 OOM 异常，导致应用奔溃。如果 UI 绘制渲染出现问题，常常会出现丢帧的情况，对于用户来说，就是卡顿，操作不流畅。</p>
+<h1 id="关于本文"><a href="#关于本文" class="headerlink" title="关于本文"></a>关于本文</h1><p>关于 <strong>内存优化</strong> 这个话题，网上有很多相关的文章，会告诉你怎么去减少内存占用等等，所以这篇文章不会涉及这些知识，正像标题所说的一样，偏向于怎么去做内存监控。文章会分成上下两篇，这是第一篇，主要是调研现有的方案，包括微信开源的 Martix 中的 <a href="http://github.com/Tencent/matrix/wiki/Matrix-Android-ResourceCanary" target="_blank" rel="noopener">Matrix-Android-ResourceCanary</a>，美团的 <a href="https://tech.meituan.com/2019/11/14/crash-oom-probe-practice.html" target="_blank" rel="noopener">Probe：Android线上OOM问题定位组件</a>，还有开源的 <a href="https://github.com/square/leakcanary" target="_blank" rel="noopener">LeakCanary</a>。第二篇，会尝试去开发一个内存监控组件。</p>
+<h1 id="技术难点"><a href="#技术难点" class="headerlink" title="技术难点"></a>技术难点</h1><p>我们先把相关技术难点先提出来，再带着问题去看看上面列举的这些方案的解决思路。</p>
+<ol>
+<li><p>hprof 文件裁剪</p>
+<p>hprof 是堆内存快照文件，可以方便的定位内存问题，但有一点不可忽视的问题，就是文件过大。hprof 文件动则 70M，80M 多，有的应用可能会超过 100M，对于测试环境来说，这个可能不是问题，但如果在生产环境的话，对于用户设备来说，这会是个不小的负担（不管是流量或者电量来说），而且如果涉及日志回捞，那上传成功率可能会大打折扣。再者，当我们在设备上进行分析操作时，内存的占用也会处于更高的水平线，这可能会加剧应用当前的内存问题，甚至可能会导致 OOM。</p>
+</li>
+<li><p>实时监控</p>
+<p>我们需要监控哪些对象，比如 Activity，Fragment 或者是其他的对象，检查频率又该是怎么样的，比如一分钟检查一次，或者是一天检查一次等等。对于测试环境来说，我们可以采用更高的监控等级，监控更多的对象，使用更高的检查频率，生产环境则需要更为保守的方案。</p>
+</li>
+<li><p>优化 dump 操作</p>
+<p>Android 设备上，要 dump 当前内存快照，一般会调用 <code>Debug.dumpHprofData()</code> 方法，接入过 LeakCanary 的同学会知道，当执行 dump 操作时，常常会导致应用停顿几秒，在生产环境执行 dump 操作的话，如果时间过长，可能会给用户带来糟糕的体验，甚至可能会触发 ANR。</p>
+</li>
+</ol>
+<p>可能还有其他问题，但暂时还没考虑到，后续再补充。</p>
+<h1 id="调研方案"><a href="#调研方案" class="headerlink" title="调研方案"></a>调研方案</h1><p>网上能搜集到方案可能很多，这里我们选取几个比较有参考价值的：</p>
+<ul>
+<li>LeakCanary</li>
+<li>微信的 Matrix</li>
+<li>美团的 Probe</li>
+</ul>
+<p>技术更新非常快，后续有其他更好的方案，再继续更新。</p>
+<h2 id="LeakCanary"><a href="#LeakCanary" class="headerlink" title="LeakCanary"></a>LeakCanary</h2><p>LeakCanary 可能是 Android 同学非常熟悉的开源项目了，它有很多优点，现在已经开发了 2.0 了，使用新的 hrpof 分析工具 <a href="https://square.github.io/leakcanary/shark/" target="_blank" rel="noopener">shark</a> 代替原来的 <a href="https://github.com/square/haha" target="_blank" rel="noopener">haha</a>，对于上面提出的难点，LeakCanary 主要做了 <strong>hprof 文件裁剪</strong> 和 <strong>实时监控</strong>。</p>
+<h3 id="hprof-文件裁剪"><a href="#hprof-文件裁剪" class="headerlink" title="hprof 文件裁剪"></a>hprof 文件裁剪</h3><p>LeakCanary 用 shark 组件来实现裁剪 hprof 文件功能，在 shark-cli 工具中，我们可以通过添加 <code>strip-hprof</code> 选项来裁剪 hprof 文件，它的实现思路是：通过将所有基本类型数组替换为空数组（大小不变）。</p>
+<p>执行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shark-cli strip-hprofHPROF_FILE_PATH</span><br></pre></td></tr></table></figure>
+<p>相关源码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">when</span> (record) &#123;                                                  </span><br><span class="line">  <span class="keyword">is</span> BooleanArrayDump -&gt; BooleanArrayDump(                       </span><br><span class="line">      record.id, record.stackTraceSerialNumber,                  </span><br><span class="line">      BooleanArray(record.array.size)                            </span><br><span class="line">  )                                                              </span><br><span class="line">  <span class="keyword">is</span> CharArrayDump -&gt; CharArrayDump(                             </span><br><span class="line">      record.id, record.stackTraceSerialNumber,                  </span><br><span class="line">      CharArray(record.array.size) &#123;                              </span><br><span class="line">        <span class="string">'?'</span>                                                      </span><br><span class="line">      &#125;                                                          </span><br><span class="line">  )                                                              </span><br><span class="line">  <span class="keyword">is</span> FloatArrayDump -&gt; FloatArrayDump(                           </span><br><span class="line">      record.id, record.stackTraceSerialNumber,                  </span><br><span class="line">      FloatArray(record.array.size)                              </span><br><span class="line">  )                                                              </span><br><span class="line">  <span class="keyword">is</span> DoubleArrayDump -&gt; DoubleArrayDump(                         </span><br><span class="line">      record.id, record.stackTraceSerialNumber,                  </span><br><span class="line">      DoubleArray(record.array.size)                             </span><br><span class="line">  )                                                              </span><br><span class="line">  <span class="keyword">is</span> ByteArrayDump -&gt; ByteArrayDump(                             </span><br><span class="line">      record.id, record.stackTraceSerialNumber,                  </span><br><span class="line">      ByteArray(record.array.size)                               </span><br><span class="line">  )                                                              </span><br><span class="line">  <span class="keyword">is</span> ShortArrayDump -&gt; ShortArrayDump(                           </span><br><span class="line">      record.id, record.stackTraceSerialNumber,                  </span><br><span class="line">      ShortArray(record.array.size)                              </span><br><span class="line">  )                                                              </span><br><span class="line">  <span class="keyword">is</span> IntArrayDump -&gt; IntArrayDump(                               </span><br><span class="line">      record.id, record.stackTraceSerialNumber,                  </span><br><span class="line">      IntArray(record.array.size)                                </span><br><span class="line">  )                                                              </span><br><span class="line">  <span class="keyword">is</span> LongArrayDump -&gt; LongArrayDump(                             </span><br><span class="line">      record.id, record.stackTraceSerialNumber,                  </span><br><span class="line">      LongArray(record.array.size)                               </span><br><span class="line">  )                                                              </span><br><span class="line">  <span class="keyword">else</span> -&gt; &#123;                                                      </span><br><span class="line">    record                                                       </span><br><span class="line">  &#125;                                                              </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实验下来，这个裁剪的收益很小，72M 的文件大概只裁剪了 62KB，可能这个功能不是为了裁剪文件大小，而是其他目的，有知道的同学可以告知下。</p>
+<h3 id="实时监控"><a href="#实时监控" class="headerlink" title="实时监控"></a>实时监控</h3><p>LeakCanary 主要是为测试环境开发，它会在 Activity 或者 Fragment 的 <strong>destory</strong> 生命周期后，可以检测 Activity 和 Fragment 是否被回收，来判断它们是否存在泄露的情况。更多相关知识，可以参考笔者之前的文章：<a href="https://juejin.im/post/5e4799306fb9a07ce152bbb8" target="_blank" rel="noopener">LeakCanary2 源码分析</a>。</p>
+<h2 id="微信的-Matrix"><a href="#微信的-Matrix" class="headerlink" title="微信的 Matrix"></a>微信的 Matrix</h2><p>微信开源的 Matrix 组件是个非常不错的项目，其中关于内存监控部分是 <a href="https://github.com/Tencent/matrix/wiki/Matrix-Android-ResourceCanary" target="_blank" rel="noopener">ResourceCanary</a>，和 LeakCanary 一样， Matrix 主要也是在 <strong>hprof 文件裁剪</strong> 和 <strong>实时监控</strong> 这两方面做了一些优化。</p>
+<h3 id="hprof-文件裁剪-1"><a href="#hprof-文件裁剪-1" class="headerlink" title="hprof 文件裁剪"></a>hprof 文件裁剪</h3><p>Matrix 的裁剪思路主要是将除了部分字符串和 Bitmap 以外实例对象中的 buffer 数组。之所以保留 Bitmap 是因为 Matirx 有个检测重复 Bitmap 的功能，会对 Bitmap 的 buffer 数组做一次 MD5 操作来判断是否重复。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>                                                                                                              </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">visitHeapDumpPrimitiveArray</span><span class="params">(<span class="keyword">int</span> tag, ID id, <span class="keyword">int</span> stackId, <span class="keyword">int</span> numElements, <span class="keyword">int</span> typeId, <span class="keyword">byte</span>[] elements)</span> </span>&#123;   </span><br><span class="line">    <span class="keyword">final</span> ID deduplicatedID = mBmpBufferIdToDeduplicatedIdMap.get(id);                                                 </span><br><span class="line">    <span class="comment">// Discard non-bitmap or duplicated bitmap buffer but keep reference key.                                          </span></span><br><span class="line">    <span class="keyword">if</span> (deduplicatedID == <span class="keyword">null</span> || !id.equals(deduplicatedID)) &#123;                                                        </span><br><span class="line">        <span class="keyword">if</span> (!mStringValueIds.contains(id)) &#123;                                                                           </span><br><span class="line">            skipData += elements.length;                                                                               </span><br><span class="line">            <span class="keyword">return</span>;                                                                                                    </span><br><span class="line">        &#125;                                                                                                              </span><br><span class="line">    &#125;                                                                                                                  </span><br><span class="line">    <span class="keyword">super</span>.visitHeapDumpPrimitiveArray(tag, id, stackId, numElements, typeId, elements);                                </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Martix 的裁剪收益还是比较可观的，原文件 92M 裁剪后只有 18M。</p>
+<h3 id="实时监控-1"><a href="#实时监控-1" class="headerlink" title="实时监控"></a>实时监控</h3><p>Matrix 是基于 LeakCanary 上进行二次开发，所以监控原理基本是一致的，主要增加了一些误报的优化，比如：</p>
+<ul>
+<li><p>多次检测到相同的可疑对象，才认定为泄露对象，参数可配置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (destroyedActivityInfo.mDetectedCount &lt; mMaxRedetectTimes                                </span><br><span class="line">        || !mResourcePlugin.getConfig().getDetectDebugger()) &#123;                              </span><br><span class="line">    <span class="comment">// Although the sentinel tell us the activity should have been recycled,                </span></span><br><span class="line">    <span class="comment">// system may still ignore it, so try again until we reach max retry times.             </span></span><br><span class="line">    MatrixLog.i(TAG, <span class="string">"activity with key [%s] should be recycled but actually still \n"</span>      </span><br><span class="line">                    + <span class="string">"exists in %s times, wait for next detection to confirm."</span>,            </span><br><span class="line">            destroyedActivityInfo.mKey, destroyedActivityInfo.mDetectedCount);              </span><br><span class="line">    <span class="keyword">continue</span>;                                                                               </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>增加一个哨兵对象，用于判断是否有 GC 操作，因为调用 <code>Runtime.getRuntime().gc()</code> 只是建议虚拟机进行 GC 操作，并不一定会进行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (sentinelRef.get() != <span class="keyword">null</span>) &#123;                                                       </span><br><span class="line">    <span class="comment">// System ignored our gc request, we will retry later.                             </span></span><br><span class="line">    MatrixLog.d(TAG, <span class="string">"system ignore our gc request, wait for next detection."</span>);        </span><br><span class="line">    <span class="keyword">return</span> Status.RETRY;                                                               </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>避免重复检测相同的对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (sentinelRef.get() != <span class="keyword">null</span>) &#123;                                                       </span><br><span class="line">    <span class="comment">// System ignored our gc request, we will retry later.                             </span></span><br><span class="line">    MatrixLog.d(TAG, <span class="string">"system ignore our gc request, wait for next detection."</span>);        </span><br><span class="line">    <span class="keyword">return</span> Status.RETRY;                                                               </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>Matrix 虽然是基于 LeakCnary，但额外增加了一些配置选项，可以用于生产环境，比如 dump 模式，支持手动触发 dump，自动 dump，和不进行 dump，可以根据不同的环境，使用不同的模式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> DumpMode &#123;                            </span><br><span class="line">    NO_DUMP, AUTO_DUMP, MANUAL_DUMP, SILENCE_DUMP </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除此之前，还有检测时间间隔等等。</p>
+<p>还有一点就是，Matrix 是将分析 hprof 操作独立出来的，可以使用 <a href="https://github.com/Tencent/matrix/tree/master/matrix/matrix-android/matrix-resource-canary/matrix-resource-canary-analyzer" target="_blank" rel="noopener">resource-canary-analyzer</a> 去执行分析操作。</p>
+<h2 id="美团的-Probe"><a href="#美团的-Probe" class="headerlink" title="美团的 Probe"></a>美团的 Probe</h2><p>Probe 不是开源的，所以只能通过相关的文章 <a href="https://tech.meituan.com/2019/11/14/crash-oom-probe-practice.html" target="_blank" rel="noopener">Probe：Android线上OOM问题定位组件</a> 和一些其他手段去了解。</p>
+<p>Probe 同样是在 <strong>hprof 文件裁剪</strong> 和 <strong>实时监控</strong> 这两方面做了优化。</p>
+<blockquote>
+<p>注意事项⚠️：对 Probe 组件的研究纯粹只是出于学习目的，请不要用做其他用途。</p>
+</blockquote>
+<h3 id="hprof-文件裁剪-2"><a href="#hprof-文件裁剪-2" class="headerlink" title="hprof 文件裁剪"></a>hprof 文件裁剪</h3><p>与 Matrix 不同的是，Probe 支持在设备上进行分析 hprof 操作，所以它不仅考虑了 hprof 文件上传成功率，还考虑加载 hprof 带来的内存占用高问题。不管是 LeakCanary 还是 Matrix，在裁剪的处理上，都是先将原始的 hprof 文件 dump 出来以后，过滤掉某些数据后，再重新写入到新的 hprof 文件。而 Probe 的处理则更加有创意，它通过 native hook 了虚拟机写入 hprof 文件的操作，在这里先过滤了某些数据，最终生成的 hprof 文件就是裁剪后的了。在不考虑可能会有的兼容性问题，这个方案要比其他的方案要高效，因为它解决了 hprof 加载的内存问题。</p>
+<p>美团在测试中发现，分析 hprof 文件的占用内存和 hprof 中记录对象实例数量是成正比的，</p>
+<blockquote>
+<p>测试时遇到的最大问题就是分析进程自身经常会发生OOM，导致分析失败。为了弄清楚分析进程为什么会占用这么大内存，我们做了两个对比实验：</p>
+<ul>
+<li>在一个最大可用内存256MB的手机上，让一个成员变量申请特别大的一块内存200多MB，人造OOM，Dump内存，分析，内存快照文件达到250多MB，分析进程占用内存并不大，为70MB左右。</li>
+<li>在一个最大可用内存256MB的手机上，添加200万个小对象（72字节），人造OOM，Dump内存，分析，内存快照文件达到250多MB，分析进程占用内存增长很快，在解析时就发生OOM了。</li>
+</ul>
+<p>实验说明，分析进程占用内存与HPROF文件中的Instance数量是正相关的，在将HPROF文件映射到内存中解析时，如果Instance的数量太大，就会导致OOM。</p>
+</blockquote>
+<p><strong>计数压缩逻辑</strong>：如果存在重复的相同实例，则增加它的计数，不保存它的实例。Probe 定义超过实例超过 8000，则不会再继续保持它的实例对象。</p>
+<h3 id="hprof-文件分析"><a href="#hprof-文件分析" class="headerlink" title="hprof 文件分析"></a>hprof 文件分析</h3><p>除了文件裁剪，Probe 还优化分析泄露对象的链路，因为 Probe 相对于其他方案，理论上它是支持所有对象的内存泄露检测的（排除了原始类型等），而 LeakCanary 和 Matrix 只支持 Activity 和 Fragment 等对象，这个优化是基于 <strong>RetainSize 越大的对象对内存的影响也越大，是最有可能造成OOM的“元凶”</strong> 这一原则。</p>
+<p>首先，在 dump 出所有对象后，创建一个 TOP N 的小根堆，根据 RetainSize 排序，初始 N 默认是 5，这里有个小细节，就是 Probe 会处理 ByteArray 类型的实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (isByteArray(var6)) &#123;</span><br><span class="line">    var6.parent.addRetainedSize(var1.getHeapIndex(var4), var6.getTotalRetainedSize());</span><br><span class="line">    var15.add(var6.parent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将 ByteArray 的 RetainSize 加到它的父节点，同时将它的父节点加到堆中。</p>
+<p>在初始化小根堆后，继续遍历做动态调整，将大于文件大小 5% 的对象直接加到堆中，同时增大 TOP N 的值，否则，跟堆顶元素做比较。在遍历对象的同时，如果是相同类的不同实例，则只会保存一份实例，同时将它们的 RetainSize 和 Num 计算进去：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (var3.containsKey(var9)) &#123;                            </span><br><span class="line">    InstanceExtra var17 = (InstanceExtra)var3.get(var9); </span><br><span class="line">    var17.retainSize += var6.getTotalRetainedSize();     </span><br><span class="line">    ++var17.num;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还会将在 <strong>计数压缩逻辑</strong> 中 RetainSize 补回来：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (var10 != <span class="keyword">null</span>) &#123;                                                                                  </span><br><span class="line">    var16.retainSize += var10.getSize();                                                              </span><br><span class="line">    <span class="keyword">long</span> var11 = var16.num;                                                                           </span><br><span class="line">    var16.num = (<span class="keyword">long</span>)var10.getCount() + var11;                                                       </span><br><span class="line">    ClassCountInfo var18 = (ClassCountInfo)AbandonedInstanceManager.getInstance().countMap.get(var9); </span><br><span class="line">    <span class="keyword">if</span> (var18 != <span class="keyword">null</span> &amp;&amp; var18.classId &gt; <span class="number">0L</span>) &#123;                                                        </span><br><span class="line">        var16.id = var18.classId;                                                                     </span><br><span class="line">    &#125;                                                                                                 </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="实时监控-2"><a href="#实时监控-2" class="headerlink" title="实时监控"></a>实时监控</h3><p>Probe 对监控 Activity 对象的处理方法和 Matrix 的 DumpMode 类似，都是分级处理，Probe 线上监控到 Activity 泄露后，不会进行 dump 操作，只是对 Activity 类名等进行上报处理（这些都是可以配置的）。</p>
+<p>除了 Activity 以为，Probe 还会通过开启一个内存监控器，每隔 1s 查看当前应用可用内存，当剩余内存低于 10% （触底）时，会进行内存分析。</p>
+<p>当发生 OOM 时，也会进行内存分析。</p>
+<p>之前的配置都是通过接口下发的，这也能保证最大程度的灵活性。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>从上面三种方案中，我们可以得出一些结论：LeakCanary 虽然只会在测试环境使用，且只提供 Activity 和 Fragment 等对象的监控，但它提供监控的思路和 hprof 的分析，Matrix 和 Probe 或多或少都是基于它进行二次开发和优化。Matrix 主要是优化泄露对象的误判和 hprof 文件的裁剪，Probe 则是优化了在设备上进行 hprof 文件分析的内存占用，同时支持检测内存中所有对象（RetainSize 大的对象）。</p>
+<p>可惜的是，上面几种方案都没有涉及如何优化 heap dump 操作，这个留着后续研究。</p>
+<h2 id="关于-OOM"><a href="#关于-OOM" class="headerlink" title="关于 OOM"></a>关于 OOM</h2><p><strong>Out of memory</strong> (<strong>OOM</strong>) 当系统无法满足申请的内存大小时，就会抛出 OOM 错误。导致 OOM 的原因，除了我们上面说讲的内存泄露以外，可能还会是线程创建超过限制，可以通过 <strong>/proc/sys/kernel/threads-max</strong> 获取：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/sys/kernel/threads-max</span><br><span class="line">26418</span><br></pre></td></tr></table></figure>
+<p>还有一种可能是 FD（File descriptor）文件描述符超过限制，可以通过 <strong>/proc/pid/limits</strong> 获取，其中 <strong>Max open files</strong> 就是可创建的文件描述符数量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Limit                     Soft Limit           Hard Limit           Units</span><br><span class="line">Max open files            4096                 4096                 files</span><br></pre></td></tr></table></figure>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://linxiaotao.github.io">Leo</a>
+            <p>原文链接：<a href="https://linxiaotao.github.io/2020/03/08/浅谈Android内存监控（上）/">https://linxiaotao.github.io/2020/03/08/浅谈Android内存监控（上）/</a>
+            <p>发表日期：<a href="https://linxiaotao.github.io/2020/03/08/浅谈Android内存监控（上）/">三月 8日 2020, 1:58:43 下午</a>
+            <p>更新日期：<a href="https://linxiaotao.github.io/2020/03/08/浅谈Android内存监控（上）/">March 14th 2020, 10:48:10 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/03/03/leakcanary2-source-analysis/" title= "LeakCanary2 源码分析">
+                    <div class="prevTitle">LeakCanary2 源码分析</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:linxiaotao1993@vip.qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/LinXiaoTao" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat_qr.jpeg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#关于本文"><span class="toc-number">2.</span> <span class="toc-text">关于本文</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#技术难点"><span class="toc-number">3.</span> <span class="toc-text">技术难点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#调研方案"><span class="toc-number">4.</span> <span class="toc-text">调研方案</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LeakCanary"><span class="toc-number">4.1.</span> <span class="toc-text">LeakCanary</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hprof-文件裁剪"><span class="toc-number">4.1.1.</span> <span class="toc-text">hprof 文件裁剪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实时监控"><span class="toc-number">4.1.2.</span> <span class="toc-text">实时监控</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#微信的-Matrix"><span class="toc-number">4.2.</span> <span class="toc-text">微信的 Matrix</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hprof-文件裁剪-1"><span class="toc-number">4.2.1.</span> <span class="toc-text">hprof 文件裁剪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实时监控-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">实时监控</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#美团的-Probe"><span class="toc-number">4.3.</span> <span class="toc-text">美团的 Probe</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hprof-文件裁剪-2"><span class="toc-number">4.3.1.</span> <span class="toc-text">hprof 文件裁剪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hprof-文件分析"><span class="toc-number">4.3.2.</span> <span class="toc-text">hprof 文件分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实时监控-2"><span class="toc-number">4.3.3.</span> <span class="toc-text">实时监控</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">4.4.</span> <span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于-OOM"><span class="toc-number">4.5.</span> <span class="toc-text">关于 OOM</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 33
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/08</span><a class="archive-post-title" href= "/2020/03/08/浅谈Android内存监控（上）/" >浅谈 Android 内存监控（上）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2020/03/03/leakcanary2-source-analysis/" >LeakCanary2 源码分析</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/12</span><a class="archive-post-title" href= "/2019/12/12/LeetCode-5-Longest-Palindromic-Substring/" >LeetCode 5: Longest Palindromic Substring</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/2019/12/04/优化包大小-PNG部分/" >优化包大小-PNG部分</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/09</span><a class="archive-post-title" href= "/2019/09/09/浅谈Flutter热重载-上/" >浅谈Flutter热重载(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/30</span><a class="archive-post-title" href= "/2019/08/30/浅谈Flutter构建/" >浅谈Flutter构建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/2019/08/22/无侵入引入Flutter模块/" >无侵入引入Flutter模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span><a class="archive-post-title" href= "/2019/08/07/仿即刻Flutter版本/" >仿即刻Flutter版本</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/21</span><a class="archive-post-title" href= "/2019/06/21/解决Flutter版本不一致的flutterw/" >解决Flutter版本不一致的flutterw</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/17</span><a class="archive-post-title" href= "/2019/06/17/Flutter-ListView-源码分析/" >Flutter ListView 源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span><a class="archive-post-title" href= "/2019/05/06/scoped-model源码解析/" >scoped_model源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href= "/2019/04/25/Looper中的死循环/" >Looper中的死循环</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/2019/02/05/Jetpack中的LiveData/" >Jetpack中的LiveData</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/14</span><a class="archive-post-title" href= "/2019/01/14/Jetpack中的Lifecycle/" >Jetpack中的Lifecycle</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span><a class="archive-post-title" href= "/2019/01/08/SparseArray源码解析/" >SparseArray源码解析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span><a class="archive-post-title" href= "/2019/01/05/Jetpack中的ViewModel/" >Jetpack中的ViewModel</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span><a class="archive-post-title" href= "/2018/12/31/2018年复盘/" >2018年复盘</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/AppPlugin中的Task-第一篇/" >AppPlugin中的Task-第一篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/ArrayList源码分析/" >ArrayList源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/07</span><a class="archive-post-title" href= "/2018/11/07/HashMap源码分析/" >HashMap源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2018/09/08/JavaScript正则表达式/" >JavaScript正则表达式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2018/09/08/灵活使用位运算符/" >灵活使用位运算符</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href= "/2018/07/19/可拖拽的网格布局/" >可拖拽的网格布局</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/21</span><a class="archive-post-title" href= "/2018/05/21/Gradle插件-提高篇/" >Gradle插件-提高篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span><a class="archive-post-title" href= "/2018/05/16/Gradle插件-基础篇/" >Gradle插件-基础篇</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2018/05/08/Gradle多项目实践/" >Gradle多项目实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/29</span><a class="archive-post-title" href= "/2018/04/29/Gradle多项目构建/" >Gradle多项目构建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2018/04/19/性能优化第一步/" >性能优化第一步</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/2018/04/12/熟悉又陌生的Context/" >熟悉又陌生的Context</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/11</span><a class="archive-post-title" href= "/2018/04/11/hello-world/" >Hello World</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/03</span><a class="archive-post-title" href= "/2018/04/03/触摸事件实践之路/" >触摸事件实践之路</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/27</span><a class="archive-post-title" href= "/2018/03/27/Activity启动流程-基于Android26/" >Activity启动流程(基于Android26)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2018/03/23/Android消息机制-Handler/" >Android消息机制-Handler</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Android Framework"><span class="iconfont-archer">&#xe606;</span>Android Framework</span>
+    
+        <span class="sidebar-tag-name" data-tags="Jetpack"><span class="iconfont-archer">&#xe606;</span>Jetpack</span>
+    
+        <span class="sidebar-tag-name" data-tags="性能优化"><span class="iconfont-archer">&#xe606;</span>性能优化</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="随笔"><span class="iconfont-archer">&#xe60a;</span>随笔</span>
+    
+        <span class="sidebar-category-name" data-categories="Gradle"><span class="iconfont-archer">&#xe60a;</span>Gradle</span>
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
+    
+        <span class="sidebar-category-name" data-categories="Flutter"><span class="iconfont-archer">&#xe60a;</span>Flutter</span>
+    
+        <span class="sidebar-category-name" data-categories="LeetCode"><span class="iconfont-archer">&#xe60a;</span>LeetCode</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Leo"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!--<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>-->
+
+</body>
+</html>
+
+
