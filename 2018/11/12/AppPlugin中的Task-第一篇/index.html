@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Leo">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Leo">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="linxiaotao's blog">
+    <meta name="description" content="前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.application 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 tas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AppPlugin中的Task-第一篇">
+<meta property="og:url" content="https://linxiaotao.github.io/2018/11/12/AppPlugin%E4%B8%AD%E7%9A%84Task-%E7%AC%AC%E4%B8%80%E7%AF%87/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="前言在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用com.android.application 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 tas">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?x-oss-process=style/doc-img">
+<meta property="article:published_time" content="2018-11-12T02:26:03.000Z">
+<meta property="article:modified_time" content="2022-06-15T11:19:32.315Z">
+<meta property="article:author" content="Leo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?x-oss-process=style/doc-img">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+    <title>AppPlugin中的Task-第一篇 · Leo&#39;s Studio</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20211217" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20211217" as="style">
+    <link rel="stylesheet" href="/css/dark.css">
+    <link rel="stylesheet" href="/css/mobile.css?v=20211217" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20211217" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20211217" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>Leo's Studio.</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">Leo&#39;s Studio.</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">AppPlugin中的Task-第一篇</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                AppPlugin中的Task-第一篇
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.6k</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2018/11/12</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在使用 Android Studio 以后，基本新的 Android 项目都是用 Gradle 作为构建工具，关于 Gradle 的介绍不在本文范畴，当新建一个 Android 项目时，默认只会有个 module 使用<code>com.android.application</code> 插件，Gradle 的核心在于 task，即从 java 源文件和资源文件编译成 apk 文件（编译过程），就是由一系列的 task 组成，task 可以相互依赖，比如最基本的 <code>Task.dependsOn()</code>，所以理解 Android 编译过程就是理解各个 task 的作用。</p>
+<blockquote>
+<p>本文涉及的源码：</p>
+<ul>
+<li>com.android.tools.build:gradle:3.1.4</li>
+<li>gradle-api-4.4</li>
+</ul>
+</blockquote>
+<h3 id="AppPlugin"><a href="#AppPlugin" class="headerlink" title="AppPlugin"></a>AppPlugin</h3><p><code>com.android.application</code> 的源码位于 <code>com.android.build.gradle.AppPlugin</code>，AppPlugin 继承于 BasePlugin，BasePlugin 封装了大部分通用的逻辑：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span>                                                                                </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">apply</span><span class="params">(<span class="meta">@NonNull</span> Project project)</span> &#123;                                            </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 省略初始化步骤</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (!projectOptions.get(BooleanOption.ENABLE_NEW_DSL_AND_API)) &#123;</span><br><span class="line">        <span class="comment">// 不使用新的 DSL API</span></span><br><span class="line">        TaskInputHelper.enableBypass();                                                  </span><br><span class="line">        </span><br><span class="line">        <span class="comment">// threadRecorder 用于记录执行时间</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// configureProject 配置项目</span></span><br><span class="line">        threadRecorder.record(                                                           </span><br><span class="line">                ExecutionType.BASE_PLUGIN_PROJECT_CONFIGURE,                             </span><br><span class="line">                project.getPath(),                                                       </span><br><span class="line">                <span class="literal">null</span>,                                                                    </span><br><span class="line">                <span class="built_in">this</span>::configureProject);                                                 </span><br><span class="line">        </span><br><span class="line">        <span class="comment">// configureExtension 配置 Extension 后，我们才能使用 android &#123;&#125; 进行配置</span></span><br><span class="line">        threadRecorder.record(                                                           </span><br><span class="line">                ExecutionType.BASE_PLUGIN_PROJECT_BASE_EXTENSION_CREATION,               </span><br><span class="line">                project.getPath(),                                                       </span><br><span class="line">                <span class="literal">null</span>,                                                                    </span><br><span class="line">                <span class="built_in">this</span>::configureExtension);                                               </span><br><span class="line">        </span><br><span class="line">        <span class="comment">// createTasks 本文的重点，创建必须的 task</span></span><br><span class="line">        threadRecorder.record(                                                           </span><br><span class="line">                ExecutionType.BASE_PLUGIN_PROJECT_TASKS_CREATION,                        </span><br><span class="line">                project.getPath(),                                                       </span><br><span class="line">                <span class="literal">null</span>,                                                                    </span><br><span class="line">                <span class="built_in">this</span>::createTasks);                                                      </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                                                                             </span><br><span class="line">         <span class="comment">// 省略                   </span></span><br><span class="line">    &#125;                                                                                    </span><br><span class="line">&#125;                                                                                        </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">createTasks</span><span class="params">()</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// createTasksBeforeEvaluate</span></span><br><span class="line">    threadRecorder.record(                                                   </span><br><span class="line">            ExecutionType.TASK_MANAGER_CREATE_TASKS,                         </span><br><span class="line">            project.getPath(),                                               </span><br><span class="line">            <span class="literal">null</span>,                                                            </span><br><span class="line">            () -&gt; taskManager.createTasksBeforeEvaluate());                  </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// afterEvaluate 执行</span></span><br><span class="line">    project.afterEvaluate(                                                   </span><br><span class="line">            project -&gt;                                                       </span><br><span class="line">                    threadRecorder.record(                                   </span><br><span class="line">                            ExecutionType.BASE_PLUGIN_CREATE_ANDROID_TASKS,  </span><br><span class="line">                            project.getPath(),                               </span><br><span class="line">                            <span class="literal">null</span>,                                            </span><br><span class="line">                            () -&gt; createAndroidTasks(<span class="literal">false</span>)));               </span><br><span class="line">&#125;                                                                            </span><br></pre></td></tr></table></figure>
+
+<p>从 <code>createTasks()</code> 可以看到，<code>createAndroidTasks()</code> 是在 <code>afterEvaluate()</code> 中执行的，evaluate 是 Gradle  一个执行的过程</p>
+<blockquote>
+<p>Gradle 编译的三个阶段：Initialization、Configuration、Execution。具体可以阅读 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/build_lifecycle.html">build_lifecycle</a></p>
+</blockquote>
+<p><code>createAndroidTasks()</code> 这个方法较长，但是我们关心的是 <code>VariantManager.createAndroidTasks()</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createAndroidTasks</span><span class="params">()</span> &#123;                                                    </span><br><span class="line">    variantFactory.validateModel(<span class="built_in">this</span>);                                               </span><br><span class="line">    variantFactory.preVariantWork(project);                                           </span><br><span class="line">                                                                                      </span><br><span class="line">    <span class="keyword">if</span> (variantScopes.isEmpty()) &#123;</span><br><span class="line">        <span class="comment">// 创建 variantScopes</span></span><br><span class="line">        recorder.record(                                                              </span><br><span class="line">                ExecutionType.VARIANT_MANAGER_CREATE_VARIANTS,                        </span><br><span class="line">                project.getPath(),                                                    </span><br><span class="line">                <span class="literal">null</span> <span class="comment">/*variantName*/</span>,                                                 </span><br><span class="line">                <span class="built_in">this</span>::populateVariantDataList);                                       </span><br><span class="line">    &#125;                                                                                 </span><br><span class="line">                                                                                      </span><br><span class="line">    <span class="comment">// Create top level test tasks.                                                   </span></span><br><span class="line">    recorder.record(                                                                  </span><br><span class="line">            ExecutionType.VARIANT_MANAGER_CREATE_TESTS_TASKS,                         </span><br><span class="line">            project.getPath(),                                                        </span><br><span class="line">            <span class="literal">null</span> <span class="comment">/*variantName*/</span>,                                                     </span><br><span class="line">            () -&gt; taskManager.createTopLevelTestTasks(!productFlavors.isEmpty()));    </span><br><span class="line">                                                                                      </span><br><span class="line">                                                                                      </span><br><span class="line">                                                                                      </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">final</span> VariantScope variantScope : variantScopes) &#123;</span><br><span class="line">        <span class="comment">// 为每个 variant 生成各自的 task</span></span><br><span class="line">        recorder.record(                                                              </span><br><span class="line">                ExecutionType.VARIANT_MANAGER_CREATE_TASKS_FOR_VARIANT,               </span><br><span class="line">                project.getPath(),                                                    </span><br><span class="line">                variantScope.getFullVariantName(),                                    </span><br><span class="line">                () -&gt; createTasksForVariantData(variantScope));                       </span><br><span class="line">    &#125;                                                                                 </span><br><span class="line">                                                                                      </span><br><span class="line">    taskManager.createReportTasks(variantScopes);                                     </span><br><span class="line">&#125;                                                                                     </span><br></pre></td></tr></table></figure>
+
+<p>调用 <code>populateVariantDataList()</code> 来生成 VariantScopes，它是由 ProductFlavors、BuildType、VariantType 组合</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">createTasksForVariantData</span><span class="params">(<span class="keyword">final</span> VariantScope variantScope)</span> &#123;                                              </span><br><span class="line">    <span class="keyword">final</span> <span class="type">BaseVariantData</span> <span class="variable">variantData</span> <span class="operator">=</span> variantScope.getVariantData();                                                </span><br><span class="line">    <span class="keyword">final</span> <span class="type">VariantType</span> <span class="variable">variantType</span> <span class="operator">=</span> variantData.getType();                                                            </span><br><span class="line">                                                                                                                      </span><br><span class="line">    <span class="keyword">final</span> <span class="type">GradleVariantConfiguration</span> <span class="variable">variantConfig</span> <span class="operator">=</span> variantScope.getVariantConfiguration();                          </span><br><span class="line">                                                                                                                      </span><br><span class="line">    <span class="keyword">final</span> <span class="type">BuildTypeData</span> <span class="variable">buildTypeData</span> <span class="operator">=</span> buildTypes.get(variantConfig.getBuildType().getName());                       </span><br><span class="line">    <span class="keyword">if</span> (buildTypeData.getAssembleTask() == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 创建 BuildType 的 assemble task</span></span><br><span class="line">        <span class="comment">// 比如 assembleDebug 和 assembleRelease</span></span><br><span class="line">        buildTypeData.setAssembleTask(taskManager.createAssembleTask(buildTypeData));                                 </span><br><span class="line">    &#125;                                                                                                                 </span><br><span class="line">                                                                                                                      </span><br><span class="line">    <span class="comment">// Add dependency of assemble task on assemble build type task.</span></span><br><span class="line">    <span class="comment">// assemble 依赖于 assembleDebug 和 assembleRelease</span></span><br><span class="line">    taskManager                                                                                                       </span><br><span class="line">            .getTaskFactory()                                                                                         </span><br><span class="line">            .configure(                                                                                               </span><br><span class="line">                    <span class="string">&quot;assemble&quot;</span>,                                                                                       </span><br><span class="line">                    task -&gt; &#123;                                                                                         </span><br><span class="line">                        <span class="keyword">assert</span> buildTypeData.getAssembleTask() != <span class="literal">null</span>;                                               </span><br><span class="line">                        task.dependsOn(buildTypeData.getAssembleTask().getName());                                    </span><br><span class="line">                    &#125;);                                                                                               </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 根据 variant 创建 assemble task</span></span><br><span class="line">    createAssembleTaskForVariantData(variantData);                                                                    </span><br><span class="line">    <span class="keyword">if</span> (variantType.isForTesting()) &#123;                                                                                 </span><br><span class="line">         <span class="comment">// 省略代码                                                                       </span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 根据 variant 创建 task</span></span><br><span class="line">        taskManager.createTasksForVariantScope(variantScope);                                                         </span><br><span class="line">    &#125;                                                                                                                 </span><br><span class="line">&#125;                                                                                                                     </span><br></pre></td></tr></table></figure>
+
+<p>assemble task 用于将源文件编译为最终产物，比如 jar、aar、apk 等，在 <code>createTasksForVariantData()</code> 中会生成对应 BuildType 的 assemble task，比如 <code>assembleDebug</code> 和 <code>assembleRelease</code> ，接着设置 <code>assemble</code> 依赖于这两个 task，最后根据 variant 生成对应的 assemble task，比如 <code>assembleTestDebug</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">createAssembleTaskForVariantData</span><span class="params">(<span class="keyword">final</span> BaseVariantData variantData)</span> &#123;                      </span><br><span class="line">    <span class="keyword">final</span> <span class="type">VariantScope</span> <span class="variable">variantScope</span> <span class="operator">=</span> variantData.getScope();                                           </span><br><span class="line">    <span class="keyword">if</span> (variantData.getType().isForTesting()) &#123;                                                         </span><br><span class="line">        variantScope.setAssembleTask(taskManager.createAssembleTask(variantData));                      </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                                                                                            </span><br><span class="line">        <span class="type">BuildTypeData</span> <span class="variable">buildTypeData</span> <span class="operator">=</span>                                                                   </span><br><span class="line">                buildTypes.get(variantData.getVariantConfiguration().getBuildType().getName());         </span><br><span class="line">                                                                                                        </span><br><span class="line">        Preconditions.checkNotNull(buildTypeData.getAssembleTask());                                    </span><br><span class="line">                                                                                                        </span><br><span class="line">        <span class="keyword">if</span> (productFlavors.isEmpty()) &#123;                                                                 </span><br><span class="line">            <span class="comment">// Reuse assemble task for build type if there is no product flavor.                        </span></span><br><span class="line">            variantScope.setAssembleTask(buildTypeData.getAssembleTask());                              </span><br><span class="line">                                                                                                        </span><br><span class="line">            variantData.addTask(                                                                        </span><br><span class="line">                    TaskContainer.TaskKind.ASSEMBLE, buildTypeData.getAssembleTask());                  </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 根据 variant 创建对应的 assemble task，比如 assembleTesDebug</span></span><br><span class="line">            variantScope.setAssembleTask(taskManager.createAssembleTask(variantData));                  </span><br><span class="line">                                                                                                        </span><br><span class="line">            <span class="comment">// setup the task dependencies                                                              </span></span><br><span class="line">            <span class="comment">// build type</span></span><br><span class="line">            <span class="comment">// build type assemble task 依赖于 具体的 assemble task</span></span><br><span class="line">            buildTypeData.getAssembleTask().dependsOn(variantScope.getAssembleTask());                  </span><br><span class="line">                                                                                                        </span><br><span class="line">            <span class="comment">// each flavor                                                                              </span></span><br><span class="line">            <span class="type">GradleVariantConfiguration</span> <span class="variable">variantConfig</span> <span class="operator">=</span> variantData.getVariantConfiguration();           </span><br><span class="line">            <span class="keyword">for</span> (CoreProductFlavor flavor : variantConfig.getProductFlavors()) &#123;                        </span><br><span class="line">                <span class="type">ProductFlavorData</span> <span class="variable">productFlavorData</span> <span class="operator">=</span> productFlavors.get(flavor.getName());             </span><br><span class="line">                                                                                                        </span><br><span class="line">                <span class="type">DefaultTask</span> <span class="variable">flavorAssembleTask</span> <span class="operator">=</span> productFlavorData.getAssembleTask();                   </span><br><span class="line">                <span class="keyword">if</span> (flavorAssembleTask == <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 创建 flavor 的 assemble task</span></span><br><span class="line">                    <span class="comment">// 比如 assembleTes</span></span><br><span class="line">                    flavorAssembleTask = taskManager.createAssembleTask(productFlavorData);             </span><br><span class="line">                    productFlavorData.setAssembleTask(flavorAssembleTask);                              </span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// flavor assemble task 依赖于具体的 assemble task</span></span><br><span class="line">                flavorAssembleTask.dependsOn(variantScope.getAssembleTask());                           </span><br><span class="line">            &#125;                                                                                           </span><br><span class="line">                                                                                                        </span><br><span class="line">            <span class="comment">// assembleTask for this flavor(dimension), created on demand if needed.                    </span></span><br><span class="line">            <span class="keyword">if</span> (variantConfig.getProductFlavors().size() &gt; <span class="number">1</span>) &#123;                                         </span><br><span class="line">                <span class="keyword">final</span> <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> StringHelper.capitalize(variantConfig.getFlavorName());             </span><br><span class="line">                <span class="keyword">final</span> <span class="type">String</span> <span class="variable">variantAssembleTaskName</span> <span class="operator">=</span>                                                  </span><br><span class="line">                        StringHelper.appendCapitalized(<span class="string">&quot;assemble&quot;</span>, name);                               </span><br><span class="line">                <span class="keyword">if</span> (!taskManager.getTaskFactory().containsKey(variantAssembleTaskName)) &#123;               </span><br><span class="line">                    <span class="type">Task</span> <span class="variable">task</span> <span class="operator">=</span> taskManager.getTaskFactory().create(variantAssembleTaskName);           </span><br><span class="line">                    task.setDescription(<span class="string">&quot;Assembles all builds for flavor combination: &quot;</span> + name);        </span><br><span class="line">                    task.setGroup(<span class="string">&quot;Build&quot;</span>);                                                             </span><br><span class="line">                    task.dependsOn(variantScope.getAssembleTask().getName());                           </span><br><span class="line">                &#125;                                                                                       </span><br><span class="line">                taskManager                                                                             </span><br><span class="line">                        .getTaskFactory()                                                               </span><br><span class="line">                        .configure(                                                                     </span><br><span class="line">                                <span class="string">&quot;assemble&quot;</span>, task1 -&gt; task1.dependsOn(variantAssembleTaskName));         </span><br><span class="line">            &#125;                                                                                           </span><br><span class="line">        &#125;                                                                                               </span><br><span class="line">    &#125;                                                                                                   </span><br><span class="line">&#125;                                                                                                       </span><br></pre></td></tr></table></figure>
+
+<p>上面会生成包括 BuildType、Flavor、BuildType + Flavor + VariantType 的 assemble task，同时 task 之间存在依赖关系：<code>assemble &gt; buildType/flavor &gt; 具体 </code> </p>
+<p><img src="https://leo-doc-img.oss-cn-hangzhou.aliyuncs.com/doc-img/assemble-task-demo.png?x-oss-process=style/doc-img" alt="assemble-task-demo"></p>
+<p>除了上面所说的 assemble task，还将生成以下 task：</p>
+<table>
+<thead>
+<tr>
+<th>task</th>
+<th>impl</th>
+<th>dependsOn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>assemble{variant}</td>
+<td>DefaultTask</td>
+<td>compile{variant}Sources，package{variant}</td>
+</tr>
+<tr>
+<td>pre{variant}Build</td>
+<td>AppPreBuildTask</td>
+<td>preBuild，extractProguardFiles(可能)</td>
+</tr>
+<tr>
+<td>extractProguardFiles</td>
+<td>ExtractProguardFiles</td>
+<td></td>
+</tr>
+<tr>
+<td>generate{variant}Sources</td>
+<td>DefaultTask</td>
+<td>compile{variant}Renderscript，generate{variant}BuildConfig，bundle{variant}Resources，compile{variant}Aidl</td>
+</tr>
+<tr>
+<td>generate{variant}Resources</td>
+<td>DefaultTask</td>
+<td>generate{variant}ResValues，compile{variant}Renderscript</td>
+</tr>
+<tr>
+<td>generate{variant}Assets</td>
+<td>DefaultTask</td>
+<td>compile{variant}Shaders</td>
+</tr>
+<tr>
+<td>compile{variant}Sources</td>
+<td>DefaultTask</td>
+<td>compile{variant}Ndk，compile{variant}JavaWithJavac</td>
+</tr>
+<tr>
+<td>check{variant}Manifest</td>
+<td>CheckManifest</td>
+<td>pre{variant}Build</td>
+</tr>
+<tr>
+<td>write{variant}ApplicationId</td>
+<td>ApplicationIdIdWriteTask</td>
+<td></td>
+</tr>
+<tr>
+<td>mainApkListPersistence{variant}</td>
+<td>MainApkListPersistence</td>
+<td></td>
+</tr>
+<tr>
+<td>reportBuildArtifacts{variant}</td>
+<td>BuildArtifactReportTask</td>
+<td></td>
+</tr>
+<tr>
+<td>create{variant}CompatibleScreenManifests</td>
+<td>CompatibleScreensManifest</td>
+<td></td>
+</tr>
+<tr>
+<td>process{variant}Manifest</td>
+<td>MergeManifests</td>
+<td>check{variant}Manifest</td>
+</tr>
+<tr>
+<td>generate{variant}ResValues</td>
+<td>GenerateResValues</td>
+<td></td>
+</tr>
+<tr>
+<td>compile{variant}Renderscript</td>
+<td>RenderscriptCompile</td>
+<td>pre{variant}Build</td>
+</tr>
+<tr>
+<td>merge{variant}Resources</td>
+<td>MergeResources</td>
+<td>generate{variant}Resources</td>
+</tr>
+<tr>
+<td>merge{variant}Shaders</td>
+<td>MergeSourceSetFolders</td>
+<td></td>
+</tr>
+<tr>
+<td>compile{variant}Shaders</td>
+<td>ShaderCompile</td>
+<td>merge{variant}Shaders</td>
+</tr>
+<tr>
+<td>merge{variant}Assets</td>
+<td>MergeSourceSetFolders</td>
+<td>generate{variant}Assets</td>
+</tr>
+<tr>
+<td>generate{variant}BuildConfig</td>
+<td>GenerateBuildConfig</td>
+<td>check{variant}Manifest</td>
+</tr>
+<tr>
+<td>splitsDiscoveryTask{variant}</td>
+<td>SplitsDiscovery</td>
+<td></td>
+</tr>
+<tr>
+<td>process{variant}JavaRes</td>
+<td>Sync</td>
+<td>pre{variant}Build</td>
+</tr>
+<tr>
+<td>process{variant}Resources</td>
+<td>LinkApplicationAndroidResourcesTask</td>
+<td></td>
+</tr>
+<tr>
+<td>bundle{variant}Resources</td>
+<td>LinkAndroidResForBundleTask</td>
+<td></td>
+</tr>
+<tr>
+<td>compile{variant}Aidl</td>
+<td>AidlCompile</td>
+<td>pre{variant}Build</td>
+</tr>
+<tr>
+<td>compile{variant}Ndk</td>
+<td>NdkCompile</td>
+<td>pre{variant}Build</td>
+</tr>
+<tr>
+<td>merge{variant}JniLibFolders</td>
+<td>MergeSourceSetFolders</td>
+<td>generate{variant}Assets</td>
+</tr>
+<tr>
+<td>javaPreCompile{variant}</td>
+<td>JavaPreCompileTask</td>
+<td>pre{variant}Build</td>
+</tr>
+<tr>
+<td>compile{variant}JavaWithJavac</td>
+<td>AndroidJavaCompile</td>
+<td>generate{variant}Sources</td>
+</tr>
+<tr>
+<td>bundleAppClasses{variant}</td>
+<td>Jar</td>
+<td></td>
+</tr>
+<tr>
+<td>transformResourcesWithMergeJavaResFor{variant}</td>
+<td>TransformTask</td>
+<td></td>
+</tr>
+<tr>
+<td>transformClassesWithMultidexlistFor{variant}</td>
+<td>TransformTask</td>
+<td></td>
+</tr>
+<tr>
+<td>transformClassesWithDexBuilderFor{variant}</td>
+<td>TransformTask</td>
+<td></td>
+</tr>
+<tr>
+<td>transformDexArchiveWithDexMergerFor{variant}</td>
+<td>TransformTask</td>
+<td>transformClassesWithMultidexlistFor{variant}</td>
+</tr>
+<tr>
+<td>preparePUBLISHED_JAVA_RES{variant}ForPublishing</td>
+<td>PipelineToPublicationTask</td>
+<td></td>
+</tr>
+<tr>
+<td>package{variant}</td>
+<td>PackageApplication</td>
+<td>merge{variant}Assets，process{variant}Resources，validateSigning{variant}，compile{variant}JavaWithJavac</td>
+</tr>
+<tr>
+<td>validateSigning{variant}</td>
+<td>ValidateSigningTask</td>
+<td></td>
+</tr>
+<tr>
+<td>install{variant}</td>
+<td>InstallVariantTask</td>
+<td>assemble{variant}</td>
+</tr>
+<tr>
+<td>uninstall{variant}</td>
+<td>UninstallTask</td>
+<td></td>
+</tr>
+<tr>
+<td>lint{variant}</td>
+<td>LintPerVariantTask</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>以 <code>assembleProdRelease</code> 命令，依次执行的 task：</p>
+<blockquote>
+<p>prod 是 product flavor</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">preBuild</span><br><span class="line">extractProguardFiles</span><br><span class="line">preProdReleaseBuild</span><br><span class="line">compileProdReleaseRenderscript</span><br><span class="line">checkProdReleaseManifest</span><br><span class="line">generateProdReleaseBuildConfig</span><br><span class="line">prepareLintJar</span><br><span class="line">mainApkListPersistenceProdRelease</span><br><span class="line">generateProdReleaseResValues</span><br><span class="line">generateProdReleaseResources</span><br><span class="line">compileProdReleaseAidl</span><br><span class="line">createProdReleaseCompatibleScreenManifests</span><br><span class="line">processProdReleaseManifest</span><br><span class="line">mergeProdReleaseResources  // 合并资源</span><br><span class="line">splitsDiscoveryTaskProdRelease</span><br><span class="line">processProdReleaseResources</span><br><span class="line">generateProdReleaseSources</span><br><span class="line">javaPreCompileProdRelease</span><br><span class="line">compileProdReleaseJavaWithJavac // javac</span><br><span class="line">compileProdReleaseNdk</span><br><span class="line">compileProdReleaseSources</span><br><span class="line">mergeProdReleaseShaders</span><br><span class="line">compileProdReleaseShaders</span><br><span class="line">generateProdReleaseAssets</span><br><span class="line">mergeProdReleaseAssets</span><br><span class="line">transformClassesWithComponentCodeForProdRelease </span><br><span class="line">processProdReleaseJavaRes</span><br><span class="line">transformResourcesWithMergeJavaResForProdRelease</span><br><span class="line">transformClassesAndResourcesWithProguardForProdRelease // 混淆</span><br><span class="line">transformClassesWithMultidexlistForProdRelease</span><br><span class="line">transformClassesWithDexForProdRelease				// dex</span><br><span class="line">transformClassesWithShrinkResForProdRelease</span><br><span class="line">mergeProdReleaseJniLibFolders</span><br><span class="line">transformNativeLibsWithMergeJniLibsForProdRelease</span><br><span class="line">validateSigningProdRelease</span><br><span class="line">packageProdRelease</span><br></pre></td></tr></table></figure>
+
+<p>接下来分析下比较重要的几个 task</p>
+<blockquote>
+<p>接下来的分析，因为对应的源码比较复杂，所以只会简短介绍结果，没有详细过程，推荐 debug 整个流程</p>
+</blockquote>
+<h3 id="CompileJavaWithJavac"><a href="#CompileJavaWithJavac" class="headerlink" title="CompileJavaWithJavac"></a>CompileJavaWithJavac</h3><p>首先找到执行的 AndroidJavaCompile</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AndroidJavaCompile.java</span></span><br><span class="line"><span class="meta">@Override</span>                                                                                       </span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">compile</span><span class="params">(IncrementalTaskInputs inputs)</span> &#123;                                          </span><br><span class="line">    <span class="comment">// compileSdkVersion &gt;= 24，需要使用 jdk1.8                                                     </span></span><br><span class="line">    <span class="keyword">if</span> (isPostN()) &#123;                                                                            </span><br><span class="line">        <span class="keyword">if</span> (!JavaVersion.current().isJava8Compatible()) &#123;                                       </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;compileSdkVersion &#x27;&quot;</span> + compileSdkVersion + <span class="string">&quot;&#x27; requires &quot;</span></span><br><span class="line">                    + <span class="string">&quot;JDK 1.8 or later to compile.&quot;</span>);                                          </span><br><span class="line">        &#125;                                                                                       </span><br><span class="line">    &#125;                                                                                           </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 处理注解处理器，在之前 task 会将使用 annotationProcessor 标示的注解处理器写入到 annotationProcessors.json 中</span></span><br><span class="line">    processAnalytics();                                                                         </span><br><span class="line">                                                                                                </span><br><span class="line">    <span class="comment">// Create directory for output of annotation processor.                                     </span></span><br><span class="line">    FileUtils.mkdirs(annotationProcessorOutputFolder);                                          </span><br><span class="line">                                                                                                </span><br><span class="line">    mInstantRunBuildContext.startRecording(InstantRunBuildContext.TaskType.JAVAC);</span><br><span class="line">    <span class="comment">// 调用 JavaCompile.compile</span></span><br><span class="line">    <span class="built_in">super</span>.compile(inputs);                                                                      </span><br><span class="line">    mInstantRunBuildContext.stopRecording(InstantRunBuildContext.TaskType.JAVAC);               </span><br><span class="line">&#125;                                                                                               </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// JavaCompile.java</span></span><br><span class="line"><span class="meta">@TaskAction</span>                                                                                                                                                                                                                                                                                                           </span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">compile</span><span class="params">(IncrementalTaskInputs inputs)</span> &#123;</span><br><span class="line">    <span class="comment">// 是否为增量编译</span></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">this</span>.compileOptions.isIncremental()) &#123;</span><br><span class="line">        <span class="built_in">this</span>.compile();                                                                                                                                                                                                                                                                                               </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;                                                                                                                                                                                                                                                                                                          </span><br><span class="line">        <span class="type">DefaultJavaCompileSpec</span> <span class="variable">spec</span> <span class="operator">=</span> <span class="built_in">this</span>.createSpec();                                                                                                                                                                                                                                                              </span><br><span class="line">        <span class="type">CompileCaches</span> <span class="variable">compileCaches</span> <span class="operator">=</span> <span class="built_in">this</span>.createCompileCaches();                                                                                                                                                                                                                                                     </span><br><span class="line">        <span class="type">IncrementalCompilerFactory</span> <span class="variable">factory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">IncrementalCompilerFactory</span>(<span class="built_in">this</span>.getFileOperations(), <span class="built_in">this</span>.getStreamHasher(), <span class="built_in">this</span>.getCachingFileHasher(), <span class="built_in">this</span>.getPath(), <span class="built_in">this</span>.createCompiler(spec), <span class="built_in">this</span>.source, compileCaches, (IncrementalTaskInputsInternal)inputs, <span class="built_in">this</span>.getEffectiveAnnotationProcessorPath()); </span><br><span class="line">        Compiler&lt;JavaCompileSpec&gt; compiler = factory.createCompiler();                                                                                                                                                                                                                                                </span><br><span class="line">        <span class="built_in">this</span>.performCompilation(spec, compiler);                                                                                                                                                                                                                                                                      </span><br><span class="line">    &#125;                                                                                                                                                                                                                                                                                                                 </span><br><span class="line">&#125;                                                                                                                                                                                                                                                                                                                     </span><br></pre></td></tr></table></figure>
+
+<p>不管是增量编译还是全量编译，最后都会调用 <code>performCompilation</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">performCompilation</span><span class="params">(JavaCompileSpec spec, Compiler&lt;JavaCompileSpec&gt; compiler)</span> &#123;</span><br><span class="line">	<span class="comment">// 执行编译</span></span><br><span class="line">    <span class="type">WorkResult</span> <span class="variable">result</span> <span class="operator">=</span> compiler.execute(spec);                                             </span><br><span class="line">    <span class="built_in">this</span>.setDidWork(result.getDidWork());                                                   </span><br><span class="line">&#125;                                                                                           </span><br></pre></td></tr></table></figure>
+
+<p>Compiler 采用<strong>装饰者设计模式</strong>，最外层是 <code>CleaningJavaCompilerSupport</code> 会先删除编译目录，再调用 <code>JdkJavaCompiler</code> 执行 <code>javac</code> 过程，具体为，创建一个 <code>JavacTaskImpl</code> 然后 JavacTask 会调用 <code>com.sun.tools.javac.main.Main</code> 进行处理，其中创建 JavacTask 的任务是由 <code>JavacTool</code> 完成</p>
+
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://linxiaotao.github.io">Leo</a>
+            <p>原文链接：<a href="https://linxiaotao.github.io/2018/11/12/AppPlugin%E4%B8%AD%E7%9A%84Task-%E7%AC%AC%E4%B8%80%E7%AF%87/">https://linxiaotao.github.io/2018/11/12/AppPlugin%E4%B8%AD%E7%9A%84Task-%E7%AC%AC%E4%B8%80%E7%AF%87/</a>
+            <p>发表日期：<a href="https://linxiaotao.github.io/2018/11/12/AppPlugin%E4%B8%AD%E7%9A%84Task-%E7%AC%AC%E4%B8%80%E7%AF%87/">November 12th 2018, 10:26:03 am</a>
+            <p>更新日期：<a href="https://linxiaotao.github.io/2018/11/12/AppPlugin%E4%B8%AD%E7%9A%84Task-%E7%AC%AC%E4%B8%80%E7%AF%87/">June 15th 2022, 7:19:32 pm</a>
+            <p>版权声明：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/12/31/2018%E5%B9%B4%E5%A4%8D%E7%9B%98/" title="2018年复盘">
+                    <div class="nextTitle">2018年复盘</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/11/09/ArrayList%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="ArrayList源码分析">
+                    <div class="prevTitle">ArrayList源码分析</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:linxiaotao1993@vip.qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/LinXiaoTao" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat_qr.jpeg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AppPlugin"><span class="toc-number">2.</span> <span class="toc-text">AppPlugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CompileJavaWithJavac"><span class="toc-number">3.</span> <span class="toc-text">CompileJavaWithJavac</span></a></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 31
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2022 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/15</span>
+            <a class="archive-post-title" href="/2022/06/15/hello-world/">Hello World</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2019 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/12</span>
+            <a class="archive-post-title" href="/2019/12/12/LeetCode-5-Longest-Palindromic-Substring/">LeetCode 5: Longest Palindromic Substring</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span>
+            <a class="archive-post-title" href="/2019/12/04/%E4%BC%98%E5%8C%96%E5%8C%85%E5%A4%A7%E5%B0%8F-PNG%E9%83%A8%E5%88%86/">优化包大小-PNG部分</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/09</span>
+            <a class="archive-post-title" href="/2019/09/09/%E6%B5%85%E8%B0%88Flutter%E7%83%AD%E9%87%8D%E8%BD%BD-%E4%B8%8A/">浅谈Flutter热重载(上)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/30</span>
+            <a class="archive-post-title" href="/2019/08/30/%E6%B5%85%E8%B0%88Flutter%E6%9E%84%E5%BB%BA/">浅谈Flutter构建</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span>
+            <a class="archive-post-title" href="/2019/08/22/%E6%97%A0%E4%BE%B5%E5%85%A5%E5%BC%95%E5%85%A5Flutter%E6%A8%A1%E5%9D%97/">无侵入引入Flutter模块</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span>
+            <a class="archive-post-title" href="/2019/08/07/%E4%BB%BF%E5%8D%B3%E5%88%BBFlutter%E7%89%88%E6%9C%AC/">仿即刻Flutter版本</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/21</span>
+            <a class="archive-post-title" href="/2019/06/21/%E8%A7%A3%E5%86%B3Flutter%E7%89%88%E6%9C%AC%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84flutterw/">解决Flutter版本不一致的flutterw</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/17</span>
+            <a class="archive-post-title" href="/2019/06/17/Flutter-ListView-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Flutter ListView 源码分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span>
+            <a class="archive-post-title" href="/2019/05/06/scoped-model%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">scoped_model源码解析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span>
+            <a class="archive-post-title" href="/2019/04/25/Looper%E4%B8%AD%E7%9A%84%E6%AD%BB%E5%BE%AA%E7%8E%AF/">Looper中的死循环</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span>
+            <a class="archive-post-title" href="/2019/02/05/Jetpack%E4%B8%AD%E7%9A%84LiveData/">Jetpack中的LiveData</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/14</span>
+            <a class="archive-post-title" href="/2019/01/14/Jetpack%E4%B8%AD%E7%9A%84Lifecycle/">Jetpack中的Lifecycle</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span>
+            <a class="archive-post-title" href="/2019/01/08/SparseArray%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">SparseArray源码解析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span>
+            <a class="archive-post-title" href="/2019/01/05/Jetpack%E4%B8%AD%E7%9A%84ViewModel/">Jetpack中的ViewModel</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2018 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span>
+            <a class="archive-post-title" href="/2018/12/31/2018%E5%B9%B4%E5%A4%8D%E7%9B%98/">2018年复盘</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span>
+            <a class="archive-post-title" href="/2018/11/12/AppPlugin%E4%B8%AD%E7%9A%84Task-%E7%AC%AC%E4%B8%80%E7%AF%87/">AppPlugin中的Task-第一篇</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span>
+            <a class="archive-post-title" href="/2018/11/09/ArrayList%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">ArrayList源码分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/07</span>
+            <a class="archive-post-title" href="/2018/11/07/HashMap%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">HashMap源码分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2018/09/08/JavaScript%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">JavaScript正则表达式</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2018/09/08/%E7%81%B5%E6%B4%BB%E4%BD%BF%E7%94%A8%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/">灵活使用位运算符</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span>
+            <a class="archive-post-title" href="/2018/07/19/%E5%8F%AF%E6%8B%96%E6%8B%BD%E7%9A%84%E7%BD%91%E6%A0%BC%E5%B8%83%E5%B1%80/">可拖拽的网格布局</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/21</span>
+            <a class="archive-post-title" href="/2018/05/21/Gradle%E6%8F%92%E4%BB%B6-%E6%8F%90%E9%AB%98%E7%AF%87/">Gradle插件-提高篇</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span>
+            <a class="archive-post-title" href="/2018/05/16/Gradle%E6%8F%92%E4%BB%B6-%E5%9F%BA%E7%A1%80%E7%AF%87/">Gradle插件-基础篇</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span>
+            <a class="archive-post-title" href="/2018/05/08/Gradle%E5%A4%9A%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">Gradle多项目实践</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/29</span>
+            <a class="archive-post-title" href="/2018/04/29/Gradle%E5%A4%9A%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA/">Gradle多项目构建</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span>
+            <a class="archive-post-title" href="/2018/04/19/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AC%AC%E4%B8%80%E6%AD%A5/">性能优化第一步</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span>
+            <a class="archive-post-title" href="/2018/04/12/%E7%86%9F%E6%82%89%E5%8F%88%E9%99%8C%E7%94%9F%E7%9A%84Context/">熟悉又陌生的Context</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/03</span>
+            <a class="archive-post-title" href="/2018/04/03/%E8%A7%A6%E6%91%B8%E4%BA%8B%E4%BB%B6%E5%AE%9E%E8%B7%B5%E4%B9%8B%E8%B7%AF/">触摸事件实践之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/27</span>
+            <a class="archive-post-title" href="/2018/03/27/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B-%E5%9F%BA%E4%BA%8EAndroid26/">Activity启动流程(基于Android26)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span>
+            <a class="archive-post-title" href="/2018/03/23/Android%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-Handler/">Android消息机制-Handler</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+            <span class="sidebar-tag-name" data-tags="Jetpack">
+                <span class="iconfont-archer">&#xe606;</span>
+                Jetpack
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="性能优化">
+                <span class="iconfont-archer">&#xe606;</span>
+                性能优化
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="Android Framework">
+                <span class="iconfont-archer">&#xe606;</span>
+                Android Framework
+            </span>
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="随笔">
+            <span class="iconfont-archer">&#xe60a;</span>
+            随笔
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Java">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Java
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Gradle">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Gradle
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript">
+            <span class="iconfont-archer">&#xe60a;</span>
+            JavaScript
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="LeetCode">
+            <span class="iconfont-archer">&#xe60a;</span>
+            LeetCode
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Flutter">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Flutter
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "https://linxiaotao.github.io",
+        root: siteMetaRoot,
+        author: "Leo"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20211217"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20211217"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20211217" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>

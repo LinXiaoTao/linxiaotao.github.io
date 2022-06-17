@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+    
+
+<!-- keywords -->
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Leo">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Leo">
+    
+        <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="linxiaotao's blog">
+    <meta name="description" content="前言本文是 Gradle 系列的第三篇，前两篇都是关于 Gradle 多项目构建，有兴趣的同学可以去翻看下。Gradle 系列作者会一直更新下去，这些知识大部分都来自于 Gradle 用户手册，但我并不想写成翻译类型的文章，从最基础的知识开始深入，因为这样前期枯燥的理论知识会让人感到厌倦，所以从用户最常用的知识入手，再穿插必要的基础知识，最终达到知识的融会贯通。因为作者从事 Android 开发，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle插件-基础篇">
+<meta property="og:url" content="https://linxiaotao.github.io/2018/05/16/Gradle%E6%8F%92%E4%BB%B6-%E5%9F%BA%E7%A1%80%E7%AF%87/index.html">
+<meta property="og:site_name" content="My World">
+<meta property="og:description" content="前言本文是 Gradle 系列的第三篇，前两篇都是关于 Gradle 多项目构建，有兴趣的同学可以去翻看下。Gradle 系列作者会一直更新下去，这些知识大部分都来自于 Gradle 用户手册，但我并不想写成翻译类型的文章，从最基础的知识开始深入，因为这样前期枯燥的理论知识会让人感到厌倦，所以从用户最常用的知识入手，再穿插必要的基础知识，最终达到知识的融会贯通。因为作者从事 Android 开发，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-05-16T01:20:58.000Z">
+<meta property="article:modified_time" content="2022-06-15T11:19:32.317Z">
+<meta property="article:author" content="Leo">
+<meta name="twitter:card" content="summary">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="icon" href="/assets/favicon.ico">
+    
+    <title>Gradle插件-基础篇 · Leo&#39;s Studio</title>
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+    (function (w) {
+        'use strict'
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () {}
+        }
+        // define on the loadCSS obj
+        var rp = (loadCSS.relpreload = {})
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret
+            try {
+                ret = w.document.createElement('link').relList.supports('preload')
+            } catch (e) {
+                ret = false
+            }
+            return function () {
+                return ret
+            }
+        })()
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || 'all'
+
+            function enableStylesheet() {
+                link.media = finalMedia
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener('load', enableStylesheet)
+            } else if (link.attachEvent) {
+                link.attachEvent('onload', enableStylesheet)
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = 'stylesheet'
+                link.media = 'only x'
+            })
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000)
+        }
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return
+            }
+            var links = w.document.getElementsByTagName('link')
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i]
+                // qualify links to those with rel=preload and as=style attrs
+                if (
+                    link.rel === 'preload' &&
+                    link.getAttribute('as') === 'style' &&
+                    !link.getAttribute('data-loadcss')
+                ) {
+                    // prevent rerunning on link
+                    link.setAttribute('data-loadcss', true)
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link)
+                }
+            }
+        }
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly()
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500)
+            if (w.addEventListener) {
+                w.addEventListener('load', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            } else if (w.attachEvent) {
+                w.attachEvent('onload', function () {
+                    rp.poly()
+                    w.clearInterval(run)
+                })
+            }
+        }
+
+        // commonjs
+        if (typeof exports !== 'undefined') {
+            exports.loadCSS = loadCSS
+        } else {
+            w.loadCSS = loadCSS
+        }
+    })(typeof global !== 'undefined' ? global : this)
+</script>
+
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20211217" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dark.css?v=20211217" as="style">
+    <link rel="stylesheet" href="/css/dark.css">
+    <link rel="stylesheet" href="/css/mobile.css?v=20211217" media="(max-width: 960px)">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js?v=20211217" as="script">
+    <link rel="preload" href="/scripts/dark.js?v=20211217" as="script">
+    <link rel="preload" href="/font/Oswald-Regular.ttf" as="font" crossorigin>
+    <link rel="preload" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" as="font" crossorigin>
+    <!-- algolia -->
+    
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ == undefined) {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js" />')
+        }
+    </script>
+    
+        <body class="post-body">
+    
+        <!-- header -->
+        <header class="header header-mobile">
+    <!-- top read progress line -->
+    <div class="header-element">
+        <div class="read-progress"></div>
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+            <div class="header-sidebar-menu">
+        
+            
+                <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- header actions -->
+    <div class="header-actions">
+        <!-- theme mode switch button -->
+        <span class="header-theme-btn header-element">
+            <i class="fas fa-adjust"></i>
+        </span>
+        <!-- back to home page text -->
+        <span class="home-link header-element">
+            <a href=/>Leo's Studio.</a>
+        </span>
+    </div>
+    <!-- toggle banner for post layout -->
+    
+        
+            <div class="banner">
+        
+            <div class="blog-title header-element">
+                <a href="/">Leo&#39;s Studio.</a>
+            </div>
+            <div class="post-title header-element">
+                <a href="#" class="post-name">Gradle插件-基础篇</a>
+            </div>
+        </div>
+    
+</header>
+
+        <!-- fixed footer -->
+        <footer class="footer-fixed">
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+            <div class="back-top back-top-hidden">
+        
+        
+            <div>&#xe639;</div>
+        
+        </div>
+    </div>
+</footer>
+
+        <!-- wrapper -->
+        <div class="wrapper">
+            <div class="site-intro" style="
+
+
+
+
+
+
+
+    height:50vh;
+
+">
+    
+    <!-- 主页  -->
+    
+        
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+                Gradle插件-基础篇
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+                
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页 meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.4k</span>阅读时长: <span class="post-count reading-time">9 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <!-- 撰写日期 -->
+                    <span class="iconfont-archer post-intro-calander">&#xe676;</span>
+                    <span class="post-intro-time">2018/05/16</span>
+                    <!-- busuanzi -->
+                    
+                        <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                            <span class="iconfont-archer post-intro-busuanzi">&#xe602;</span>
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    
+                    <!-- 文章分享 -->
+                    <span class="share-wrapper">
+                        <span class="iconfont-archer share-icon">&#xe71d;</span>
+                        <span class="share-text">Share</span>
+                        <ul class="share-list">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+            <script>
+  // get user agent
+  function getBrowserVersions() {
+    var u = window.navigator.userAgent
+    return {
+      userAgent: u,
+      trident: u.indexOf('Trident') > -1, //IE内核
+      presto: u.indexOf('Presto') > -1, //opera内核
+      webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+      gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+      mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+      ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+      android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+      iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+      iPad: u.indexOf('iPad') > -1, //是否为iPad
+      webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+      weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+      uc: u.indexOf('UCBrowser') > -1, //是否为android下的UC浏览器
+    }
+  }
+  var browser = {
+    versions: getBrowserVersions(),
+  }
+  console.log('userAgent: ' + browser.versions.userAgent)
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded')
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document
+        .getElementsByClassName('intro-title')[0]
+        .classList.add('intro-fade-in')
+      document
+        .getElementsByClassName('intro-subtitle')[0]
+        .classList.add('intro-fade-in')
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in')
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb() {
+    if (browser.versions.uc) {
+      console.log('UCBrowser')
+      fontLoaded()
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular'],
+        },
+        loading: function () {
+          // 所有字体开始加载
+          // console.log('font loading');
+        },
+        active: function () {
+          // 所有字体已渲染
+          fontLoaded()
+        },
+        inactive: function () {
+          // 字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout')
+          fontLoaded()
+        },
+        timeout: 5000, // Set the timeout to two seconds
+      })
+    }
+  }
+
+  function asyncErr() {
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document,
+      t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0]
+    o.src = u
+    if (cb) {
+      o.addEventListener(
+        'load',
+        function (e) {
+          cb(null, e)
+        },
+        false
+      )
+    }
+    if (err) {
+      o.addEventListener(
+        'error',
+        function (e) {
+          err(null, e)
+        },
+        false
+      )
+    }
+    s.parentNode.insertBefore(o, s)
+  }
+
+  var asyncLoadWithFallBack = function (arr, success, reject) {
+    var currReject = function () {
+      reject()
+      arr.shift()
+      if (arr.length) async(arr[0], success, currReject)
+    }
+
+    async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack(
+    [
+      'https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js',
+      'https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js',
+      "/lib/webfontloader.min.js",
+    ],
+    asyncCb,
+    asyncErr
+  )
+</script>
+
+            <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+            <div class="container container-unloaded">
+                <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文是 Gradle 系列的第三篇，前两篇都是关于 Gradle 多项目构建，有兴趣的同学可以去翻看下。Gradle 系列作者会一直更新下去，这些知识大部分都来自于 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/userguide.html">Gradle 用户手册</a>，但我并不想写成翻译类型的文章，从最基础的知识开始深入，因为这样前期枯燥的理论知识会让人感到厌倦，所以从用户最常用的知识入手，再穿插必要的基础知识，最终达到知识的融会贯通。因为作者从事 Android 开发，所以会更多提及 Android 中关于 Gradle 的知识。</p>
+<blockquote>
+<p>博客中的<a target="_blank" rel="noopener" href="https://github.com/LinXiaoTao/GradleCaseProject">源码地址</a></p>
+</blockquote>
+<h2 id="Gradle插件"><a href="#Gradle插件" class="headerlink" title="Gradle插件"></a>Gradle插件</h2><p>Gradle 是非常强大的构建工具，所有的知识都围绕着 project 和 task 这两个知识点。project 在前面的文章中我们已经简单介绍了，task 现在是穿插着讲，后续会考虑单独写成文章。而我们今天讲的 plugin 对于大部分的 Gradle 使用者来说，可能是一个熟悉又陌生的知识点，熟悉是因为用的太频繁了，比如 Android 项目中，我们都会使用以下配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;com.android.application&#x27;</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion xxx</span><br><span class="line">    buildToolsVersion xxx</span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但另外一方面，我们对 plugin 的实现又似懂非懂，使用 Android Application Plugin 后，<code>android &#123;&#125;</code> 配置块是如何生成的，又有哪些配置可以用。现在有很多自定义的 Gradle Plugin，比如使用 AOP 实现的代码插桩，打点等等功能的库，那么这些库又是如何通过 Plugin 功能实现的。</p>
+<p>接下来，我们将基于 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/userguide.html">Gradle 用户手册</a> 中关于 Plugin 的知识，从 Plugin 的理论知识到自定义实现 Plugin 写一系列文章。</p>
+<blockquote>
+<p>友情提示：如果想深入理解 Gradle 知识，最好还是从 Gradle 官方文档入手，比如 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/userguide.html">Gradle 用户手册</a>，<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/javadoc/">API 文档</a> 等等，如果只是想快速了解，那么可以继续往下读。</p>
+</blockquote>
+<h3 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h3><p>Gradle Plugin 的设计应该符合以下准则：</p>
+<h4 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h4><ul>
+<li><p>可复用的逻辑应该写成二进制形式</p>
+<p>Gradle Plugin 有两种形式：脚本插件和二进制插件。脚本插件就是普通的构建脚本，虽然脚本插件也可以组织构建逻辑，但是它不能进行测试，也不能定义可复用的类型，难于长期维护。</p>
+</li>
+<li><p>考虑性能影响</p>
+<p>虽然在设计 Gradle Plugin 时，可以实现你能想到的任何逻辑，但是应该考虑对构建时间的影响。</p>
+</li>
+<li><p>约定大于配置</p>
+<p>Gradle Plugin 的设计应该秉承<strong>约定大于配置</strong>的准则，尽量减少用户陷入繁琐的配置中，又提供配置入口给具有自定义需求的用户。比如 Android Application Plugin 的 <em><strong>sourceSets</strong></em> 配置，如果不进行配置，会使用默认的目录，可以使用  <code>./gradlew :app:sourceSets</code> 打印默认使用的目录。</p>
+</li>
+<li><p>功能与约定</p>
+<p>为了让用户能够更灵活地使用你设计的 Plugin，你应该提供更为灵活的使用方式，其中一个方式就是，将实现功能与通用配置分离开来。比如： <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/standard_plugins.html?_ga=2.84655903.747719590.1526541985-590693097.1523454314#sec:base_plugins">Java Base Plugin</a> 和 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/java_plugin.html?_ga=2.72588053.747719590.1526541985-590693097.1523454314">Java Plugin</a>：</p>
+<ul>
+<li>Java Base Plugin：提供了 <em><strong>sourceSets</strong></em> 配置属性，用于定义源文件的目录，但它并不会被用于任何构建任务</li>
+<li>Java Plugin：则是在 Java Base Plugin 提供的 <em><strong>sourceSets</strong></em> 配置上读取源文件，同时定义了具体的构建任务</li>
+</ul>
+<p>如果用户想实现更深层次的定制，则可以继承于 Java Base Plugin 实现自定义构建任务。</p>
+<p>在实现自定义 Plugin 可以这样实现：</p>
+<p>假设 <code>BasePlugin</code> 实现了通用配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BasePlugin</span> <span class="keyword">implements</span> <span class="title class_">Plugin</span>&lt;Project&gt; &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> apply(Project project) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>MyPlugin</code> 则是基于 <code>BasePlugin</code> 实现了特定功能：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyPlugin</span> <span class="keyword">implements</span> <span class="title class_">Plugin</span>&lt;Project&gt; &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">void</span> apply(Project project) &#123;</span><br><span class="line">        proejct.getPlugins().apply(BasePlugin.<span class="keyword">class</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h4><ul>
+<li><p>倾向于使用静态类型语言来实现</p>
+<p>Gradle Plugin 的实现语言可以是任何 JVM 语言（即编译产物能在 JVM 上运行），可以是 Java、Kotlin、Groovy 等等。</p>
+<p>但建议使用 Java 或 Kotlin 等静态类型语言来实现，以降低出现不兼容的可能。</p>
+</li>
+<li><p>使用 Gradle 公开 API 实现</p>
+<p>当实现 Gradle Plugin，需要指定使用的 Gradle API 版本，例如以下配置：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    compile gradleAPi()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但因为 Gradle 的历史原因，公开和内部的 API 并没有分离开来，为了确保与各个 Gradle 版本的兼容性，请尽量使用公开的 API</p>
+<blockquote>
+<p>能在 <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/dsl/?_ga=2.131010252.258862271.1526633053-590693097.1523454314">DSL 文档</a> 和  <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/javadoc/?_ga=2.131010252.258862271.1526633053-590693097.1523454314">DOC 文档</a> 中找到的，即为公开的 API</p>
+</blockquote>
+</li>
+<li><p>最大程度地减少外部库的依赖</p>
+<p>当我们在编写 Plugin 时，可能会习惯性地去引入某个功能齐全的外部库，比如：Guave，但是这同时也会带来一些问题，可以使用 <code>buildEnvironment</code> task 查看构建环境依赖关系，包括 Plugin：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">classpath</span><br><span class="line">+--- com.android.tools.build:gradle:2.3.3</span><br><span class="line">|    \--- com.android.tools.build:gradle-core:2.3.3</span><br><span class="line">|         +--- com.android.tools.build:builder:2.3.3</span><br></pre></td></tr></table></figure>
+
+<p>因为 Gradle Plugin 并没有独立的类加载器运行环境，所以这些依赖可能会与其他 Plugin 的依赖发生冲突。</p>
+</li>
+</ul>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>上面是自定义 Gradle Plugin 的一些规范和注意事项，下面我们通过一个比较简单的自定义 Plugin 来实践下。</p>
+<p>这个 Plugin 的功能很简单，创建一个 task，获取配置的属性，再打印出来。</p>
+<p>上面我们说到，Plugin 可以分为脚本插件和二进制插件两种，脚本插件就是 Gradle 文件，而二进制文件的可以像普通依赖一样，从中央仓库上下载，还有一种方式是，将源码存放到当前项目下的 <em><strong>buildSrc</strong></em> module，当应用插件时，会从中查找。为了方便起见，我们使用后面那种方式。</p>
+<ul>
+<li><p>首先，我们创建一个名为 <em><strong>buildSrc</strong></em> 的 module，记得在 <code>setting.gradle</code> 中配置，在该 module 的根目录下创建 <code>build.gradle</code>，因为我们打算用 Java 实现，所以先引入 Java Plugin，同时依赖 Gradle API。</p>
+<blockquote>
+<p>Gradle 同时也提供了一个 Plugin 用于简化这些步骤，具体可以查看 <a target="_blank" rel="noopener" href="https://docs.gradle.org/4.7/userguide/java_gradle_plugin.html?_ga=2.132564685.258862271.1526633053-590693097.1523454314">java-gradle-plugin</a></p>
+</blockquote>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;java-library&#x27;</span></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation fileTree(<span class="attr">dir:</span> <span class="string">&#x27;libs&#x27;</span>, <span class="attr">include:</span> [<span class="string">&#x27;*.jar&#x27;</span>])</span><br><span class="line">    implementation gradleApi()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sourceCompatibility = <span class="string">&quot;1.8&quot;</span></span><br><span class="line">targetCompatibility = <span class="string">&quot;1.8&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接着，创建一个 Task 类型，命名为 <code>HelloWorld</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorld</span> <span class="keyword">extends</span> <span class="title class_">DefaultTask</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> String userName;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@TaskAction</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello World，&quot;</span> + userName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一般继承于 <code>DefaultTask</code> 也可以选择其他 Task 基类，<code>@TaskAction</code> 是必须的，用于注解方法为 Task 运行时执行的代码，<code>userName</code> 是可选配置。</p>
+</li>
+<li><p>其实上一步做完，我们已经可以在其他 module 下的 gradle 文件中直接引用这个 Task 类型，比如：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> com.example.gradle.HelloWorld</span><br><span class="line"></span><br><span class="line">task hello(<span class="attr">type:</span> HelloWorld) &#123;</span><br><span class="line">    userName = <span class="string">&quot;leo&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行 <code>./gradlew :app:hello</code> 输出 “Hello World，leo”</p>
+<blockquote>
+<p>注意：上面这样做的前提是，这部分的代码位于 <em><strong>buildSrc</strong></em> module，这也是约定配置，符合<strong>约定大于配置</strong>规范</p>
+</blockquote>
+<p>在我们这个例子中，我们通过 Plugin 去动态创建一个 Task：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">HelloWorldPlugin</span> <span class="keyword">implements</span> <span class="title class_">Plugin</span>&lt;Project&gt; &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">apply</span><span class="params">(Project project)</span> &#123;</span><br><span class="line">        project.getTasks().create(<span class="string">&quot;pluginHello&quot;</span>, HelloWorld.class, helloWorld -&gt;</span><br><span class="line">                helloWorld.userName = <span class="string">&quot;leo&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现自定义 Plugin 需要实现于 Plugin，接着在 <code>apply()</code> 中添加一个名为 “pluginHello”，类型为 <code>HelloWorld</code> 的 Task。</p>
+</li>
+<li><p>至此，我们已经写好了 Plugin 的逻辑代码，要想在当前项目中的其他 module 中引用 <em><strong>buildSrc</strong></em> 中的 Plugin，需要给 <code>HelloWorldPlugin</code> 指定一个 ID，注：直接写在构建脚本中的插件则不需要。具体配置如下：</p>
+<p>在 <code>src/main/resources/META-INF/gradle-plugins/</code> 目录下创建一个配置文件，命名规则为：***[PluginID].properties***，在我们这个例子中为：<code>com.example.hello.properties</code>：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">implementation-class</span>=<span class="string">com.example.gradle.HelloWorldPlugin</span></span><br></pre></td></tr></table></figure>
+
+<p><code>implementation-class</code> 表示 Plugin 类</p>
+<blockquote>
+<p>Plugin ID 应该符合以下规定：</p>
+<ul>
+<li>可以包含任何字母、字符，’.’、’-‘</li>
+<li>必须至少包含一个 ‘.’ 分隔命名空间和插件名称</li>
+<li>按照惯例，使用域名反向小写作为命名空间</li>
+<li>按照惯例，命名空间只使用小写字母</li>
+<li><code>org.gradle</code> 和 <code>com.gradleware</code> 命名空间不能被使用</li>
+<li>不能使用 ‘.’ 作为开始或结束字符</li>
+<li>不能使用连续的 ‘.’ 字符</li>
+</ul>
+</blockquote>
+</li>
+<li><p>至此，我们已经写好了一个简单自定义 Plugin，我们在 app module 下的 <code>build.gradle</code> 引入这个它：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: &#x27;com.example.hello&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>执行 <code>./gradlew :app:pluginHello</code> 输出 “Hello World，leo”</p>
+<blockquote>
+<p>上面我们提到了 java-gradle-plugin，如果使用这个 Plugin 的话，可以无需手动配置 properties，只需在 gradle 中配置如下即可：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">gradlePlugin &#123;</span><br><span class="line">    plugins &#123;</span><br><span class="line">        helloPlugin &#123;</span><br><span class="line">            id = <span class="string">&#x27;com.example.hello&#x27;</span></span><br><span class="line">            implementationClass = <span class="string">&#x27;com.example.gradle.HelloWorldPlugin&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+</ul>
+<h3 id="插件源码"><a href="#插件源码" class="headerlink" title="插件源码"></a>插件源码</h3><p>在上面的例子中，我们将代码写在了 <em><strong>buildSrc</strong></em> module 中，那么除此之外还有：</p>
+<ul>
+<li><p>构建脚本</p>
+<p>可以将 Plugin 的源码直接包含在构建脚本中，这样子可以方便地在当前构建脚本直接使用该 Plugin，但是无法在其他构建脚本中使用。</p>
+<p><em><strong>build.gradle</strong></em></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TestPlugin</span> <span class="keyword">implements</span> <span class="title class_">Plugin</span>&lt;Project&gt; &#123;</span><br><span class="line">    <span class="type">void</span> apply(Project project) &#123;</span><br><span class="line">        project.tasks.create(<span class="string">&#x27;pluginTest&#x27;</span>) &#123;</span><br><span class="line">            doLast &#123;</span><br><span class="line">                println <span class="string">&quot;This is Test&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply <span class="attr">plugin:</span> TestPlugin</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>需要注意：上面的书写顺序，还记得我们之前说的<strong>边读取边解释</strong></p>
+</blockquote>
+</li>
+<li><p>单独的项目</p>
+<p>你可以为 Gradle Plugin 创建一个单独的项目，这种方式和 <em><strong>buildSrc</strong></em> 类似，并且可以生成 JAR 上传到中央仓库提供给其他开发者使用，而 <em><strong>buildSrc</strong></em> 只能在当前项目中使用。</p>
+</li>
+</ul>
+<h3 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h3><p>由于篇幅的限制，基础篇我们就讲到这里，后续的文章还会更深入地讲解 Gradle Plugin 知识。</p>
+
+    </article>
+    <!-- license -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://linxiaotao.github.io">Leo</a>
+            <p>原文链接：<a href="https://linxiaotao.github.io/2018/05/16/Gradle%E6%8F%92%E4%BB%B6-%E5%9F%BA%E7%A1%80%E7%AF%87/">https://linxiaotao.github.io/2018/05/16/Gradle%E6%8F%92%E4%BB%B6-%E5%9F%BA%E7%A1%80%E7%AF%87/</a>
+            <p>发表日期：<a href="https://linxiaotao.github.io/2018/05/16/Gradle%E6%8F%92%E4%BB%B6-%E5%9F%BA%E7%A1%80%E7%AF%87/">May 16th 2018, 9:20:58 am</a>
+            <p>更新日期：<a href="https://linxiaotao.github.io/2018/05/16/Gradle%E6%8F%92%E4%BB%B6-%E5%9F%BA%E7%A1%80%E7%AF%87/">June 15th 2022, 7:19:32 pm</a>
+            <p>版权声明：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/05/21/Gradle%E6%8F%92%E4%BB%B6-%E6%8F%90%E9%AB%98%E7%AF%87/" title="Gradle插件-提高篇">
+                    <div class="nextTitle">Gradle插件-提高篇</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/05/08/Gradle%E5%A4%9A%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/" title="Gradle多项目实践">
+                    <div class="prevTitle">Gradle多项目实践</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- comment -->
+    
+        <div class="post-comment">
+            <!-- 来必力 City 版安装代码 -->
+
+
+            
+
+            
+
+            
+
+            <!-- utteranc评论 -->
+
+
+            <!-- partial('_partial/comment/changyan') -->
+            <!--PC版-->
+
+
+            
+            
+
+            
+
+        </div>
+    
+    <!-- timeliness note -->
+    <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+    
+    <!-- Mathjax -->
+    
+</main>
+
+                <!-- profile -->
+                
+            </div>
+            <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+        <div class="social">
+            
+    
+        
+            
+                <a href="mailto:linxiaotao1993@vip.qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/LinXiaoTao" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                    
+                    <img class="profile-qr" src="/assets/wechat_qr.jpeg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+        </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+        <div class="busuanzi-container">
+            
+             
+                <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+            
+        </div>
+    	
+</footer>
+
+        </div>
+        <!-- toc -->
+        
+            <div class="toc-wrapper toc-wrapper-loding" style=
+
+
+
+
+
+
+
+    top:50vh;
+
+>
+                <div class="toc-catalog">
+                    <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gradle%E6%8F%92%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">Gradle插件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.1.</span> <span class="toc-text">设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84"><span class="toc-number">2.1.1.</span> <span class="toc-text">架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.1.2.</span> <span class="toc-text">技术实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90"><span class="toc-number">2.2.</span> <span class="toc-text">例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E6%BA%90%E7%A0%81"><span class="toc-number">2.3.</span> <span class="toc-text">插件源码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9D%9F%E8%AF%AD"><span class="toc-number">2.4.</span> <span class="toc-text">结束语</span></a></li></ol></li></ol>
+            </div>
+        
+        <!-- sidebar -->
+        <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+        <div class="sidebar-panel-archives">
+    <!-- 在 ejs 中将 archive 按照时间排序 -->
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 31
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+        
+            
+            
+            <div class="archive-year"> 2022 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/15</span>
+            <a class="archive-post-title" href="/2022/06/15/hello-world/">Hello World</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2019 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/12</span>
+            <a class="archive-post-title" href="/2019/12/12/LeetCode-5-Longest-Palindromic-Substring/">LeetCode 5: Longest Palindromic Substring</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span>
+            <a class="archive-post-title" href="/2019/12/04/%E4%BC%98%E5%8C%96%E5%8C%85%E5%A4%A7%E5%B0%8F-PNG%E9%83%A8%E5%88%86/">优化包大小-PNG部分</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/09</span>
+            <a class="archive-post-title" href="/2019/09/09/%E6%B5%85%E8%B0%88Flutter%E7%83%AD%E9%87%8D%E8%BD%BD-%E4%B8%8A/">浅谈Flutter热重载(上)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/30</span>
+            <a class="archive-post-title" href="/2019/08/30/%E6%B5%85%E8%B0%88Flutter%E6%9E%84%E5%BB%BA/">浅谈Flutter构建</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span>
+            <a class="archive-post-title" href="/2019/08/22/%E6%97%A0%E4%BE%B5%E5%85%A5%E5%BC%95%E5%85%A5Flutter%E6%A8%A1%E5%9D%97/">无侵入引入Flutter模块</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/07</span>
+            <a class="archive-post-title" href="/2019/08/07/%E4%BB%BF%E5%8D%B3%E5%88%BBFlutter%E7%89%88%E6%9C%AC/">仿即刻Flutter版本</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/21</span>
+            <a class="archive-post-title" href="/2019/06/21/%E8%A7%A3%E5%86%B3Flutter%E7%89%88%E6%9C%AC%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84flutterw/">解决Flutter版本不一致的flutterw</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/17</span>
+            <a class="archive-post-title" href="/2019/06/17/Flutter-ListView-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Flutter ListView 源码分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/06</span>
+            <a class="archive-post-title" href="/2019/05/06/scoped-model%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">scoped_model源码解析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span>
+            <a class="archive-post-title" href="/2019/04/25/Looper%E4%B8%AD%E7%9A%84%E6%AD%BB%E5%BE%AA%E7%8E%AF/">Looper中的死循环</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span>
+            <a class="archive-post-title" href="/2019/02/05/Jetpack%E4%B8%AD%E7%9A%84LiveData/">Jetpack中的LiveData</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/14</span>
+            <a class="archive-post-title" href="/2019/01/14/Jetpack%E4%B8%AD%E7%9A%84Lifecycle/">Jetpack中的Lifecycle</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/08</span>
+            <a class="archive-post-title" href="/2019/01/08/SparseArray%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">SparseArray源码解析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/05</span>
+            <a class="archive-post-title" href="/2019/01/05/Jetpack%E4%B8%AD%E7%9A%84ViewModel/">Jetpack中的ViewModel</a>
+        </li>
+    
+        
+            
+            
+                
+                </ul>
+            
+            <div class="archive-year"> 2018 </div>
+            <ul class="year-list">
+            
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/31</span>
+            <a class="archive-post-title" href="/2018/12/31/2018%E5%B9%B4%E5%A4%8D%E7%9B%98/">2018年复盘</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span>
+            <a class="archive-post-title" href="/2018/11/12/AppPlugin%E4%B8%AD%E7%9A%84Task-%E7%AC%AC%E4%B8%80%E7%AF%87/">AppPlugin中的Task-第一篇</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span>
+            <a class="archive-post-title" href="/2018/11/09/ArrayList%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">ArrayList源码分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/07</span>
+            <a class="archive-post-title" href="/2018/11/07/HashMap%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">HashMap源码分析</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2018/09/08/JavaScript%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">JavaScript正则表达式</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span>
+            <a class="archive-post-title" href="/2018/09/08/%E7%81%B5%E6%B4%BB%E4%BD%BF%E7%94%A8%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6/">灵活使用位运算符</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span>
+            <a class="archive-post-title" href="/2018/07/19/%E5%8F%AF%E6%8B%96%E6%8B%BD%E7%9A%84%E7%BD%91%E6%A0%BC%E5%B8%83%E5%B1%80/">可拖拽的网格布局</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/21</span>
+            <a class="archive-post-title" href="/2018/05/21/Gradle%E6%8F%92%E4%BB%B6-%E6%8F%90%E9%AB%98%E7%AF%87/">Gradle插件-提高篇</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/16</span>
+            <a class="archive-post-title" href="/2018/05/16/Gradle%E6%8F%92%E4%BB%B6-%E5%9F%BA%E7%A1%80%E7%AF%87/">Gradle插件-基础篇</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span>
+            <a class="archive-post-title" href="/2018/05/08/Gradle%E5%A4%9A%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">Gradle多项目实践</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/29</span>
+            <a class="archive-post-title" href="/2018/04/29/Gradle%E5%A4%9A%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA/">Gradle多项目构建</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span>
+            <a class="archive-post-title" href="/2018/04/19/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AC%AC%E4%B8%80%E6%AD%A5/">性能优化第一步</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span>
+            <a class="archive-post-title" href="/2018/04/12/%E7%86%9F%E6%82%89%E5%8F%88%E9%99%8C%E7%94%9F%E7%9A%84Context/">熟悉又陌生的Context</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/03</span>
+            <a class="archive-post-title" href="/2018/04/03/%E8%A7%A6%E6%91%B8%E4%BA%8B%E4%BB%B6%E5%AE%9E%E8%B7%B5%E4%B9%8B%E8%B7%AF/">触摸事件实践之路</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/27</span>
+            <a class="archive-post-title" href="/2018/03/27/Activity%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B-%E5%9F%BA%E4%BA%8EAndroid26/">Activity启动流程(基于Android26)</a>
+        </li>
+    
+        
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span>
+            <a class="archive-post-title" href="/2018/03/23/Android%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-Handler/">Android消息机制-Handler</a>
+        </li>
+    
+    </div>
+</div>
+
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+        
+            <span class="sidebar-tag-name" data-tags="Jetpack">
+                <span class="iconfont-archer">&#xe606;</span>
+                Jetpack
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="性能优化">
+                <span class="iconfont-archer">&#xe606;</span>
+                性能优化
+            </span>
+        
+            <span class="sidebar-tag-name" data-tags="Android Framework">
+                <span class="iconfont-archer">&#xe606;</span>
+                Android Framework
+            </span>
+        
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+        缺失模块，请参考主题文档进行安装配置：https://github.com/fi3ework/hexo-theme-archer#%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="随笔">
+            <span class="iconfont-archer">&#xe60a;</span>
+            随笔
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Java">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Java
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Gradle">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Gradle
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript">
+            <span class="iconfont-archer">&#xe60a;</span>
+            JavaScript
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Android">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Android
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="LeetCode">
+            <span class="iconfont-archer">&#xe60a;</span>
+            LeetCode
+        </span>
+    
+        <span class="sidebar-category-name" data-categories="Flutter">
+            <span class="iconfont-archer">&#xe60a;</span>
+            Flutter
+        </span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+
+    </div>
+</div>
+
+        <!-- site-meta -->
+        <script>
+    var siteMetaRoot = "/"
+    if (siteMetaRoot === "undefined") {
+        siteMetaRoot = '/'
+    }
+    var siteMeta = {
+        url: "https://linxiaotao.github.io",
+        root: siteMetaRoot,
+        author: "Leo"
+    }
+</script>
+
+        <!-- import experimental options here -->
+        <!-- Custom Font -->
+
+
+        <!-- main func -->
+        <script src="/scripts/main.js?v=20211217"></script>
+        <!-- dark mode -->
+        <script src="/scripts/dark.js?v=20211217"></script>
+        <!-- fancybox -->
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" defer></script>
+        <!-- algolia -->
+        
+        <!-- busuanzi -->
+        
+            <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+        
+        <!-- CNZZ -->
+        
+        <!-- async load share.js -->
+        
+            <script src="/scripts/share.js?v=20211217" async></script>
+        
+        <!-- mermaid -->
+        
+    </body>
+</html>
